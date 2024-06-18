@@ -1,11 +1,11 @@
-package techit.velog.domain.comment;
+package techit.velog.domain.comment.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import techit.velog.domain.BaseEntity;
-import techit.velog.domain.post.Posts;
+import techit.velog.domain.post.entity.Posts;
 
 import java.util.LinkedList;
 import java.util.List;

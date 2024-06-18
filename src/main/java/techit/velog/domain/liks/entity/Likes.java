@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import techit.velog.domain.BaseEntity;
-import techit.velog.domain.post.Posts;
+import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.user.entity.User;
 
 @NoArgsConstructor

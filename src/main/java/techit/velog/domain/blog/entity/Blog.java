@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import techit.velog.domain.BaseEntity;
-import techit.velog.domain.post.Posts;
-import techit.velog.domain.tag.Tags;
+import techit.velog.domain.post.entity.Posts;
+import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.user.entity.User;
 
 import java.util.ArrayList;
@@ -37,4 +37,16 @@ public class Blog extends BaseEntity {
     @OneToMany(mappedBy = "blog")
     private List<Posts> posts = new ArrayList<>();
 
+    public Blog(String title, User user) {
+        this.title = title;
+        this.description = "내가 만든 쿠키";
+        if (user != null) {
+            addUser(user);
+        }
+    }
+
+    public void addUser(User user) {
+        this.user = user;
+        user.setBlog(this);
+    }
 }

@@ -1,4 +1,4 @@
-package techit.velog.domain.post;
+package techit.velog.domain.post.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

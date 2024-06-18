@@ -1,0 +1,51 @@
+<html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>글 쓰기</title>
+</head>
+<body>
+<section>
+    <div>
+        <form action="" th:action method="post" th:object="${post}">
+            <div>
+                <label for="title">제목</label>
+                <input type="text" id=title th:field="*{title}">
+                <div th:erros="*{title}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="content">내용</label>
+                <input type="text" id=content th:field="*{content}">
+                <div th:erros="*{content}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="tagName">태그</label>
+                <input type="text" id=tagName th:field="*{tagName}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요">
+                <div th:erros="*{tagName}" class="error-class"></div>
+            </div>
+            <!-- radio button -->
+            <div>
+                <div>공개 설정</div>
+                <div th:each="type : ${isSecret}" class="form-check form-check-inline">
+                    <input type="radio" th:field="*{isSecret}" th:value="${type.name()}" class="form-check-input">
+                    <label th:for="${#ids.prev('isSecret')}" th:text="${type.description}" class="form-check-label">
+                        BOOK
+                    </label>
+                </div>
+            </div>
+            <div>임시 여부</div>
+            <div>
+                <div class="form-check">
+                    <input type="checkbox" id="isReql" th:field="*{isReal}" class="form-check-input">
+                    <label for="isReql" class="form-check-label">임시</label>
+                </div>
+            </div>
+            <input type="submit" value="제출">
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

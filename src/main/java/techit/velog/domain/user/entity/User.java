@@ -41,6 +41,7 @@ public class User extends BaseEntity {
     private UploadFile uploadFile;
 
     @OneToMany(mappedBy = "user2",cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Blog> blogs = new ArrayList<>();
     /**
      * 회원가입 Dto -> Entity
@@ -55,6 +56,13 @@ public class User extends BaseEntity {
                 .role(userJoinReq.getRole())
                 .emailCheck(userJoinReq.isEmailCheck())
                 .build();
+    }
+
+    /**
+     * 편의 메서드
+     */
+    public void setBlog(Blog blog) {
+        this.blog = blog;
     }
 
 }

@@ -3,7 +3,7 @@ package techit.velog.domain.uploadfile;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import techit.velog.domain.post.Posts;
+import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.user.entity.User;
 
 @Getter
