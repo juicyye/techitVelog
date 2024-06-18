@@ -12,6 +12,7 @@ public class UserReqDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserJoinReq{
+        private String userId;
         private String name;
         private String loginId;
         private String password;

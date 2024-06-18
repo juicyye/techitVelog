@@ -1,23 +1,22 @@
-package techit.velog.domain.uploadfile;
+package techit.velog.domain.liks.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import techit.velog.domain.BaseEntity;
 import techit.velog.domain.post.Posts;
 import techit.velog.domain.user.entity.User;
 
-@Getter
-@Entity
 @NoArgsConstructor
-public class UploadFile {
+@AllArgsConstructor
+@Entity
+public class Likes extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "like_id")
     private Long id;
 
-    private String uploadFileName;
-    private String storeFileName;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -25,8 +24,4 @@ public class UploadFile {
     @JoinColumn(name = "post_id")
     private Posts posts;
 
-    public UploadFile(String uploadFileName, String storeFileName) {
-        this.uploadFileName = uploadFileName;
-        this.storeFileName = storeFileName;
-    }
 }
