@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        /* Reset some default browser styles */
+        body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, a {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* General body styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container for links */
+        .link-container {
+            margin-bottom: 15px;
+        }
+
+        /* Link styles */
+        a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Different colors for different link types */
+        .login a {
+            background-color: #007bff; /* Blue */
+        }
+
+        .signup a {
+            background-color: #28a745; /* Green */
+        }
+
+        .logout a {
+            background-color: #dc3545; /* Red */
+        }
+
+        .manager a {
+            background-color: #ffc107; /* Yellow */
+        }
+
+        .admin a {
+            background-color: #6c757d; /* Grey */
+        }
+
+        .user a {
+            background-color: #17a2b8; /* Teal */
+        }
+
+        /* Adding a box shadow to links */
+        a {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        a:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Adding some padding and max-width to the container */
+        body > div {
+            max-width: 400px;
+            width: 100%;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="link-container login" sec:authorize="isAnonymous()">
+    <a href="" th:href="@{/login}">로그인</a>
+</div>
+<div class="link-container signup" sec:authorize="isAnonymous()">
+    <a href="" th:href="@{/join}">회원가입</a>
+</div>
+<div class="link-container logout" sec:authorize="isAuthenticated()">
+    <a href="" th:href="@{/logout}">로그아웃</a>
+</div>
+<div class="link-container admin">
+    <a href="" th:href="@{/admin}">관리자</a>
+</div>
+<div class="link-container user">
+    <a href="" th:href="@{/user}">유저</a>
+</div>
+</body>
+</html>
