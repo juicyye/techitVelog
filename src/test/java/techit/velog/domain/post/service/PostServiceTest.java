@@ -5,9 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.dto.PostReqDto;
+import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostRepository;
@@ -18,16 +22,19 @@ import techit.velog.domain.user.dto.UserReqDto;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.domain.user.service.UserService;
+import techit.velog.dummy.DummyObject;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static techit.velog.domain.post.dto.PostReqDto.*;
+import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @SpringBootTest
 @Transactional
-class PostServiceTest {
+class PostServiceTest extends DummyObject {
     @Autowired
     private PostService postService;
     @Autowired
@@ -61,7 +68,7 @@ class PostServiceTest {
         PostReqDtoWeb postReqDtoWeb = new PostReqDtoWeb();
         postReqDtoWeb.setTitle("title");
         postReqDtoWeb.setContent("content");
-        postReqDtoWeb.setReql(true);
+        postReqDtoWeb.setIsReal(true);
         postReqDtoWeb.setIsSecret(IsSecret.SECRET);
         postReqDtoWeb.setTagName("하이하이 방가방가, 내이름은 태그");
 
@@ -88,7 +95,7 @@ class PostServiceTest {
         PostReqDtoWeb postReqDtoWeb = new PostReqDtoWeb();
         postReqDtoWeb.setTitle("title");
         postReqDtoWeb.setContent("content");
-        postReqDtoWeb.setReql(true);
+        postReqDtoWeb.setIsReal(true);
         postReqDtoWeb.setIsSecret(IsSecret.SECRET);
         postReqDtoWeb.setTagName("하이하이 방가방가, 내이름은 태그");
 
@@ -101,6 +108,38 @@ class PostServiceTest {
         Tags tags = tagRepository.findById(1L).orElse(null);
         System.out.println("tags = " + tags.getName());
         Assertions.assertThat(tags).isNotNull();
+    }
+
+    @Test
+    void PostList_test() throws Exception {
+        // given
+        userService.join(adminUser());
+        AccountDto accountDto = new AccountDto();
+        accountDto.setLoginId("admin");
+        accountDto.setPassword("admin");
+        accountDto.setRole(Role.ROLE_ADMIN);
+
+        for (int i = 0; i < 10; i++) {
+            PostReqDtoWeb postReqDtoWeb = new PostReqDtoWeb("title" + i, "content" + i);
+            postService.create(postReqDtoWeb, accountDto);
+        }
+
+        List<Posts> all = postRepository.findAll();
+        for (Posts posts : all) {
+            System.out.println("posts.getContent() = " + posts.getContent());
+        }
+        Blog admin = blogRepository.findByUserId("admin").get();
+        System.out.println("admin.getDescription() = " + admin.getTitle());
+
+
+        // when
+        Page<PostRespDtoWeb> posts = postService.getPosts(PageRequest.of(0, 3));
+        for (PostRespDtoWeb post : posts) {
+            System.out.println("post.getContent() = " + post.getBlogName());
+        }
+
+        // then
+
     }
 
 

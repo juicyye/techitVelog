@@ -20,7 +20,7 @@ public class UserReqDto {
         private boolean emailCheck;
         private String email;
         private Role role;
-
+        private String nickname;
     }
     @Data
     @NoArgsConstructor

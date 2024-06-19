@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import techit.velog.domain.user.dto.UserReqDto;
+import techit.velog.domain.user.dto.UserRespDto;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.service.UserService;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
+import static techit.velog.domain.user.dto.UserRespDto.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -88,5 +91,12 @@ public class UserController {
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
         return "login/denied";
+    }
+
+    @GetMapping("/account")
+    public String account(Model model, @AuthenticationPrincipal AccountDto accountDto) {
+        UserRespDtoWeb user = userService.getUser(accountDto.getLoginId());
+        model.addAttribute("user", user);
+        return "user/info";
     }
 }

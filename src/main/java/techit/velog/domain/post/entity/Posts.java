@@ -10,10 +10,9 @@ import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.liks.entity.Likes;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.uploadfile.UploadFile;
-import techit.velog.domain.user.entity.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import static techit.velog.domain.post.dto.PostReqDto.*;
@@ -26,16 +25,21 @@ public class Posts extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-    private String postId;
     private String title;
     private String content;
 
-    private boolean isReal;
+    @Enumerated(EnumType.STRING)
+    private IsReal isReal;
     @Enumerated(EnumType.STRING)
     private IsSecret isSecret;
     private int views;
 
-    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "upload_file_id")
+    private UploadFile uploadFile;
+
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JoinColumn(name = "post_id")
     private List<UploadFile> uploadFiles = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,22 +52,25 @@ public class Posts extends BaseEntity {
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
 
 
     /**
      * 생성자
      */
-    public Posts(PostReqDtoWeb postReqDtoWeb, Blog blog, List<PostTag> postTags) {
+    public Posts(PostReqDtoWeb postReqDtoWeb, Blog blog) {
         this.title = postReqDtoWeb.getTitle();
         this.content = postReqDtoWeb.getContent();
-        this.isReal = postReqDtoWeb.getIsReal();
         this.isSecret = postReqDtoWeb.getIsSecret();
         if (blog != null) {
             setBlog(blog);
         }
-        this.getPostTags().addAll(postTags);
+
+        if (postReqDtoWeb.getIsReal()) {
+            this.isReal = IsReal.REAL;
+        } else this.isReal = IsReal.TEMP;
+
     }
 
     /**
@@ -83,4 +90,12 @@ public class Posts extends BaseEntity {
         this.views++;
     }
 
+    public void changeUploadFile(List<UploadFile> uploadFiles, UploadFile uploadFile) {
+        this.uploadFiles = uploadFiles;
+        this.uploadFile = uploadFile;
+    }
+
+    public void changeReal() {
+
+    }
 }

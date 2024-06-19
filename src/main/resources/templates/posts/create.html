@@ -9,7 +9,7 @@
 <body>
 <section>
     <div>
-        <form action="" th:action method="post" th:object="${post}">
+        <form action="" th:action method="post" th:object="${post}" enctype="multipart/form-data">
             <div>
                 <label for="title">제목</label>
                 <input type="text" id=title th:field="*{title}">
@@ -41,6 +41,10 @@
                     <input type="checkbox" id="isReql" th:field="*{isReal}" class="form-check-input">
                     <label for="isReql" class="form-check-label">임시</label>
                 </div>
+            </div>
+            <div>
+                <p><input type="file"  name="imageFile" ></p>
+                <p><input type="file" multiple="multiple" name="imageFiles" ></p>
             </div>
             <input type="submit" value="제출">
         </form>

@@ -27,6 +27,7 @@ public class User extends BaseEntity {
     private String userId;
 
     private String name;
+    private String nickname;
     private String loginId;
     private String password;
     private boolean emailCheck;
@@ -50,6 +51,7 @@ public class User extends BaseEntity {
         return User.builder()
                 .userId(userJoinReq.getUserId())
                 .name(userJoinReq.getName())
+                .nickname(userJoinReq.getNickname())
                 .loginId(userJoinReq.getLoginId())
                 .password(userJoinReq.getPassword())
                 .email(userJoinReq.getEmail())

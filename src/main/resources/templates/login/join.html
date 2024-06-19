@@ -81,6 +81,11 @@
             <div th:errors="*{loginId}" class="error-class"></div>
         </div>
         <div>
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" name="nickname" th:field="*{nickname}" required>
+            <div th:errors="*{nickname}" class="error-class"></div>
+        </div>
+        <div>
             <label for="password">비밀번호</label>
             <input type="password" id="password" name="password" th:field="*{password}" required>
             <div th:errors="*{password}" class="error-class"></div>

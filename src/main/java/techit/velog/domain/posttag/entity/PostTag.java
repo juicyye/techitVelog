@@ -8,8 +8,6 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.tag.entity.Tags;
 
-import javax.swing.text.html.HTML;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -31,9 +29,10 @@ public class PostTag extends BaseEntity {
     /**
      * 생성메서드
      */
-    public PostTag(Tags tags) {
+    public static void ChangeTag(Tags tags, Posts posts) {
         PostTag postTag = new PostTag();
         postTag.setTags(tags);
+        postTag.changePost(posts);
     }
 
     /**
@@ -46,4 +45,8 @@ public class PostTag extends BaseEntity {
     }
 
 
+    public void changePost(Posts posts) {
+        this.posts = posts;
+        posts.getPostTags().add(this);
+    }
 }
