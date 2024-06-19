@@ -21,13 +21,13 @@ import static techit.velog.domain.tag.dto.TagRespDto.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/blog")
+@RequestMapping("/{id}")
 public class BlogController {
     private final BlogService blogService;
     private final TagService tagService;
     private final PostService postService;
 
-    @GetMapping("/{id}")
+    @GetMapping
     public String blog(@PathVariable("id") String blogName, Model model) {
         List<BlogRespDtoWeb> blogs = blogService.getPost(blogName);
         List<PostRespDtoWeb> posts = postService.getPostByBlog(blogName);
@@ -38,4 +38,12 @@ public class BlogController {
 
         return "blog/blog";
     }
+
+    @GetMapping("/posts")
+    public String posts(@PathVariable("id") String blogName, Model model) {
+        List<PostRespDtoWeb> postByBlog = postService.getPostByBlog(blogName);
+        return null;
+    }
+
+
 }

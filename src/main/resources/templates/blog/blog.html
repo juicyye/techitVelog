@@ -16,7 +16,7 @@
         </div>
 
         <div th:each="post : ${posts}">
-            <h3 th:text="${post.title}"></h3>
+            <h3 > <a href="" th:href="@{|/${post.blogName}/posts|}" th:text="${post.title}"></a></h3>
             <h3 th:text="${post.content}"></h3>
             <h3 th:text="${post.createDate}"></h3>
         </div>
