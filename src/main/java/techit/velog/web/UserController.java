@@ -2,6 +2,7 @@ package techit.velog.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.user.dto.UserReqDto;
 import techit.velog.domain.user.dto.UserRespDto;
 import techit.velog.domain.user.entity.Role;
@@ -99,4 +101,54 @@ public class UserController {
         model.addAttribute("user", user);
         return "user/info";
     }
+
+    @GetMapping("/account/update")
+    public String accountUpdateForm(Model model, @AuthenticationPrincipal AccountDto accountDto) {
+        UserReqDtoWeb user = userService.getUpdateUser(accountDto.getLoginId());
+        model.addAttribute("user", user);
+        return "user/update";
+    }
+
+    @PostMapping("/account/update")
+    public String update(@Validated @ModelAttribute("user") UserReqDtoWeb userReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto, RedirectAttributes rttr) {
+        if(bindingResult.hasErrors()) {
+            log.info("update error {}",bindingResult.getAllErrors());
+            return "user/update";
+        }
+        if (!userService.checkPassword(accountDto,userReqDtoWeb.getPassword())) {
+            bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
+            return "user/update";
+        }
+        if (!userReqDtoWeb.getChangePassword().equals(userReqDtoWeb.getChangePasswordConfirm())) {
+            bindingResult.reject("password_not_confirm","비밀번호가 일치하지 않습니다.");
+            return "user/update";
+        }
+
+        userService.updateInfo(userReqDtoWeb,accountDto);
+        rttr.addAttribute("update",true);
+        return "redirect:/";
+    }
+
+    @GetMapping("/account/delete")
+    public String deleteForm(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto) {
+        return "user/delete";
+    }
+
+    @PostMapping("/account/delete")
+    public String delete(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto, BindingResult bindingResult
+            , @AuthenticationPrincipal AccountDto accountDto,RedirectAttributes rttr, HttpServletRequest request, HttpServletResponse response) {
+        if(!userService.checkPassword(accountDto,userReqDeleteDto.getPassword())) {
+            bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
+            return "user/delete";
+        }
+        userService.deleteUser(accountDto);
+        rttr.addAttribute("delete",true);
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+        if(authentication != null) {
+            new SecurityContextLogoutHandler().logout(request,response,authentication);
+        }
+        return "redirect:/";
+    }
+
+
 }

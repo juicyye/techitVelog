@@ -14,7 +14,8 @@
         <h3 th:text="${user.email}"></h3>
         <h3 th:text="${user.userId}"></h3>
 
-        <button th:onclick="|location.href='@{/account/update}'|" value="개인정보 수정"></button>
+        <button th:onclick="|location.href='@{/account/update}'|" >개인정보 수정</button>
+        <button th:onclick="|location.href='@{/account/delete}'|" >회원 탈퇴</button>
 
     </div>
 

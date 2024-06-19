@@ -30,7 +30,8 @@ public class User extends BaseEntity {
     private String nickname;
     private String loginId;
     private String password;
-    private boolean emailCheck;
+    @Enumerated(EnumType.STRING)
+    private EmailCheck emailCheck;
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -48,6 +49,7 @@ public class User extends BaseEntity {
      * 회원가입 Dto -> Entity
      */
     public static User toEntity(UserJoinReq userJoinReq) {
+        EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         return User.builder()
                 .userId(userJoinReq.getUserId())
                 .name(userJoinReq.getName())
@@ -56,7 +58,7 @@ public class User extends BaseEntity {
                 .password(userJoinReq.getPassword())
                 .email(userJoinReq.getEmail())
                 .role(userJoinReq.getRole())
-                .emailCheck(userJoinReq.isEmailCheck())
+                .emailCheck(emailCheck1)
                 .build();
     }
 
@@ -67,4 +69,17 @@ public class User extends BaseEntity {
         this.blog = blog;
     }
 
+    /**
+     * 비지니스 메서드
+     */
+
+    public void changeInfo(UserReqDtoWeb userReqDtoWeb) {
+        EmailCheck emailCheck1 = userReqDtoWeb.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
+        this.name = userReqDtoWeb.getUsername();
+        this.nickname = userReqDtoWeb.getNickname();
+        this.email = userReqDtoWeb.getEmail();
+        this.password = userReqDtoWeb.getChangePassword();
+        this.emailCheck = emailCheck1;
+
+    }
 }

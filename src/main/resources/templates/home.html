@@ -91,6 +91,12 @@
     </style>
 </head>
 <body>
+<div th:if="${param.delete}">
+    탈퇴처리가 완료되었습니다.
+</div>
+<div th:if="${param.update}">
+    수정이 완료되었습니다.
+</div>
 <div class="link-container login" sec:authorize="isAnonymous()">
     <a href="" th:href="@{/login}">로그인</a>
 </div>
@@ -106,8 +112,11 @@
 <div class="link-container user">
     <a href="" th:href="@{/user}">유저</a>
 </div>
-<div>
+<div class="link-container user">
     <a href="" th:href="@{/posts/create}">글 작성</a>
+</div>
+<div class="link-container user" sec:authorize="isAuthenticated()">
+    <a href="" th:href="@{/account}">개인정보</a>
 </div>
 </body>
 </html>

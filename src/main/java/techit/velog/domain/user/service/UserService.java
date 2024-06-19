@@ -51,4 +51,32 @@ public class UserService {
         }
         return new UserRespDtoWeb(_user.get());
     }
+
+    public UserReqDtoWeb getUpdateUser(String loginId) {
+        Optional<User> _user = userRepository.findByLoginId(loginId);
+        if (_user.isEmpty()) {
+            throw new CustomWebException("user not found by loginId: " + loginId);
+        }
+        return new UserReqDtoWeb(_user.get());
+    }
+
+    public boolean checkPassword(AccountDto accountDto, String password) {
+        if (passwordEncoder.matches(password, accountDto.getPassword())) {
+            return true;
+        } else{
+            return false;
+        }
+    }
+    @Transactional
+    public void updateInfo(UserReqDtoWeb userReqDtoWeb, AccountDto accountDto) {
+        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+        userReqDtoWeb.setChangePassword(passwordEncoder.encode(userReqDtoWeb.getChangePassword()));
+        user.changeInfo(userReqDtoWeb);
+    }
+
+    @Transactional
+    public void deleteUser(AccountDto accountDto) {
+        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+        userRepository.delete(user);
+    }
 }

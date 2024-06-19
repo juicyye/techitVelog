@@ -4,10 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.entity.User;
-
+@Slf4j
 public class UserReqDto {
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserReqDtoWeb{
+        private String email;
+        private String username;
+        private String nickname;
+        private String password;
+        private String changePassword;
+        private String changePasswordConfirm;
+        private boolean emailCheck;
+
+        public UserReqDtoWeb(User user) {
+            this.email = user.getEmail();
+            this.username = user.getName();
+            this.nickname = user.getNickname();
+        }
+    }
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -49,5 +68,10 @@ public class UserReqDto {
                     .build();
         }
 
+    }
+
+    @Data
+    public static class UserReqDeleteDto{
+        private String password;
     }
 }

@@ -1,0 +1,59 @@
+<html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>개인정보 수정</title>
+</head>
+<body>
+<section>
+    <div>
+
+        <form action="" th:action method="post" th:object="${user}">
+            <div th:replace="~{/layout/fiederror :: fielderror}"></div>
+            <div>
+                <label for="username">이름</label>
+                <input type="text" id=username th:field="*{username}">
+                <div th:erros="*{username}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="nickname">닉네임</label>
+                <input type="text" id=nickname th:field="*{nickname}">
+                <div th:erros="*{nickname}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="email">이메일</label>
+                <input type="text" id=email th:field="*{email}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요">
+                <div th:erros="*{email}" class="error-class"></div>
+            </div>
+            <div>이메일 수신 설정</div>
+            <div>
+                <div class="form-check">
+                    <input type="checkbox" id="emailCheck" th:field="*{emailCheck}" class="form-check-input">
+                    <label for="emailCheck" class="form-check-label">허용</label>
+                </div>
+            </div>
+            <div>
+                <label for="password">비밀번호</label>
+                <input type="password" id=password th:field="*{password}">
+                <div th:erros="*{password}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="changePassword">새 비밀번호</label>
+                <input type="password" id=changePassword th:field="*{changePassword}" >
+                <div th:erros="*{changePassword}" class="error-class"></div>
+            </div>
+            <div>
+                <label for="changePasswordConfirm">새 비밀번호 확인</label>
+                <input type="password" id=changePasswordConfirm th:field="*{changePasswordConfirm}" >
+                <div th:erros="*{changePasswordConfirm}" class="error-class"></div>
+            </div>
+
+            <input type="submit" value="제출">
+        </form>
+    </div>
+</section>
+
+</body>
+</html>

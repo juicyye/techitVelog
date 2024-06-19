@@ -14,6 +14,8 @@ public class UserRespDto {
         private String name;
         private String nickname;
         private String email;
+        private boolean emailCheck;
+
         private UploadFile image;
 
         public UserRespDtoWeb(User user) {
