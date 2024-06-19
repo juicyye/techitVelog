@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.post.repository.PostRepository;
 import techit.velog.domain.user.dto.UserReqDto;
 import techit.velog.domain.user.dto.UserRespDto;
 import techit.velog.domain.user.entity.User;
@@ -25,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlogRepository blogRepository;
     private final PasswordEncoder  passwordEncoder;
+    private final PostRepository postRepository;
 
     @Transactional
     public Long join(UserJoinReq userJoinReq) {
@@ -76,7 +78,10 @@ public class UserService {
 
     @Transactional
     public void deleteUser(AccountDto accountDto) {
+        // todo 연관관계 테이블들 삭제`
         User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+        Blog blog = blogRepository.findByUserId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+        postRepository.deleteByBlog_id(blog.getId());
         userRepository.delete(user);
     }
 }

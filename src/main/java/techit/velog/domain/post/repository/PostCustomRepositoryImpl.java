@@ -6,12 +6,6 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import techit.velog.domain.blog.entity.QBlog;
-import techit.velog.domain.post.entity.IsReal;
-import techit.velog.domain.post.entity.IsSecret;
-import techit.velog.domain.post.entity.Posts;
-import techit.velog.domain.post.entity.QPosts;
-import techit.velog.domain.uploadfile.QUploadFile;
 import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.List;
@@ -21,6 +15,7 @@ import static techit.velog.domain.blog.entity.QBlog.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.uploadfile.QUploadFile.*;
+import static techit.velog.domain.user.entity.QUser.*;
 
 
 public class PostCustomRepositoryImpl implements PostCustomRepository{
@@ -43,10 +38,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         for (PostRespDtoWeb result : results) {
             List<UploadFile> images = queryFactory.select(uploadFile)
                     .from(uploadFile)
-                    .where(uploadFile.posts.id.eq(result.getId()))
+                    .where(uploadFile.posts.id.eq(result.getPostId()))
                     .fetch();
             if (!images.isEmpty()) {
-                result.setImageFiles(images);
+                result.setPostImages(images);
             }
 
         }
@@ -70,13 +65,33 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         for (PostRespDtoWeb result : results) {
             List<UploadFile> images = queryFactory.select(uploadFile)
                     .from(uploadFile)
-                    .where(uploadFile.posts.id.eq(result.getId()))
+                    .where(uploadFile.posts.id.eq(result.getPostId()))
                     .fetch();
             if (!images.isEmpty()) {
-                result.setImageFiles(images);
+                result.setPostImages(images);
             }
 
         }
         return results;
+    }
+
+    @Override
+    public PostRespDtoWeb findByIdBlogName(String blogName, Long postId) {
+        PostRespDtoWeb postRespDtoWeb = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
+                        posts.id, posts.title, posts.content, posts.createDate, posts.updateDate, posts.views))
+                .from(posts)
+                .where(posts.blog.title.eq(blogName))
+                .where(posts.id.eq(postId))
+                .fetchOne();
+
+        List<UploadFile> uploadFiles = queryFactory.select(uploadFile)
+                .from(uploadFile)
+                .where(uploadFile.posts.id.eq(postId))
+                .fetch();
+        if (!uploadFiles.isEmpty()) {
+            postRespDtoWeb.setPostImages(uploadFiles);
+        }
+
+        return postRespDtoWeb;
     }
 }

@@ -36,15 +36,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "blog_id")
     private Blog blog;
 
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "user",cascade = CascadeType.ALL)
     private UploadFile uploadFile;
-
-    @OneToMany(mappedBy = "user2",cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Blog> blogs = new ArrayList<>();
     /**
      * 회원가입 Dto -> Entity
      */

@@ -6,11 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import techit.velog.domain.blog.dto.BlogRespDto;
 import techit.velog.domain.blog.service.BlogService;
-import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.service.PostService;
-import techit.velog.domain.tag.dto.TagRespDto;
 import techit.velog.domain.tag.service.TagService;
 
 import java.util.List;
@@ -30,7 +27,7 @@ public class BlogController {
     @GetMapping
     public String blog(@PathVariable("id") String blogName, Model model) {
         List<BlogRespDtoWeb> blogs = blogService.getPost(blogName);
-        List<PostRespDtoWeb> posts = postService.getPostByBlog(blogName);
+        List<PostRespDtoWeb> posts = postService.getPostsByBlogName(blogName);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blogs", blogs);
         model.addAttribute("posts", posts);
@@ -39,10 +36,12 @@ public class BlogController {
         return "blog/blog";
     }
 
-    @GetMapping("/posts")
-    public String posts(@PathVariable("id") String blogName, Model model) {
-        List<PostRespDtoWeb> postByBlog = postService.getPostByBlog(blogName);
-        return null;
+    @GetMapping("/{postId}")
+    public String postDetail(@PathVariable("id") String blogName, @PathVariable("postId") Long postId, Model model) {
+        PostRespDtoWeb postRespDtoWeb = postService.getPostByBlogName(blogName, postId);
+        model.addAttribute("post", postRespDtoWeb);
+
+        return "blog/post";
     }
 
 

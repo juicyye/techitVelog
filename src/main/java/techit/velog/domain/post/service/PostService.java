@@ -19,7 +19,6 @@ import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.global.exception.CustomWebException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,8 +128,14 @@ public class PostService {
     }
 
 
-    public List<PostRespDtoWeb> getPostByBlog(String blogName) {
+    public List<PostRespDtoWeb> getPostsByBlogName(String blogName) {
         return postRepository.findAllByBlogName(blogName);
+    }
+
+    public PostRespDtoWeb getPostByBlogName(String blogName, Long postId) {
+        return postRepository.findByIdBlogName(blogName, postId);
 
     }
+
+
 }
