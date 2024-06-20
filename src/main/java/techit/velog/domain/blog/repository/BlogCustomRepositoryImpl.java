@@ -8,13 +8,14 @@ import java.util.List;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.blog.entity.QBlog.*;
+import static techit.velog.domain.user.entity.QUser.*;
 
 
-public class BlogRepositoryCustomImpl implements BlogRepositoryCustom {
+public class BlogCustomRepositoryImpl implements BlogRepositoryCustom {
     private EntityManager em;
     private JPAQueryFactory queryFactory;
 
-    public BlogRepositoryCustomImpl(EntityManager em) {
+    public BlogCustomRepositoryImpl(EntityManager em) {
         this.em = em;
         this.queryFactory = new JPAQueryFactory(em);
     }
@@ -23,8 +24,9 @@ public class BlogRepositoryCustomImpl implements BlogRepositoryCustom {
     public List<BlogRespDtoWeb> findAllByBlog(String blogName) {
         List<BlogRespDtoWeb> results = queryFactory.select(Projections.fields(BlogRespDtoWeb.class,
                         blog.id.as("blogId"), blog.title, blog.description, blog.createDate, blog.updateDate,
-                        blog.user.nickname.as("nickname"),blog.user.uploadFile.as("image")))
+                        user.nickname.as("nickname"),user.uploadFile.as("image")))
                 .from(blog)
+                .join(blog.user, user)
                 .where(blog.title.eq(blogName))
                 .fetch();
 

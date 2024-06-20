@@ -36,24 +36,24 @@ class BlogRepositoryCustomImplTest extends DummyObject {
 
     @Test
     void Blog_test() throws Exception {
-        // given
-//        UserReqDto.AccountDto accountDto = new UserReqDto.AccountDto();
-//        accountDto.setLoginId("admin");
-//        accountDto.setPassword("admin");
-//        accountDto.setRole(Role.ROLE_ADMIN);
-//
-//        for (int i = 0; i < 10; i++) {
-//            PostReqDto.PostReqDtoWeb postReqDtoWeb = new PostReqDto.PostReqDtoWeb("title" + i, "content" + i);
-//            postService.create(postReqDtoWeb, accountDto);
-//        }
-//
-//        // when
-//        List<BlogRespDtoWeb> blog = blogRepository.findAllByBlog("@adminUser");
-//        for (BlogRespDtoWeb blogRespDtoWeb : blog) {
-//            System.out.println("blogRespDtoWeb.getUserName() = " + blogRespDtoWeb.getNickname());
-//        }
+         //given
+        UserReqDto.AccountDto accountDto = new UserReqDto.AccountDto();
+        accountDto.setLoginId("admin");
+        accountDto.setPassword("admin");
+        accountDto.setRole(Role.ROLE_ADMIN);
 
-        // then
+        for (int i = 0; i < 10; i++) {
+            PostReqDto.PostReqDtoWeb postReqDtoWeb = new PostReqDto.PostReqDtoWeb("title" + i, "content" + i);
+            postService.create(postReqDtoWeb, accountDto);
+        }
+
+        // when
+        List<BlogRespDtoWeb> blog = blogRepository.findAllByBlog("@adminUser");
+        for (BlogRespDtoWeb blogRespDtoWeb : blog) {
+            System.out.println("blogRespDtoWeb.getUserName() = " + blogRespDtoWeb.getNickname());
+        }
+
+        //then
 
     }
 
