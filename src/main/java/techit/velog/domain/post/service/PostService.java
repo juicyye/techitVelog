@@ -17,6 +17,7 @@ import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.global.exception.CustomWebException;
+import techit.velog.global.util.SplitService;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,6 +43,7 @@ public class PostService {
         Blog blog = blogRepository.findByUserId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
         List<UploadFile> uploadFiles = ImageFiles(postReqDtoWeb.getImageFiles());
         UploadFile uploadFile = uploadFile(postReqDtoWeb.getUploadFile());
+        postReqDtoWeb.setTitle(SplitService.split(postReqDtoWeb.getTitle()));
 
         // post 저장
         Posts posts = new Posts(postReqDtoWeb, blog);
@@ -128,12 +130,12 @@ public class PostService {
     }
 
 
-    public List<PostRespDtoWeb> getPostsByBlogName(String blogName) {
+    public List<PostRespDtoWeb> getAllByBlogName(String blogName) {
         return postRepository.findAllByBlogName(blogName);
     }
 
-    public PostRespDtoWeb getPostByBlogName(String blogName, Long postId) {
-        return postRepository.findByIdBlogName(blogName, postId);
+    public PostRespDtoWeb getPostByBlogName(String blogName, String postTitle) {
+        return postRepository.findByIdBlogName(blogName, postTitle);
 
     }
 

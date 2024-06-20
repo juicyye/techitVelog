@@ -16,14 +16,35 @@ public class Follow {
     @Column(name = "follow_id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id")
-    private Blog following;
+    @JoinColumn(name = "from_blogId")
+    private Blog from_blog;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id")
-    private Blog follower;
+    @JoinColumn(name = "to_blogId")
+    private Blog to_blog;
 
-    public Follow(Blog following, Blog follower) {
-        this.following = following;
-        this.follower = follower;
+    /**
+     * 회원 A -> 회원 B를 팔로우한다
+     * from blog가 to blog를 팔로우한다
+     */
+
+    public Follow(Blog from_blog, Blog to_blog) {
+        addFrom_blog(from_blog);
+        addTo_blog(to_blog);
     }
+
+    /**
+     * 편의 메서드
+     */
+
+
+    public void addFrom_blog(Blog from_blog) {
+        this.from_blog = from_blog;
+    }
+
+
+    public void addTo_blog(Blog to_blog) {
+        this.to_blog = to_blog;
+
+    }
+
 }

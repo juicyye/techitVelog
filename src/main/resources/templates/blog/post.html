@@ -9,13 +9,26 @@
 <body>
 <section>
     <div>
-        <h3 th:text="${user.name}"></h3>
-        <h3 th:text="${user.nickname}"></h3>
-        <h3 th:text="${user.email}"></h3>
-        <h3 th:text="${user.userId}"></h3>
+        <div>블로그이름
+            <h3 th:text="${post.blogName}"></h3>
+        </div>
+        <div>제목
+            <h3 th:text="${post.title}"></h3>
+        </div>
+        <div>내용
+            <h3 th:text="${post.content}"></h3>
+        </div>
+        <div>작성일자
+            <h3 th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></h3>
+        </div>
+        <div>수정일자
+            <h3 th:text="${#temporals.format(post.updateDate,'yyyy-MM-dd')}"></h3>
+        </div>
 
-        <button th:onclick="|location.href='@{/account/update}'|" >개인정보 수정</button>
-        <button th:onclick="|location.href='@{/account/delete}'|" >회원 탈퇴</button>
+        <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|">추천하기</button>
+        <h3 th:text="${post.likes}"></h3>
+
+
 
     </div>
 

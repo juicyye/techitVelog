@@ -27,6 +27,7 @@ public class Posts extends BaseEntity {
     public Long id;
     private String title;
     private String content;
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private IsReal isReal;
@@ -38,7 +39,7 @@ public class Posts extends BaseEntity {
     @JoinColumn(name = "upload_file_id")
     private UploadFile uploadFile;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<UploadFile> uploadFiles = new ArrayList<>();
 
@@ -63,6 +64,7 @@ public class Posts extends BaseEntity {
         this.title = postReqDtoWeb.getTitle();
         this.content = postReqDtoWeb.getContent();
         this.isSecret = postReqDtoWeb.getIsSecret();
+        this.description = postReqDtoWeb.getDescription();
         if (blog != null) {
             setBlog(blog);
         }

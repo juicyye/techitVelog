@@ -1,0 +1,35 @@
+<html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>블로그</title>
+</head>
+<body>
+<section>
+    <div>
+        <h2 th:text="${#lists.size(follows)}"></h2>
+        <div th:each="follow : ${follows}">
+            <div> 블로그이름:
+            <h3><a href="" th:href="@{|/${follow.blogName}|}" th:text="${follow.blogName}">></a></h3>
+            </div>
+            <div> 블로그 소개:
+                <h3 th:text="${follow.description}"></h3>
+            </div>
+            <div>닉네임:
+                <h3 th:text="${follow.nickname}"></h3>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+
+</section>
+
+</body>
+</html>

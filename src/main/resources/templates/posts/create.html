@@ -21,6 +21,11 @@
                 <div th:erros="*{content}" class="error-class"></div>
             </div>
             <div>
+                <label for="description">설명</label>
+                <input type="text" id=description th:field="*{description}">
+                <div th:erros="*{description}" class="error-class"></div>
+            </div>
+            <div>
                 <label for="tagName">태그</label>
                 <input type="text" id=tagName th:field="*{tagName}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요">
                 <div th:erros="*{tagName}" class="error-class"></div>

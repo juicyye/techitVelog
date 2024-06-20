@@ -13,5 +13,8 @@ public interface PostCustomRepository {
     Page<PostRespDtoWeb> findAllByLists(Pageable pageable);
     List<PostRespDtoWeb> findAllByBlogName(String blogName);
 
-    PostRespDtoWeb findByIdBlogName(String blogName, Long postId);
+    PostRespDtoWeb findByIdBlogName(String blogName, String postTitle);
+
+
+
 }

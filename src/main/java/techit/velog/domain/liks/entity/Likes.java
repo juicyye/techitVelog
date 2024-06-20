@@ -24,4 +24,17 @@ public class Likes extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Posts posts;
 
+    public Likes(User user, Posts posts) {
+        this.user = user;
+        addPosts(posts);
+
+    }
+
+    /**
+     * 편의 메소드
+     */
+    public void addPosts(Posts posts) {
+        this.posts = posts;
+        posts.getLikes().add(this);
+    }
 }

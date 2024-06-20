@@ -7,7 +7,7 @@ import techit.velog.domain.blog.entity.Blog;
 
 import java.util.Optional;
 
-public interface BlogRepository extends JpaRepository<Blog,Long>, BlogRepositoryCustom {
+public interface BlogRepository extends JpaRepository<Blog,Long>, BlogCustomRepository {
     @Query("select b from Blog b join b.user u where u.loginId = :loginId")
     Optional<Blog> findByUserId(@Param("loginId") String loginId);
 

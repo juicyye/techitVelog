@@ -17,17 +17,23 @@ public class PostRespDto {
     @Setter
     public static class PostRespDtoWeb{
         private Long postId;
-        private String blogName;
+        private Long blogId;
         private String title;
         private String content;
+        private String description;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
         private int views;
-        private List<CommentRespDtoWeb> comments = new ArrayList<>();
-        private List<LikeRespDtoWeb> likes = new ArrayList<>();
+        private String nickname;
+        private String blogName;
+        private int likes;
+        private String tagName;
 
-        private UploadFile UserImage;
+        private List<CommentRespDtoWeb> comments = new ArrayList<>();
+
         private List<UploadFile> postImages;
         private UploadFile postImage;
     }
+
+
 }

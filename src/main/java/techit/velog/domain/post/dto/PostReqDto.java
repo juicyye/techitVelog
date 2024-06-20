@@ -15,6 +15,7 @@ public class PostReqDto {
     public static class PostReqDtoWeb {
         private String title;
         private String content;
+        private String description;
         private Boolean isReal;
         private IsSecret isSecret;
         private String tagName;

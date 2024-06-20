@@ -17,6 +17,4 @@ public class JoinInit extends DummyObject{
             Long join1 = userService.join(newUser());
         };
     }
-
-
 }

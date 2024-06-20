@@ -27,16 +27,12 @@ public class Blog extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog",cascade = CascadeType.ALL)
     private List<Tags> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "blog")
+    @OneToMany(mappedBy = "blog",cascade = CascadeType.ALL)
     private List<Posts> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")
-    private List<Follow> followings = new ArrayList<>();
-    @OneToMany(mappedBy = "follower")
-    private List<Follow> followers = new ArrayList<>();
 
     public Blog(String title, User user) {
         this.title = title;
