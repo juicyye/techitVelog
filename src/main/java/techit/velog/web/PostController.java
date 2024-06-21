@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import techit.velog.domain.blog.dto.BlogRespDto;
+import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.comment.entity.IsDeleted;
 import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.entity.IsSecret;
@@ -20,6 +22,7 @@ import techit.velog.domain.post.service.PostService;
 
 import java.util.List;
 
+import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.post.dto.PostReqDto.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -30,6 +33,7 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 @Slf4j
 public class PostController {
     private final PostService postService;
+    private final BlogService blogService;
 
 
     @ModelAttribute("isSecret")
@@ -53,9 +57,14 @@ public class PostController {
     }
 
     @GetMapping
-    public String posts(@PageableDefault(sort = "createDate", direction = Sort.Direction.ASC)Pageable pageable, Model model) {
-        Page<PostRespDtoWeb> posts = postService.getPosts(pageable);
+    public String posts(@PageableDefault(sort = "createDate", direction = Sort.Direction.ASC)Pageable pageable, Model model,@AuthenticationPrincipal AccountDto accountDto) {
+        BlogRespDtoWeb blog = null;
+        if (accountDto != null) {
+            blog = blogService.getBlog(accountDto);
+        }
+        Page<PostRespDtoWebAll> posts = postService.getPosts(pageable);
         model.addAttribute("posts", posts);
+        model.addAttribute("blog", blog);
         return "posts/list";
     }
 

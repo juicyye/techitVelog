@@ -1,8 +1,7 @@
 package techit.velog.domain.post.dto;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import techit.velog.domain.uploadfile.UploadFile;
 
 import java.time.LocalDateTime;
@@ -15,6 +14,8 @@ import static techit.velog.domain.liks.dto.LikeRespDto.*;
 public class PostRespDto {
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PostRespDtoWeb{
         private Long postId;
         private Long blogId;
@@ -33,6 +34,24 @@ public class PostRespDto {
 
         private List<UploadFile> postImages;
         private UploadFile postImage;
+
+
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class PostRespDtoWebAll{
+        private Long postId;
+        private String content;
+        private String title;
+        private String postDescription;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private String nickname;
+        private String blogName;
+        private Long likes;
+        private Long comments;
     }
 
 

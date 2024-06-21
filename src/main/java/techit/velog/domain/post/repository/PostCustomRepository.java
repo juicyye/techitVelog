@@ -10,7 +10,7 @@ import java.util.List;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 
 public interface PostCustomRepository {
-    Page<PostRespDtoWeb> findAllByLists(Pageable pageable);
+    Page<PostRespDtoWebAll> findAllByLists(Pageable pageable);
     List<PostRespDtoWeb> findAllByBlogName(String blogName);
 
     PostRespDtoWeb findByIdBlogName(String blogName, String postTitle);

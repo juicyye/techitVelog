@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import techit.velog.domain.blog.service.BlogService;
+import techit.velog.domain.comment.dto.CommentRespDto;
+import techit.velog.domain.comment.service.CommentService;
 import techit.velog.domain.follow.dto.FollowRespDto;
 import techit.velog.domain.follow.service.FollowService;
 import techit.velog.domain.liks.service.LikeService;
@@ -18,6 +20,7 @@ import techit.velog.domain.user.dto.UserReqDto;
 import java.util.List;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
+import static techit.velog.domain.comment.dto.CommentRespDto.*;
 import static techit.velog.domain.follow.dto.FollowRespDto.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.tag.dto.TagRespDto.*;
@@ -32,6 +35,7 @@ public class BlogController {
     private final PostService postService;
     private final FollowService followService;
     private final LikeService likeService;
+    private final CommentService commentService;
 
     @GetMapping
     public String blog(@PathVariable("blogName") String blogName, Model model) {
@@ -48,7 +52,9 @@ public class BlogController {
     @GetMapping("/{postTitle}")
     public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model) {
         PostRespDtoWeb postRespDtoWeb = postService.getPostByBlogName(blogName, postTitle);
+        List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWeb.getPostId());
         model.addAttribute("post", postRespDtoWeb);
+        model.addAttribute("comments", comments);
 
         return "blog/post";
     }

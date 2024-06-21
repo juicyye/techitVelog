@@ -56,6 +56,13 @@ public class Posts extends BaseEntity {
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
     private List<PostTag> postTags = new ArrayList<>();
 
+    /**
+     * 테스트용
+     */
+    public Posts(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     /**
      * 생성자

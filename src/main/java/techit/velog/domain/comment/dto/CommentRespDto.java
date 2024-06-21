@@ -15,19 +15,19 @@ public class CommentRespDto {
     @Builder
     public static class CommentRespDtoWeb{
         private Long commentId;
-        private Long postId;
         private Long parentId;
+        private String blogName;
+        private String postTitle;
         private String content;
-        private String loginId;
         private IsDeleted deleteStatus;
+        @Builder.Default
         private List<CommentRespDtoWeb> child = new ArrayList<>();
 
         public static CommentRespDtoWeb toDto(Comment comment) {
-            Long parentId = comment.getParent() != null ? comment.getParent().getId() : null;
+
             return CommentRespDtoWeb.builder()
                     .commentId(comment.getId())
-                    .postId(comment.getPosts().getId())
-                    .parentId(parentId)
+                    .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                     .content(comment.getContent())
                     .deleteStatus(comment.getIsDeleted())
                     .build();

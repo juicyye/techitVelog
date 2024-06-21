@@ -37,12 +37,6 @@ public class UserController {
         return Role.values();
     }
 
-    // todo 추후 삭제예정
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
-
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception, Model model) {
         model.addAttribute("error", error);

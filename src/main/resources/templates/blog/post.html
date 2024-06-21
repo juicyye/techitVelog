@@ -28,6 +28,27 @@
         <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|">추천하기</button>
         <h3 th:text="${post.likes}"></h3>
 
+        <div>
+            <ul class="list-unstyled">
+                <div th:each="comment : ${comments}">
+                    <div th:replace="~{comment/comments :: commentTemplate(${comment},${post})}"></div>
+                </div>
+            </ul>
+        </div>
+
+        <div>
+            <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post">
+                <div>
+                    <div>
+                        <label for="content">댓글</label>
+                        <input type="hidden" name="postId" th:value="${post.postId}">
+                        <input type="text" id="content" name="content">
+                        <input type="submit" value="댓글">
+                    </div>
+                </div>
+            </form>
+        </div>
+
 
 
     </div>

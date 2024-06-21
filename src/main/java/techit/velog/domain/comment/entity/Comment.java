@@ -42,6 +42,21 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Comment> child = new LinkedList<>();
+    /**
+     * 테스트
+     */
+    public Comment(String content,Posts posts) {
+        this.content = content;
+        addPost(posts);
+    }
+
+    public Comment(String content, Comment parent,Posts posts) {
+        this.content = content;
+        parent.addChild(this);
+        this.parent = parent;
+        addPost(posts);
+    }
+
 
     /**
      * 생성자

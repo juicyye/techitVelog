@@ -24,6 +24,7 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
     public List<Comment> findAllByPost(Long postId) {
         return queryFactory.select(comment)
                 .from(comment)
+                .leftJoin(comment.parent).fetchJoin()
                 .where(comment.posts.id.eq(postId))
                 .orderBy(comment.parent.id.asc().nullsFirst())
                 .fetch();

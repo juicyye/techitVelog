@@ -16,6 +16,7 @@ import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
 
@@ -36,11 +37,12 @@ public class PostService {
     private final BlogRepository blogRepository;
     private final TagRepository tagRepository;
     private final FileStore fileStore;
+    private final UserRepository userRepository;
 
     @Transactional
     public Long create(PostReqDtoWeb postReqDtoWeb, AccountDto accountDto) {
         // 블로그 불러오고 필요한것들 바꾸기
-        Blog blog = blogRepository.findByUserId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
+        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
         List<UploadFile> uploadFiles = ImageFiles(postReqDtoWeb.getImageFiles());
         UploadFile uploadFile = uploadFile(postReqDtoWeb.getUploadFile());
         postReqDtoWeb.setTitle(SplitService.split(postReqDtoWeb.getTitle()));
@@ -53,7 +55,7 @@ public class PostService {
         return savedPost.getId();
     }
 
-    public Page<PostRespDtoWeb> getPosts(Pageable pageable) {
+    public Page<PostRespDtoWebAll> getPosts(Pageable pageable) {
         return postRepository.findAllByLists(pageable);
     }
 
@@ -138,6 +140,7 @@ public class PostService {
         return postRepository.findByIdBlogName(blogName, postTitle);
 
     }
+
 
 
 }
