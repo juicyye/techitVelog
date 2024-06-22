@@ -45,7 +45,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable) {
 
         List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
-                        posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,
+                        posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,posts.views,
                         posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments")))
                 .from(posts)
@@ -66,7 +66,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     @Override
     public List<PostRespDtoWeb> findAllByBlogName(String blogName) {
         List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
-                        posts.id.as("postId"), posts.title, posts.content,
+                        posts.id.as("postId"), posts.title, posts.content,posts.views,
                         posts.createDate,posts.updateDate, blog.title.as("blogName")))
                 .from(posts)
                 .join(posts.blog,blog)
@@ -89,7 +89,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     @Override
     public PostRespDtoWeb findByIdBlogName(String blogName, String postTitle) {
         PostRespDtoWeb postRespDtoWeb = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
-                        posts.id.as("postId"), posts.title.as("title"), posts.content, posts.createDate, posts.updateDate,
+                        posts.id.as("postId"), posts.title.as("title"), posts.content, posts.createDate, posts.updateDate,posts.views,
                         blog.title.as("blogName"),user.nickname.as("nickname")))
                 .from(posts)
                 .join(posts.blog, blog)
@@ -116,7 +116,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     public  List<PostRespDtoWebAll> test() {
         // 포스트, 블로그이름, 유저닉네임, 좋아요수, 댓글, 좋아요
         return queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
-                        posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,
+                        posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,posts.views,
                         posts.description.as("postDescription"),user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments")))
                 .from(posts)

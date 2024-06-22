@@ -10,6 +10,19 @@ import techit.velog.domain.user.entity.User;
 @Slf4j
 public class UserReqDto {
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserReqDtoWebUpdate{
+        private String email;
+        private String username;
+        private String nickname;
+        private String password;
+        private String changePassword;
+        private String changePasswordConfirm;
+        private boolean emailCheck;
+
+    }
+    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserReqDtoWeb{

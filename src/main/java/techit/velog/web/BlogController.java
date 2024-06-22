@@ -1,5 +1,7 @@
 package techit.velog.web;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -50,7 +52,9 @@ public class BlogController {
     }
 
     @GetMapping("/{postTitle}")
-    public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model) {
+    public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,
+                             HttpServletRequest request, HttpServletResponse response) {
+        postService.viewCountValidation(blogName, postTitle, request, response);
         PostRespDtoWeb postRespDtoWeb = postService.getPostByBlogName(blogName, postTitle);
         List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWeb.getPostId());
         model.addAttribute("post", postRespDtoWeb);

@@ -56,6 +56,23 @@ public class PostController {
         return "redirect:/";
     }
 
+    @GetMapping("/modify/{id}")
+    public String postModifyForm(@PathVariable("id") Long postId, Model model) {
+        PostRespDtoWebUpdate post = postService.getPost(postId);
+        model.addAttribute("post", post);
+        return "posts/modify";
+    }
+
+    @PostMapping("/modify/{id}")
+    public String postModify(@PathVariable("id") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            return "posts/modify";
+        }
+        postService.update(postId, postReqDtoWebUpdate);
+        return "redirect:/";
+    }
+
+
     @GetMapping
     public String posts(@PageableDefault(sort = "createDate", direction = Sort.Direction.ASC)Pageable pageable, Model model,@AuthenticationPrincipal AccountDto accountDto) {
         BlogRespDtoWeb blog = null;

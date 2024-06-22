@@ -98,6 +98,7 @@ public class UserController {
 
     @GetMapping("/account/update")
     public String accountUpdateForm(Model model, @AuthenticationPrincipal AccountDto accountDto) {
+        // todo Dto 바꾸기
         UserReqDtoWeb user = userService.getUpdateUser(accountDto.getLoginId());
         model.addAttribute("user", user);
         return "user/update";

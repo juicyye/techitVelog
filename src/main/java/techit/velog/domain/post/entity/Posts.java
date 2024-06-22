@@ -8,14 +8,16 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.liks.entity.Likes;
+import techit.velog.domain.post.dto.PostReqDto;
+import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static techit.velog.domain.post.dto.PostReqDto.*;
+import static techit.velog.domain.post.dto.PostRespDto.*;
 
 @Entity
 @NoArgsConstructor
@@ -76,9 +78,9 @@ public class Posts extends BaseEntity {
             setBlog(blog);
         }
 
-        if (postReqDtoWeb.getIsReal()) {
-            this.isReal = IsReal.REAL;
-        } else this.isReal = IsReal.TEMP;
+        if (postReqDtoWeb.getIsTemp()) {
+            this.isReal = IsReal.TEMP;
+        } else this.isReal = IsReal.REAL;
 
     }
 
@@ -95,8 +97,8 @@ public class Posts extends BaseEntity {
      * 비즈니스 메서드
      */
 
-    public void addView(){
-        this.views++;
+    public void addView(int views){
+        this.views = views;
     }
 
     public void changeUploadFile(List<UploadFile> uploadFiles, UploadFile uploadFile) {
@@ -104,7 +106,15 @@ public class Posts extends BaseEntity {
         this.uploadFile = uploadFile;
     }
 
-    public void changeReal() {
+
+    public void change(PostReqDtoWebUpdate postReqDtoWebUpdate) {
+        this.title = postReqDtoWebUpdate.getTitle();
+        this.content = postReqDtoWebUpdate.getContent();
+        this.isSecret = postReqDtoWebUpdate.getIsSecret();
+        this.description = postReqDtoWebUpdate.getDescription();
+        if (postReqDtoWebUpdate.getIsTemp()) {
+            this.isReal = IsReal.TEMP;
+        } else this.isReal = IsReal.REAL;
 
     }
 }

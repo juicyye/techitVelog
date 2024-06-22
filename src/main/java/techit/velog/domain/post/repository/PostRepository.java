@@ -1,7 +1,9 @@
 package techit.velog.domain.post.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import techit.velog.domain.post.entity.Posts;
 
 import java.util.List;
@@ -12,4 +14,7 @@ public interface PostRepository extends JpaRepository<Posts, Long>,PostCustomRep
 
     void deleteByBlog_id(Long id);
 
+    @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.title = :postTitle")
+    @EntityGraph(attributePaths = {"blog"})
+    Optional<Posts> findPostBlogName(@Param("blogName") String blogName,@Param("postTitle") String postTitle);
 }

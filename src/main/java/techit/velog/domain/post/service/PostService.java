@@ -1,5 +1,8 @@
 package techit.velog.domain.post.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -9,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.post.dto.PostReqDto;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostRepository;
 import techit.velog.domain.posttag.entity.PostTag;
@@ -21,6 +25,11 @@ import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +66,13 @@ public class PostService {
 
     public Page<PostRespDtoWebAll> getPosts(Pageable pageable) {
         return postRepository.findAllByLists(pageable);
+    }
+
+    @Transactional
+    public void update(Long postId, PostReqDtoWebUpdate postReqDtoWebUpdate) {
+        Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        // todo 기존 태그는 삭제하고 새로운 태그는 더하기
+        posts.change(postReqDtoWebUpdate);
     }
 
 
@@ -141,6 +157,36 @@ public class PostService {
 
     }
 
+    @Transactional
+    public void viewCountValidation(String blogName, String postTitle, HttpServletRequest request, HttpServletResponse response) {
+        String cookieName = blogName + postTitle;
+        Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElseGet(() -> new Cookie[0]);
+        Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("view-count"))
+                .findFirst().orElseGet(() -> {
+                    addViewCount(blogName, postTitle);
+                    return new Cookie("view-count", "[" + cookieName + "]");
+                });
+        if (!cookie.getValue().contains("[" + cookieName + "]")) {
+            addViewCount(blogName, postTitle);
+            cookie.setValue(cookie.getValue()+"["+cookieName + "]");
+        }
+        long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
+        long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) (todayEndSecond - currentSecond));
+        response.addCookie(cookie);
+    }
 
+    private void addViewCount(String blogName, String postTitle) {
+        Posts posts = postRepository.findPostBlogName(blogName, postTitle).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        posts.addView(posts.getViews() + 1);
+    }
+
+    public PostRespDtoWebUpdate getPost(Long postId) {
+        Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        return new PostRespDtoWebUpdate(posts);
+
+
+    }
 
 }
