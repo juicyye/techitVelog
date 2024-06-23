@@ -10,14 +10,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import techit.velog.domain.blog.service.BlogService;
-import techit.velog.domain.comment.dto.CommentRespDto;
 import techit.velog.domain.comment.service.CommentService;
-import techit.velog.domain.follow.dto.FollowRespDto;
 import techit.velog.domain.follow.service.FollowService;
 import techit.velog.domain.liks.service.LikeService;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
-import techit.velog.domain.user.dto.UserReqDto;
 
 import java.util.List;
 
@@ -39,9 +36,10 @@ public class BlogController {
     private final LikeService likeService;
     private final CommentService commentService;
 
+    // todo 리팩토링 필수
     @GetMapping
     public String blog(@PathVariable("blogName") String blogName, Model model) {
-        BlogRespDtoWeb blog = blogService.getPost(blogName);
+        BlogRespDtoWeb blog = blogService.getBlog(blogName);
         List<PostRespDtoWeb> posts = postService.getAllByBlogName(blogName);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
@@ -88,8 +86,7 @@ public class BlogController {
     public String likes(@PathVariable("blogName") String blogName, Model model) {
         List<PostRespDtoWeb> postRespDtoWebs = likeService.getLikes(blogName);
         model.addAttribute("posts", postRespDtoWebs);
-        return "blog/likes";
+        return "posts/list";
     }
-
 
 }

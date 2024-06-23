@@ -14,6 +14,7 @@ public interface PostCustomRepository {
     List<PostRespDtoWeb> findAllByBlogName(String blogName);
 
     PostRespDtoWeb findByIdBlogName(String blogName, String postTitle);
+    List<PostRespDtoWebTag> findAllByTagName(String blogName, String tagName);
 
 
 

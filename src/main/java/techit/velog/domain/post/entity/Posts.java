@@ -55,7 +55,7 @@ public class Posts extends BaseEntity {
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
 
     /**
@@ -116,5 +116,9 @@ public class Posts extends BaseEntity {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
 
+    }
+
+    public void removePostTag(){
+        this.postTags.clear();
     }
 }

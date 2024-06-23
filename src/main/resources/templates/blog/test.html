@@ -49,11 +49,11 @@
             <h4 class="card-title">작성일자</h4>
             <h3 th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></h3>
         </div>
-    </div>
 
-    <div th:each="tag : ${tags}" class="mb-4">
-        <h3><a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name}"></a></h3>
-        <p th:text="'(' + ${#lists.size(tag.postTagCount)} +')'"></p>
+        <div>
+            <h3 th:text="${post.tagName}"></h3>
+            <h3 th:text="${post.tagCount}"></h3>
+        </div>
     </div>
 </section>
 </body>

@@ -43,6 +43,7 @@ public class PostReqDto {
     @Setter
     public static class PostReqDtoWebUpdate{
         private Long postId;
+        private Long blogId;
         private String title;
         private String content;
         private String description;

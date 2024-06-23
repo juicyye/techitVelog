@@ -15,7 +15,7 @@ public class TagRespDto {
     public static class TagRespDtoWeb {
         private Long id;
         private String name;
-        private List<PostRespDtoWeb> postDto = new ArrayList<>();
+        private int postTagCount;
 
     }
 }

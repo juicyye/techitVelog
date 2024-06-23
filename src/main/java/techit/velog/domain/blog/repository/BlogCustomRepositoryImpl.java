@@ -29,7 +29,7 @@ public class BlogCustomRepositoryImpl implements BlogCustomRepository {
     public BlogRespDtoWeb findAllByBlog(String blogName) {
         BlogRespDtoWeb result = queryFactory.select(Projections.fields(BlogRespDtoWeb.class,
                         blog.id.as("blogId"), blog.title, blog.description, blog.createDate, blog.updateDate,
-                        user.nickname.as("nickname"), user.id.as("userId")))
+                        user.nickname.as("nickname"), user.id.as("userId"), blog.title.as("blogName")))
                 .from(blog)
                 .join(blog.user, user)
                 .where(blog.title.eq(blogName))

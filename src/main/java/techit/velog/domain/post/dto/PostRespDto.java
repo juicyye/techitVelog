@@ -61,6 +61,7 @@ public class PostRespDto {
     @Setter
     public static class PostRespDtoWebUpdate{
         private Long postId;
+        private Long blogId;
         private String title;
         private String content;
         private String description;
@@ -74,6 +75,7 @@ public class PostRespDto {
 
         public PostRespDtoWebUpdate(Posts posts) {
             this.postId = posts.getId();
+            this.blogId = posts.getBlog().getId();
             this.title = posts.getTitle();
             this.content = posts.getContent();
             this.description = posts.getDescription();
@@ -84,6 +86,26 @@ public class PostRespDto {
             this.uploadFiles = posts.getUploadFiles();
             this.isTemp = posts.getIsReal().equals(IsReal.TEMP);
         }
+    }
+    @Getter
+    @Setter
+    public static class PostRespDtoWebTag{
+        private Long postId;
+        private Long blogId;
+        private String title;
+        private String content;
+        private String description;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private int views;
+        private String nickname;
+        private String blogName;
+        private String tagName;
+        private Long likes;
+        private Long comments;
+        private Long tagCount;
+
+
     }
 
 

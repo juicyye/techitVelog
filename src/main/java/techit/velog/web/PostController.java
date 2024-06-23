@@ -19,6 +19,7 @@ import techit.velog.domain.comment.entity.IsDeleted;
 import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
+import techit.velog.domain.tag.service.TagService;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 public class PostController {
     private final PostService postService;
     private final BlogService blogService;
+    private final TagService tagService;
 
 
     @ModelAttribute("isSecret")
@@ -58,7 +60,7 @@ public class PostController {
 
     @GetMapping("/modify/{id}")
     public String postModifyForm(@PathVariable("id") Long postId, Model model) {
-        PostRespDtoWebUpdate post = postService.getPost(postId);
+        PostRespDtoWebUpdate post = postService.getUpdatePost(postId);
         model.addAttribute("post", post);
         return "posts/modify";
     }
@@ -69,6 +71,8 @@ public class PostController {
             return "posts/modify";
         }
         postService.update(postId, postReqDtoWebUpdate);
+        // todo 이게 정말 최선일까 생각해보기
+        tagService.removeTag();
         return "redirect:/";
     }
 

@@ -16,7 +16,8 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 public class BlogService {
     private final BlogRepository blogRepository;
 
-    public BlogRespDtoWeb getPost(String blogName) {
+    // todo 리팩토링 필수
+    public BlogRespDtoWeb getBlog(String blogName) {
         Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그를 찾을수 없습니다."));
         return blogRepository.findAllByBlog(blog.getTitle());
     }

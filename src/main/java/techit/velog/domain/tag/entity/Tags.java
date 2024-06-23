@@ -43,4 +43,11 @@ public class Tags extends BaseEntity {
         this.blog = blog;
         blog.getTags().add(this);
     }
+
+    /**
+     * 비즈니스 메서드
+     */
+    public void removePostTag(){
+        postTags.clear();
+    }
 }

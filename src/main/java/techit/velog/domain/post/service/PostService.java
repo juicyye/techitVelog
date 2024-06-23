@@ -18,6 +18,7 @@ import techit.velog.domain.post.repository.PostRepository;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
+import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.repository.UserRepository;
@@ -71,7 +72,11 @@ public class PostService {
     @Transactional
     public void update(Long postId, PostReqDtoWebUpdate postReqDtoWebUpdate) {
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        Blog blog = blogRepository.findById(postReqDtoWebUpdate.getBlogId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
+        // post안에 있는 태그들을 다 삭제하고 다시 넣기
+        posts.removePostTag();
         // todo 기존 태그는 삭제하고 새로운 태그는 더하기
+        splitTag(postReqDtoWebUpdate.getTagName(),blog,posts);
         posts.change(postReqDtoWebUpdate);
     }
 
@@ -182,11 +187,26 @@ public class PostService {
         posts.addView(posts.getViews() + 1);
     }
 
-    public PostRespDtoWebUpdate getPost(Long postId) {
+    public PostRespDtoWebUpdate getUpdatePost(Long postId) {
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
-        return new PostRespDtoWebUpdate(posts);
-
-
+        PostRespDtoWebUpdate postRespDtoWebUpdate = new PostRespDtoWebUpdate(posts);
+        postRespDtoWebUpdate.setTagName(changeTag(posts.getPostTags()));
+        return postRespDtoWebUpdate;
     }
 
+    /**
+     * 포스트에 있는 스플릿 태그를 스트링으로 바꾸는 작업
+     */
+    private String changeTag(List<PostTag> postTags) {
+        StringBuilder sb = new StringBuilder();
+        for (PostTag postTag : postTags) {
+            Tags tags = postTag.getTags();
+            sb.append(tags.getName()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    public List<PostRespDtoWebTag> getPostsByTagName(String blogName, String tagName) {
+        return postRepository.findAllByTagName(blogName, tagName);
+    }
 }

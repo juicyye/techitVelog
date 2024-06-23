@@ -14,6 +14,7 @@ import techit.velog.domain.liks.entity.QLikes;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.entity.QPosts;
 import techit.velog.domain.posttag.entity.QPostTag;
+import techit.velog.domain.tag.entity.QTags;
 import techit.velog.domain.uploadfile.QUploadFile;
 import techit.velog.domain.uploadfile.UploadFile;
 
@@ -28,6 +29,7 @@ import static techit.velog.domain.liks.entity.QLikes.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.posttag.entity.QPostTag.*;
+import static techit.velog.domain.tag.entity.QTags.*;
 import static techit.velog.domain.uploadfile.QUploadFile.*;
 import static techit.velog.domain.user.entity.QUser.*;
 
@@ -126,7 +128,26 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .leftJoin(posts.comments, comment)
                 .groupBy(posts.id, user.nickname, posts.title,blog.title)
                 .fetch();
+    }
 
+    @Override
+    public List<PostRespDtoWebTag> findAllByTagName(String blogName, String tagName) {
+        return queryFactory.select(Projections.fields(PostRespDtoWebTag.class,
+                        posts.id.as("postId"), blog.id.as("blogId"), posts.title,
+                        posts.content, posts.description, posts.createDate, posts.updateDate, posts.views,
+                        user.nickname, blog.title.as("blogName"), tags.name.as("tagName")
+                        , likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
+                tags.name.as("tagName"),postTag.countDistinct().as("tagCount")))
+                .from(postTag)
+                .join(postTag.tags, tags)
+                .join(postTag.posts, posts)
+                .join(posts.blog, blog)
+                .join(blog.user, user)
+                .leftJoin(posts.likes, likes)
+                .leftJoin(posts.comments, comment)
+                .where(blog.title.eq(blogName).and(tags.name.eq(tagName)))
+                .groupBy(posts.id, user.nickname, posts.title,blog.title)
+                .fetch();
 
     }
 }
