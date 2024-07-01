@@ -45,16 +45,20 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
     @Override
     public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable) {
+        QUploadFile userImage = new QUploadFile("userImage");
 
         List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
                         posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,posts.views,
                         posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
-                        likes.countDistinct().as("likes"), comment.countDistinct().as("comments")))
+                        likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
+                        posts.uploadFile.as("postImage"), userImage.as("userImage")))
                 .from(posts)
                 .join(posts.blog, blog) // 블로그 없이 글을 쓸 수 없다
                 .join(blog.user, user)
+                .leftJoin(user.uploadFile, userImage)
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
+                .leftJoin(posts.uploadFile, uploadFile)
                 .groupBy(posts.id, user.nickname, posts.title, blog.title)
                 .fetch();
 

@@ -1,5 +1,6 @@
 package techit.velog.domain.post.service;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,13 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
-import techit.velog.domain.post.dto.PostReqDto;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostRepository;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
-import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.repository.UserRepository;
@@ -30,11 +29,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static techit.velog.domain.post.dto.PostReqDto.*;
+import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -48,21 +45,24 @@ public class PostService {
     private final TagRepository tagRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
+    private EntityManager em;
 
     @Transactional
-    public Long create(PostReqDtoWeb postReqDtoWeb, AccountDto accountDto) {
+    public Long create(PostReqDtoWebCreate postReqDtoWebCreate, AccountDto accountDto) {
+
         // 블로그 불러오고 필요한것들 바꾸기
         Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
-        List<UploadFile> uploadFiles = ImageFiles(postReqDtoWeb.getImageFiles());
-        UploadFile uploadFile = uploadFile(postReqDtoWeb.getUploadFile());
-        postReqDtoWeb.setTitle(SplitService.split(postReqDtoWeb.getTitle()));
+
+        List<UploadFile> uploadFiles = ImageFiles(postReqDtoWebCreate.getImageFiles());
+        UploadFile uploadFile = uploadFile(postReqDtoWebCreate.getUploadFile());
+        postReqDtoWebCreate.setTitle(SplitService.split(postReqDtoWebCreate.getTitle()));
 
         // post 저장
-        Posts posts = new Posts(postReqDtoWeb, blog);
-        splitTag(postReqDtoWeb.getTagName(),blog,posts);
-        posts.changeUploadFile(uploadFiles,uploadFile);
-        Posts savedPost = postRepository.save(posts);
-        return savedPost.getId();
+        Posts posts = new Posts(postReqDtoWebCreate,blog);
+        posts.changeUploadFile(uploadFiles, uploadFile);
+        splitTag(postReqDtoWebCreate.getTagName(),blog, posts);
+
+        return postRepository.save(posts).getId();
     }
 
     public Page<PostRespDtoWebAll> getPosts(Pageable pageable) {
@@ -76,8 +76,35 @@ public class PostService {
         // post안에 있는 태그들을 다 삭제하고 다시 넣기
         posts.removePostTag();
         // todo 기존 태그는 삭제하고 새로운 태그는 더하기
-        splitTag(postReqDtoWebUpdate.getTagName(),blog,posts);
+        splitTag(postReqDtoWebUpdate.getTagName(), blog, posts);
         posts.change(postReqDtoWebUpdate);
+    }
+
+    /**
+     * 태그, 포스트태그 저장
+     */
+    private List<PostTag> addTag(String tag, Blog blog, Posts posts) {
+        List<PostTag> postTags = new ArrayList<>();
+        if (tag != null) {
+            String[] split = tag.split("\\s*,\\s*|\\s+");
+            HashSet<String> tags = new HashSet<>(Arrays.asList(split));
+            PostTag postTag;
+
+            for (String s : tags) {
+                log.info("tag s {}", s);
+                Optional<Tags> _tag = tagRepository.findByName(s);
+                if (_tag.isEmpty()) {
+                    Tags tags1 = new Tags(s, blog);
+                    postTag = new PostTag(tags1,posts);
+                    tagRepository.save(tags1);
+
+                } else{
+                    postTag = new PostTag(_tag.get(),posts);
+                }
+                postTags.add(postTag);
+            }
+        }
+        return postTags;
     }
 
 
@@ -87,21 +114,23 @@ public class PostService {
     private void splitTag(String tag, Blog blog, Posts posts) {
         if (tag != null) {
             String[] split = tag.split("\\s*,\\s*|\\s+");
+            HashSet<String> tags = new HashSet<>(Arrays.asList(split));
 
-            // todo 나중에 변수명 변경
-            for (String s : split) {
+            // todo 마지막 값 중복
+            for (String s : tags) {
+                log.info("tag s {}", s);
                 Optional<Tags> _tag = tagRepository.findByName(s);
-                if (_tag.isEmpty()) {
-                    Tags tags1 = new Tags(s, blog);
-                    PostTag.ChangeTag(tags1,posts);
-                    tagRepository.save(tags1);
-                } else{
+                if (_tag.isPresent()) {
                     Tags tags1 = _tag.get();
-                    PostTag.ChangeTag(tags1,posts);
+                    new PostTag(tags1, posts);
+
+                } else {
+                    Tags tags1 = new Tags(s, blog);
+                    new PostTag(tags1, posts);
+                    tagRepository.save(tags1);
                 }
             }
         }
-
     }
 
     /**
@@ -125,13 +154,13 @@ public class PostService {
      */
     private List<UploadFile> ImageFiles(List<MultipartFile> files) {
         if (files != null) {
-            try{
+            try {
                 return fileStore.storeFiles(files);
-            }  catch (IOException e) {
-                log.error("file error {}",e.getMessage());
+            } catch (IOException e) {
+                log.error("file error {}", e.getMessage());
                 throw new CustomWebException(e.getMessage());
             }
-        } else{
+        } else {
             return null;
         }
 
@@ -140,13 +169,13 @@ public class PostService {
 
     private UploadFile uploadFile(MultipartFile file) {
         if (file != null) {
-            try{
+            try {
                 return fileStore.storeFile(file);
-            }  catch (IOException e) {
-                log.error("file error {}",e.getMessage());
+            } catch (IOException e) {
+                log.error("file error {}", e.getMessage());
                 throw new CustomWebException(e.getMessage());
             }
-        } else{
+        } else {
             return null;
         }
 
@@ -163,7 +192,8 @@ public class PostService {
     }
 
     @Transactional
-    public void viewCountValidation(String blogName, String postTitle, HttpServletRequest request, HttpServletResponse response) {
+    public void viewCountValidation(String blogName, String postTitle, HttpServletRequest
+            request, HttpServletResponse response) {
         String cookieName = blogName + postTitle;
         Cookie[] cookies = Optional.ofNullable(request.getCookies()).orElseGet(() -> new Cookie[0]);
         Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("view-count"))
@@ -173,7 +203,7 @@ public class PostService {
                 });
         if (!cookie.getValue().contains("[" + cookieName + "]")) {
             addViewCount(blogName, postTitle);
-            cookie.setValue(cookie.getValue()+"["+cookieName + "]");
+            cookie.setValue(cookie.getValue() + "[" + cookieName + "]");
         }
         long todayEndSecond = LocalDate.now().atTime(LocalTime.MAX).toEpochSecond(ZoneOffset.UTC);
         long currentSecond = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
@@ -208,5 +238,15 @@ public class PostService {
 
     public List<PostRespDtoWebTag> getPostsByTagName(String blogName, String tagName) {
         return postRepository.findAllByTagName(blogName, tagName);
+    }
+
+    public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate,AccountDto accountDto) {
+        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
+        Optional<Posts> _posts = postRepository.findPostBlogName(blog.getTitle(), postReqDtoWebCreate.getTitle());
+        if(_posts.isPresent()) {
+            return true;
+        } else{
+            return false;
+        }
     }
 }

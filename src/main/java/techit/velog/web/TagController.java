@@ -16,6 +16,7 @@ import java.util.List;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.tag.dto.TagRespDto.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,9 +30,11 @@ public class TagController {
         // 결국 가져오는건 포스트 하지만 일대다는 안되니까 포스트태그에서 시작하는 수밖에 없다
         List<PostRespDtoWebTag> posts = postService.getPostsByTagName(blogName, tagName);
         BlogRespDtoWeb blog = blogService.getBlog(blogName);
+        List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
         model.addAttribute("posts", posts);
+        model.addAttribute("tags", tags);
 
-        return "blog/test";
+        return "blog/blog";
     }
 }

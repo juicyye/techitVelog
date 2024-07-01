@@ -119,6 +119,7 @@ public class UserController {
             return "user/update";
         }
 
+
         userService.updateInfo(userReqDtoWeb,accountDto);
         rttr.addAttribute("update",true);
         return "redirect:/";

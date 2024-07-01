@@ -11,6 +11,7 @@ import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -48,7 +49,7 @@ public class User extends BaseEntity {
     public static User toEntity(UserJoinReq userJoinReq) {
         EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         return User.builder()
-                .userId(userJoinReq.getUserId())
+                .userId(UUID.randomUUID().toString())
                 .name(userJoinReq.getName())
                 .nickname(userJoinReq.getNickname())
                 .loginId(userJoinReq.getLoginId())
@@ -72,7 +73,6 @@ public class User extends BaseEntity {
 
     public void changeInfo(UserReqDtoWeb userReqDtoWeb) {
         EmailCheck emailCheck1 = userReqDtoWeb.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
-        this.name = userReqDtoWeb.getUsername();
         this.nickname = userReqDtoWeb.getNickname();
         this.email = userReqDtoWeb.getEmail();
         this.password = userReqDtoWeb.getChangePassword();

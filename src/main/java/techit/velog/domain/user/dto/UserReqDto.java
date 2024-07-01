@@ -27,7 +27,6 @@ public class UserReqDto {
     @NoArgsConstructor
     public static class UserReqDtoWeb{
         private String email;
-        private String username;
         private String nickname;
         private String password;
         private String changePassword;
@@ -36,7 +35,6 @@ public class UserReqDto {
 
         public UserReqDtoWeb(User user) {
             this.email = user.getEmail();
-            this.username = user.getName();
             this.nickname = user.getNickname();
         }
     }
@@ -44,7 +42,6 @@ public class UserReqDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserJoinReq{
-        private String userId;
         private String name;
         private String loginId;
         private String password;

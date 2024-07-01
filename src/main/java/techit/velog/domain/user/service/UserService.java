@@ -29,7 +29,6 @@ public class UserService {
     @Transactional
     public Long join(UserJoinReq userJoinReq) {
         userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
-        userJoinReq.setUserId(UUID.randomUUID().toString());
         User savedUser = userRepository.save(User.toEntity(userJoinReq));
         blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
         return savedUser.getId();

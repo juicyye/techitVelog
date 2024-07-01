@@ -53,7 +53,7 @@
 
     <div th:each="tag : ${tags}" class="mb-4">
         <h3><a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name}"></a></h3>
-        <p th:text="'(' + ${#lists.size(tag.postTagCount)} +')'"></p>
+        <p th:text="'(' + ${tag.postTagCount} +')'"></p>
     </div>
 </section>
 </body>

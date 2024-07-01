@@ -8,16 +8,13 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.liks.entity.Likes;
-import techit.velog.domain.post.dto.PostReqDto;
-import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static techit.velog.domain.post.dto.PostReqDto.*;
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 
 @Entity
 @NoArgsConstructor
@@ -69,19 +66,33 @@ public class Posts extends BaseEntity {
     /**
      * 생성자
      */
-    public Posts(PostReqDtoWeb postReqDtoWeb, Blog blog) {
-        this.title = postReqDtoWeb.getTitle();
-        this.content = postReqDtoWeb.getContent();
-        this.isSecret = postReqDtoWeb.getIsSecret();
-        this.description = postReqDtoWeb.getDescription();
+    public Posts(PostReqDtoWebCreate postReqDtoWebCreate, Blog blog) {
+        this.title = postReqDtoWebCreate.getTitle();
+        this.content = postReqDtoWebCreate.getContent();
+        this.isSecret = postReqDtoWebCreate.getIsSecret();
+        this.description = postReqDtoWebCreate.getDescription();
         if (blog != null) {
             setBlog(blog);
         }
-
-        if (postReqDtoWeb.getIsTemp()) {
+        if (postReqDtoWebCreate.getIsTemp()) {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
+    }
 
+    public Posts (Blog blog, PostReqDtoWebCreate postReqDtoWebCreate, List<PostTag> postTags) {
+        this.title = postReqDtoWebCreate.getTitle();
+        this.content = postReqDtoWebCreate.getContent();
+        this.isSecret = postReqDtoWebCreate.getIsSecret();
+        this.description = postReqDtoWebCreate.getDescription();
+        if (postReqDtoWebCreate.getIsTemp()) {
+            this.isReal = IsReal.TEMP;
+        } else{
+            this.isReal = IsReal.REAL;
+        }
+        setBlog(blog);
+        for (PostTag postTag : postTags) {
+            addPostTag(postTag);
+        }
     }
 
     /**
@@ -91,6 +102,11 @@ public class Posts extends BaseEntity {
     public void setBlog(Blog blog) {
         this.blog = blog;
         blog.getPosts().add(this);
+    }
+
+    public void addPostTag(PostTag postTag) {
+        postTags.add(postTag);
+        postTag.setPost(this);
     }
 
     /**
@@ -115,10 +131,15 @@ public class Posts extends BaseEntity {
         if (postReqDtoWebUpdate.getIsTemp()) {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
-
     }
 
     public void removePostTag(){
         this.postTags.clear();
+    }
+
+    public void addPostTag(List<PostTag> postTags) {
+        for (PostTag postTag : postTags) {
+            addPostTag(postTag);
+        }
     }
 }

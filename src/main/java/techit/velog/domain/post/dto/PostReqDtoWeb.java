@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostReqDto {
+public class PostReqDtoWeb {
     @Getter
     @Setter
     @NoArgsConstructor
-    public static class PostReqDtoWeb {
+    public static class PostReqDtoWebCreate {
         @NotEmpty
-        @Pattern(regexp = "^[a-zA-Z0-9-가-힣]{2,20}$")
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "제목은 2~20 이내로 적어주세요")
         private String title;
         private String content;
         private String description;
@@ -32,7 +32,7 @@ public class PostReqDto {
         /**
          * 테스트용
          */
-        public PostReqDtoWeb(String title, String content) {
+        public PostReqDtoWebCreate(String title, String content) {
             this.title = title;
             this.content = content;
             isTemp = true;

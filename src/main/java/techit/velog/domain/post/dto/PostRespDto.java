@@ -55,6 +55,8 @@ public class PostRespDto {
         private Long likes;
         private Long comments;
         private int views;
+        private UploadFile postImage;
+        private UploadFile userImage;
     }
 
     @Getter

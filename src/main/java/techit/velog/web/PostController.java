@@ -6,25 +6,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import techit.velog.domain.blog.dto.BlogRespDto;
 import techit.velog.domain.blog.service.BlogService;
-import techit.velog.domain.comment.entity.IsDeleted;
-import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 
-import java.util.List;
-
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
-import static techit.velog.domain.post.dto.PostReqDto.*;
+import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -44,17 +38,21 @@ public class PostController {
     }
 
     @GetMapping("/create")
-    public String postCreateForm(@ModelAttribute("post") PostReqDtoWeb postReqDtoWeb) {
+    public String postCreateForm(@ModelAttribute("post") PostReqDtoWebCreate postReqDtoWebCreate) {
         return "posts/create";
     }
 
     @PostMapping("/create")
-    public String postCreate(@Validated @ModelAttribute("post") PostReqDtoWeb postReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) {
+    public String postCreate(@Validated @ModelAttribute("post") PostReqDtoWebCreate postReqDtoWebCreate, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) {
         if(bindingResult.hasErrors()) {
             log.info("create post error {}", bindingResult.getAllErrors());
             return "posts/create";
         }
-        postService.create(postReqDtoWeb, accountDto);
+        if (postService.duplicateBlogName(postReqDtoWebCreate,accountDto)) {
+            bindingResult.reject("duplicate-blog-name", "동일한 제목은 사용하실 수 없습니다.");
+            return "posts/create";
+        }
+        postService.create(postReqDtoWebCreate, accountDto);
         return "redirect:/";
     }
 

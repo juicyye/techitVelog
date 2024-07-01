@@ -23,7 +23,7 @@ public class Tags extends BaseEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "tags",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "tags")
     private List<PostTag> postTags = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
