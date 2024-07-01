@@ -32,6 +32,7 @@ public class UserReqDto {
         private String changePassword;
         private String changePasswordConfirm;
         private boolean emailCheck;
+        private String description;
 
         public UserReqDtoWeb(User user) {
             this.email = user.getEmail();

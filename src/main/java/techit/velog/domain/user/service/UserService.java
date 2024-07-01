@@ -71,6 +71,8 @@ public class UserService {
         User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
         userReqDtoWeb.setChangePassword(passwordEncoder.encode(userReqDtoWeb.getChangePassword()));
         user.changeInfo(userReqDtoWeb);
+        Blog blog = blogRepository.findByUser_Id(user.getId()).orElseThrow(() -> new CustomWebException("not found blog"));
+        blog.changeDescription(userReqDtoWeb.getDescription());
     }
 
     @Transactional

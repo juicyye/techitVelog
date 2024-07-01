@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.dto.UserReqDto;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
@@ -247,6 +249,32 @@ public class PostService {
             return true;
         } else{
             return false;
+        }
+    }
+
+    public void getSavePosts(AccountDto accountDto) {
+        Optional<Posts> posts = postRepository.find(accountDto.getLoginId());
+        if (posts.isEmpty()) {
+            throw new CustomWebException("not found post with blog");
+        } else{
+            posts.get()
+        }
+
+    }
+    @Data
+    public static class PostRespDtoWebSave{
+        private Long id;
+        private String title;
+        private String content;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+
+        public PostRespDtoWebSave(Posts posts) {
+            this.id = id;
+            this.title = title;
+            this.content = content;
+            this.createDate = createDate;
+            this.updateDate = updateDate;
         }
     }
 }

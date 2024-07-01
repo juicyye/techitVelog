@@ -87,6 +87,11 @@ public class PostController {
         return "posts/list";
     }
 
+    @GetMapping("/saves")
+    public String savePost(@AuthenticationPrincipal AccountDto accountDto, Model model) {
+        postService.getSavePosts(accountDto);
+    }
+
 
 
 

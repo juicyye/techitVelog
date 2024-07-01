@@ -14,4 +14,6 @@ public interface BlogRepository extends JpaRepository<Blog,Long>, BlogCustomRepo
     Optional<Blog> findByLoginId(@Param("loginId") String loginId);
 
     Optional<Blog> findByTitle(String blogName);
+
+    Optional<Blog> findByUser_Id(Long userId);
 }

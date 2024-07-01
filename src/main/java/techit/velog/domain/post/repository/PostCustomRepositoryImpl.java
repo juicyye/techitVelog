@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.comment.entity.QComment;
 import techit.velog.domain.follow.entity.QFollow;
 import techit.velog.domain.liks.entity.QLikes;
+import techit.velog.domain.post.entity.IsReal;
+import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.entity.QPosts;
 import techit.velog.domain.posttag.entity.QPostTag;
@@ -60,6 +62,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .leftJoin(posts.comments, comment)
                 .leftJoin(posts.uploadFile, uploadFile)
                 .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
                 .fetch();
 
         int total = queryFactory.select(posts)
@@ -77,6 +80,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .from(posts)
                 .join(posts.blog,blog)
                 .where(blog.title.eq(blogName))
+                .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
                 .fetch();
 
         for (PostRespDtoWeb result : results) {
@@ -150,6 +154,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
                 .where(blog.title.eq(blogName).and(tags.name.eq(tagName)))
+                .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
                 .groupBy(posts.id, user.nickname, posts.title,blog.title)
                 .fetch();
 

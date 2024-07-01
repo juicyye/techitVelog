@@ -46,4 +46,8 @@ public class Blog extends BaseEntity {
         this.user = user;
         user.setBlog(this);
     }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
 }

@@ -17,5 +17,4 @@ public interface PostRepository extends JpaRepository<Posts, Long>,PostCustomRep
     @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.title = :postTitle")
     @EntityGraph(attributePaths = {"blog"})
     Optional<Posts> findPostBlogName(@Param("blogName") String blogName,@Param("postTitle") String postTitle);
-
 }

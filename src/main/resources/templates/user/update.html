@@ -13,9 +13,9 @@
             <div th:replace="~{/layout/fiederror :: fielderror}"></div>
 
             <div class="form-group">
-                <label for="username">이름</label>
-                <input type="text" id="username" th:field="*{username}" class="form-control">
-                <div th:errors="*{username}" class="error-class"></div>
+                <label for="description">블로그 소개</label>
+                <input type="text" id="description" th:field="*{description}" class="form-control">
+                <div th:errors="*{description}" class="error-class"></div>
             </div>
 
             <div class="form-group">
