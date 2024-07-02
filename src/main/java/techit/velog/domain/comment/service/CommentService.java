@@ -3,13 +3,10 @@ package techit.velog.domain.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import techit.velog.domain.comment.dto.CommentReqDto;
-import techit.velog.domain.comment.dto.CommentRespDto;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.comment.repository.CommentRepository;
 import techit.velog.domain.post.entity.Posts;
-import techit.velog.domain.post.repository.PostRepository;
-import techit.velog.domain.user.dto.UserReqDto;
+import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
@@ -28,7 +25,7 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
+    private final PostsRepository postRepository;
     private final UserRepository userRepository;
 
     @Transactional

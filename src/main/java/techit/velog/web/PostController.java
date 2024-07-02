@@ -17,9 +17,11 @@ import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 
+import java.util.List;
+
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Controller
@@ -89,7 +91,9 @@ public class PostController {
 
     @GetMapping("/saves")
     public String savePost(@AuthenticationPrincipal AccountDto accountDto, Model model) {
-        postService.getSavePosts(accountDto);
+        List<PostRespDtoWebSave> postSave = postService.getPostSave(accountDto);
+        model.addAttribute("posts", postSave);
+        return "posts/list";
     }
 
 

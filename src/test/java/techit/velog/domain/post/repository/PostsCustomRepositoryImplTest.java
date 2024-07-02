@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.blog.service.BlogService;
-import techit.velog.domain.post.dto.PostRespDto;
+import techit.velog.domain.post.dto.PostRespDtoWeb;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.user.entity.Role;
@@ -24,14 +24,14 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class PostCustomRepositoryImplTest extends DummyObject {
+class PostsCustomRepositoryImplTest extends DummyObject {
 
     @Autowired
-    private PostCustomRepositoryImpl postCustomRepository;
+    private PostsCustomRepositoryImpl postCustomRepository;
     @Autowired
     private BlogRepository blogRepository;
     @Autowired
-    private PostRepository postRepository;
+    private PostsRepository postRepository;
     @Autowired
     private UserService userService;
     @Autowired
@@ -52,7 +52,7 @@ class PostCustomRepositoryImplTest extends DummyObject {
     @Test
     void post_test() throws Exception {
         // given
-        List<PostRespDto.PostRespDtoWebAll> test = postCustomRepository.test();
+        List<PostRespDtoWeb.PostRespDtoWebAll> test = postCustomRepository.test();
         System.out.println("test = " + test);
 
         // when

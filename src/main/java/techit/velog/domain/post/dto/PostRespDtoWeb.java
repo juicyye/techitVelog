@@ -11,31 +11,25 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static techit.velog.domain.comment.dto.CommentRespDto.*;
-
-public class PostRespDto {
+public class PostRespDtoWeb {
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostRespDtoWeb{
+    public static class PostRespDtoWebDetail {
         private Long postId;
-        private Long blogId;
+        private String blogName;
         private String title;
         private String content;
-        private String description;
+        private String postDescription;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
         private int views;
         private String nickname;
-        private String blogName;
         private int likes;
-        private String tagName;
-
-        private List<CommentRespDtoWeb> comments = new ArrayList<>();
-
+        private List<String> tagName;
         private List<UploadFile> postImages;
-        private UploadFile postImage;
+        private IsSecret isSecret;
 
 
     }
@@ -66,7 +60,7 @@ public class PostRespDto {
         private Long blogId;
         private String title;
         private String content;
-        private String description;
+        private String postDescription;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
         private IsSecret isSecret;
@@ -80,7 +74,7 @@ public class PostRespDto {
             this.blogId = posts.getBlog().getId();
             this.title = posts.getTitle();
             this.content = posts.getContent();
-            this.description = posts.getDescription();
+            this.postDescription = posts.getDescription();
             this.createDate = posts.getCreateDate();
             this.updateDate = posts.getUpdateDate();
             this.isSecret = posts.getIsSecret();
@@ -89,25 +83,43 @@ public class PostRespDto {
             this.isTemp = posts.getIsReal().equals(IsReal.TEMP);
         }
     }
+
     @Getter
     @Setter
-    public static class PostRespDtoWebTag{
+    public static class PostRespDtoWebVelog{
         private Long postId;
-        private Long blogId;
-        private String title;
-        private String content;
-        private String description;
-        private LocalDateTime createDate;
-        private LocalDateTime updateDate;
-        private int views;
-        private String nickname;
         private String blogName;
-        private String tagName;
+        private String title;
+        private String postDescription;
+        private int views;
         private Long likes;
         private Long comments;
-        private Long tagCount;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private List<String> tagName;
+        private UploadFile postImage;
+        private String nickName;
+        private UploadFile userImage;
+        private IsSecret isSecret;
 
+    }
 
+    @Data
+    public static class PostRespDtoWebSave{
+        private Long postId;
+        private String title;
+        private String postDescription;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private String blogName;
+
+        public PostRespDtoWebSave(Posts posts) {
+            this.postId = posts.getId();
+            this.title = posts.getTitle();
+            this.postDescription = posts.getDescription();
+            this.createDate = posts.getCreateDate();
+            this.updateDate = posts.getUpdateDate();
+        }
     }
 
 

@@ -9,8 +9,8 @@ import techit.velog.domain.post.entity.Posts;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostRepository extends JpaRepository<Posts, Long>,PostCustomRepository {
-    Optional<Posts> findByBlog_Id(Long id);
+public interface PostsRepository extends JpaRepository<Posts, Long>, PostsCustomRepository {
+    List<Posts> findByBlog_Id(Long id);
 
     void deleteByBlog_id(Long id);
 

@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
-import techit.velog.domain.post.repository.PostRepository;
+import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 import static techit.velog.domain.user.dto.UserRespDto.*;
@@ -24,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BlogRepository blogRepository;
     private final PasswordEncoder  passwordEncoder;
-    private final PostRepository postRepository;
+    private final PostsRepository postRepository;
 
     @Transactional
     public Long join(UserJoinReq userJoinReq) {

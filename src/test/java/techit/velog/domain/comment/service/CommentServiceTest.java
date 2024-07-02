@@ -5,17 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import techit.velog.domain.comment.dto.CommentReqDto;
-import techit.velog.domain.comment.dto.CommentRespDto;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.comment.repository.CommentRepository;
 import techit.velog.domain.post.entity.Posts;
-import techit.velog.domain.post.repository.PostRepository;
+import techit.velog.domain.post.repository.PostsRepository;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static techit.velog.domain.comment.dto.CommentReqDto.*;
 import static techit.velog.domain.comment.dto.CommentRespDto.*;
 
 @SpringBootTest
@@ -25,7 +21,7 @@ class CommentServiceTest {
     private CommentService commentService;
 
     @Autowired
-    private PostRepository postRepository;
+    private PostsRepository postRepository;
 
     @Autowired
     private CommentRepository commentRepository;

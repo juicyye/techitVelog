@@ -4,24 +4,24 @@ import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.Posts;
-import techit.velog.domain.post.repository.PostRepository;
+import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
-import techit.velog.domain.user.dto.UserReqDto;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
@@ -32,9 +32,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Service
@@ -42,7 +43,7 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 @Transactional(readOnly = true)
 @Slf4j
 public class PostService {
-    private final PostRepository postRepository;
+    private final PostsRepository postRepository;
     private final BlogRepository blogRepository;
     private final TagRepository tagRepository;
     private final FileStore fileStore;
@@ -83,34 +84,6 @@ public class PostService {
     }
 
     /**
-     * 태그, 포스트태그 저장
-     */
-    private List<PostTag> addTag(String tag, Blog blog, Posts posts) {
-        List<PostTag> postTags = new ArrayList<>();
-        if (tag != null) {
-            String[] split = tag.split("\\s*,\\s*|\\s+");
-            HashSet<String> tags = new HashSet<>(Arrays.asList(split));
-            PostTag postTag;
-
-            for (String s : tags) {
-                log.info("tag s {}", s);
-                Optional<Tags> _tag = tagRepository.findByName(s);
-                if (_tag.isEmpty()) {
-                    Tags tags1 = new Tags(s, blog);
-                    postTag = new PostTag(tags1,posts);
-                    tagRepository.save(tags1);
-
-                } else{
-                    postTag = new PostTag(_tag.get(),posts);
-                }
-                postTags.add(postTag);
-            }
-        }
-        return postTags;
-    }
-
-
-    /**
      * 태그를 split해서 태그로 저장하는 메소드
      */
     private void splitTag(String tag, Blog blog, Posts posts) {
@@ -134,22 +107,6 @@ public class PostService {
             }
         }
     }
-
-    /**
-     * 포스트태그에 태그를 저장하는 메소드
-     */
-    /*private List<PostTag> PostTags(String tag, Blog blog, Posts posts) {
-        if (tag != null) {
-            List<PostTag> postTags = new ArrayList<>();
-            List<Tags> tags = splitTag(tag, blog);
-            // todo 나중에 변수명이랑 스트림함수 써서 리팩토링
-            for (Tags tag1 : tags) {
-                postTags.add(new PostTag(tag1,posts));
-            }
-            return postTags;
-        } else return null;
-
-    }*/
 
     /**
      * 파일저장하고 객체로 바꾸는 메소드
@@ -180,17 +137,22 @@ public class PostService {
         } else {
             return null;
         }
-
     }
 
 
-    public List<PostRespDtoWeb> getAllByBlogName(String blogName) {
-        return postRepository.findAllByBlogName(blogName);
+
+
+    public List<PostRespDtoWebVelog> getPostsVelog(String blogName, SecurityContext securityContext) {
+        if (securityContext.getAuthentication().isAuthenticated()) {
+            return postRepository.findAllByVelog(blogName, true);
+        } else{
+            return postRepository.findAllByVelog(blogName, false);
+        }
+
     }
 
-    public PostRespDtoWeb getPostByBlogName(String blogName, String postTitle) {
-        return postRepository.findByIdBlogName(blogName, postTitle);
-
+    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle) {
+        return postRepository.findPostDetail(blogName, postTitle);
     }
 
     @Transactional
@@ -219,6 +181,10 @@ public class PostService {
         posts.addView(posts.getViews() + 1);
     }
 
+    /**
+     * post 업데이트 하는 메서드
+     */
+
     public PostRespDtoWebUpdate getUpdatePost(Long postId) {
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         PostRespDtoWebUpdate postRespDtoWebUpdate = new PostRespDtoWebUpdate(posts);
@@ -238,9 +204,11 @@ public class PostService {
         return sb.toString();
     }
 
-    public List<PostRespDtoWebTag> getPostsByTagName(String blogName, String tagName) {
-        return postRepository.findAllByTagName(blogName, tagName);
-    }
+    /**
+     * 블로그이름이 중복되었는지 확인하는 메서드
+     * 왜 잇는거지?
+     * todo 왜있는지 확인하기
+     */
 
     public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate,AccountDto accountDto) {
         Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
@@ -252,29 +220,17 @@ public class PostService {
         }
     }
 
-    public void getSavePosts(AccountDto accountDto) {
-        Optional<Posts> posts = postRepository.find(accountDto.getLoginId());
-        if (posts.isEmpty()) {
-            throw new CustomWebException("not found post with blog");
-        } else{
-            posts.get()
-        }
+    /**
+     * 임시 저장된 글만 보여주는 메소드
+     */
 
+    public List<PostRespDtoWebSave> getPostSave(AccountDto accountDto) {
+        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("not found blog"));
+        return postRepository.findByBlog_Id(blog.getId()).stream().filter(f -> f.getIsReal() == IsReal.TEMP).map(post -> {
+            PostRespDtoWebSave postRespDtoWebSave = new PostRespDtoWebSave(post);
+            postRespDtoWebSave.setBlogName(blog.getTitle());
+            return postRespDtoWebSave;
+        }).collect(Collectors.toList());
     }
-    @Data
-    public static class PostRespDtoWebSave{
-        private Long id;
-        private String title;
-        private String content;
-        private LocalDateTime createDate;
-        private LocalDateTime updateDate;
 
-        public PostRespDtoWebSave(Posts posts) {
-            this.id = id;
-            this.title = title;
-            this.content = content;
-            this.createDate = createDate;
-            this.updateDate = updateDate;
-        }
-    }
 }

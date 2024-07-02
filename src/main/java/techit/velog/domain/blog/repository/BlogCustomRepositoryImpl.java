@@ -3,11 +3,7 @@ package techit.velog.domain.blog.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import techit.velog.domain.post.dto.PostRespDto;
-import techit.velog.domain.uploadfile.QUploadFile;
 import techit.velog.domain.uploadfile.UploadFile;
-
-import java.util.List;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.blog.entity.QBlog.*;

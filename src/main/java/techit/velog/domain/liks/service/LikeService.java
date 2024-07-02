@@ -7,10 +7,8 @@ import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.liks.entity.Likes;
 import techit.velog.domain.liks.repository.LikeRepository;
-import techit.velog.domain.post.dto.PostRespDto;
 import techit.velog.domain.post.entity.Posts;
-import techit.velog.domain.post.repository.PostRepository;
-import techit.velog.domain.user.dto.UserReqDto;
+import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
@@ -18,7 +16,7 @@ import techit.velog.global.exception.CustomWebException;
 import java.util.List;
 import java.util.Optional;
 
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Service
@@ -28,7 +26,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final PostsRepository postRepository;
 
     @Transactional
     public String like(Long postId, AccountDto accountDto) {
@@ -48,7 +46,7 @@ public class LikeService {
 
     }
 
-    public List<PostRespDtoWeb> getLikes(String blogName) {
+    public List<PostRespDtoWebDetail> getLikes(String blogName) {
         Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그가 없습니다."));
         User user = userRepository.findByBlog_Id(blog.getId()).orElseThrow(() -> new CustomWebException("유저가 없습니다."));
         return likeRepository.findByLikePost(user.getId());

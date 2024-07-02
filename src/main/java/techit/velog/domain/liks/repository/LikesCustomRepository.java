@@ -2,8 +2,8 @@ package techit.velog.domain.liks.repository;
 
 import java.util.List;
 
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 
 public interface LikesCustomRepository {
-    List<PostRespDtoWeb> findByLikePost(Long userId);
+    List<PostRespDtoWebDetail> findByLikePost(Long userId);
 }

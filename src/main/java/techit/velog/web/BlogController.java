@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +23,7 @@ import java.util.List;
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.comment.dto.CommentRespDto.*;
 import static techit.velog.domain.follow.dto.FollowRespDto.*;
-import static techit.velog.domain.post.dto.PostRespDto.*;
+import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.tag.dto.TagRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -36,11 +38,11 @@ public class BlogController {
     private final LikeService likeService;
     private final CommentService commentService;
 
-    // todo 리팩토링 필수
+
     @GetMapping
-    public String blog(@PathVariable("blogName") String blogName, Model model) {
+    public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext) {
         BlogRespDtoWeb blog = blogService.getBlog(blogName);
-        List<PostRespDtoWeb> posts = postService.getAllByBlogName(blogName);
+        List<PostRespDtoWebVelog> posts = postService.getPostsVelog(blogName, securityContext);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
         model.addAttribute("posts", posts);
@@ -52,10 +54,10 @@ public class BlogController {
     @GetMapping("/{postTitle}")
     public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,
                              HttpServletRequest request, HttpServletResponse response) {
+        PostRespDtoWebDetail postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle);
+        List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWebDetail.getPostId());
         postService.viewCountValidation(blogName, postTitle, request, response);
-        PostRespDtoWeb postRespDtoWeb = postService.getPostByBlogName(blogName, postTitle);
-        List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWeb.getPostId());
-        model.addAttribute("post", postRespDtoWeb);
+        model.addAttribute("post", postRespDtoWebDetail);
         model.addAttribute("comments", comments);
 
         return "blog/post";
@@ -84,8 +86,8 @@ public class BlogController {
 
     @GetMapping("/likes")
     public String likes(@PathVariable("blogName") String blogName, Model model) {
-        List<PostRespDtoWeb> postRespDtoWebs = likeService.getLikes(blogName);
-        model.addAttribute("posts", postRespDtoWebs);
+        List<PostRespDtoWebDetail> postRespDtoWebDetails = likeService.getLikes(blogName);
+        model.addAttribute("posts", postRespDtoWebDetails);
         return "posts/list";
     }
 
