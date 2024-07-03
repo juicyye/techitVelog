@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
@@ -35,7 +36,7 @@ public class PostController {
 
 
     @ModelAttribute("isSecret")
-    public IsSecret[] isSecrets(){
+    public IsSecret[] isSecrets() {
         return IsSecret.values();
     }
 
@@ -46,11 +47,11 @@ public class PostController {
 
     @PostMapping("/create")
     public String postCreate(@Validated @ModelAttribute("post") PostReqDtoWebCreate postReqDtoWebCreate, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             log.info("create post error {}", bindingResult.getAllErrors());
             return "posts/create";
         }
-        if (postService.duplicateBlogName(postReqDtoWebCreate,accountDto)) {
+        if (postService.duplicateBlogName(postReqDtoWebCreate, accountDto)) {
             bindingResult.reject("duplicate-blog-name", "동일한 제목은 사용하실 수 없습니다.");
             return "posts/create";
         }
@@ -58,27 +59,9 @@ public class PostController {
         return "redirect:/";
     }
 
-    @GetMapping("/modify/{id}")
-    public String postModifyForm(@PathVariable("id") Long postId, Model model) {
-        PostRespDtoWebUpdate post = postService.getUpdatePost(postId);
-        model.addAttribute("post", post);
-        return "posts/modify";
-    }
-
-    @PostMapping("/modify/{id}")
-    public String postModify(@PathVariable("id") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            return "posts/modify";
-        }
-        postService.update(postId, postReqDtoWebUpdate);
-        // todo 이게 정말 최선일까 생각해보기
-        tagService.removeTag();
-        return "redirect:/";
-    }
-
 
     @GetMapping
-    public String posts(@PageableDefault(sort = "createDate", direction = Sort.Direction.ASC)Pageable pageable, Model model,@AuthenticationPrincipal AccountDto accountDto) {
+    public String posts(@PageableDefault(sort = "createDate", direction = Sort.Direction.ASC) Pageable pageable, Model model, @AuthenticationPrincipal AccountDto accountDto) {
         BlogRespDtoWeb blog = null;
         if (accountDto != null) {
             blog = blogService.getBlog(accountDto);
@@ -93,11 +76,8 @@ public class PostController {
     public String savePost(@AuthenticationPrincipal AccountDto accountDto, Model model) {
         List<PostRespDtoWebSave> postSave = postService.getPostSave(accountDto);
         model.addAttribute("posts", postSave);
-        return "posts/list";
+        return "posts/saves";
     }
-
-
-
 
 
 }

@@ -17,28 +17,17 @@
                     <h3 class="card-title"><a th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}"></a></h3>
 
                     <div class="card-text">
-                        <h5>포스트 내용</h5>
-                        <p th:text="${post.content}"></p>
-                    </div>
-
-                    <div class="card-text">
                         <h5>포스트 간단설명</h5>
-                        <p th:text="${post.description}"></p>
-                    </div>
-
-                    <div class="card-text">
-                        <h5>블로그 이름</h5>
-                        <p th:text="${post.blogName}"></p>
-                    </div>
-
-                    <div class="card-text">
-                        <h5>닉네임</h5>
-                        <p th:text="${post.nickname}"></p>
+                        <p th:text="${post.postDescription}"></p>
                     </div>
 
                     <div class="card-text">
                         <h5>생성일자</h5>
                         <p th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></p>
+                    </div>
+                    <div class="card-text">
+                        <h5>댓글수</h5>
+                        <p th:text="${post.comments}"></p>
                     </div>
                     <div class="card-text">
                         <h5>조회수</h5>
@@ -49,11 +38,12 @@
                         <h5>좋아요수</h5>
                         <p th:text="${post.likes}"></p>
                     </div>
-
                     <div class="card-text">
-                        <h5>댓글수</h5>
-                        <p th:text="${post.comments}"></p>
+                        <h5>블로그 이동</h5>
+                        <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.nickname}"></a>
                     </div>
+
+
                 </div>
             </div>
 

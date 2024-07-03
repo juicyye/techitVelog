@@ -6,12 +6,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item" th:if="${param.delete}">
-                <span class="navbar-text">탈퇴처리가 완료되었습니다.</span>
-            </li>
-            <li class="nav-item" th:if="${param.update}">
-                <span class="navbar-text">수정이 완료되었습니다.</span>
-            </li>
             <li class="nav-item" sec:authorize="isAnonymous()">
                 <a class="nav-link" href="" th:href="@{/login}">로그인</a>
             </li>

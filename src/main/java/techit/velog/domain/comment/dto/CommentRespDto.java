@@ -4,6 +4,7 @@ import lombok.*;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.comment.entity.IsDeleted;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,19 @@ public class CommentRespDto {
                     .deleteStatus(comment.getIsDeleted())
                     .build();
         }
+    }
+    @Data
+    public static class commentRespDtoWebUpdate {
+        private Long commentId;
+        private String content;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
 
-
+        public commentRespDtoWebUpdate(Comment comment) {
+            this.commentId = comment.getId();
+            this.content = comment.getContent();
+            this.createDate = comment.getCreateDate();
+            this.updateDate = comment.getUpdateDate();
+        }
     }
 }

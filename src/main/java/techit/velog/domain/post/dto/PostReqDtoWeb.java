@@ -46,7 +46,7 @@ public class PostReqDtoWeb {
         private Long blogId;
         private String title;
         private String content;
-        private String description;
+        private String postDescription;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
         private IsSecret isSecret;

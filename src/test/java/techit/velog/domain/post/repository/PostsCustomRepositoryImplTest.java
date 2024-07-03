@@ -51,11 +51,17 @@ class PostsCustomRepositoryImplTest extends DummyObject {
 
     @Test
     void post_test() throws Exception {
+        List<Posts> all = postRepository.findAll();
+        for (Posts posts : all) {
+            System.out.println("posts.getTitle() = " + posts.getTitle());
+            Blog blog = posts.getBlog();
+            System.out.println("blog.getTitle() = " + blog.getTitle());
+        }
         // given
-        List<PostRespDtoWeb.PostRespDtoWebAll> test = postCustomRepository.test();
-        System.out.println("test = " + test);
+        PostRespDtoWeb.PostRespDtoWebDetail result = postRepository.findPostDetail("@user", "타이틀");
 
         // when
+        System.out.println("result = " + result);
 
         // then
     }

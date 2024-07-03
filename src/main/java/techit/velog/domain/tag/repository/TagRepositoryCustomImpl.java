@@ -3,6 +3,8 @@ package techit.velog.domain.tag.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import techit.velog.domain.post.entity.IsReal;
+import techit.velog.domain.tag.entity.Tags;
 
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
     }
 
     @Override
-    public List<TagRespDtoWeb> findAllByBlog(String blogName) {
+    public List<TagRespDtoWeb> findAllByTagName(String blogName) {
 
         List<TagRespDtoWeb> results = queryFactory.select(Projections.fields(TagRespDtoWeb.class,
                         tags.id.as("id"),tags.name.as("name")))
@@ -43,5 +45,14 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
             result.setPostTagCount(size);
         }
         return results;
+    }
+
+    @Override
+    public List<Tags> findAllByPostId(Long blogId) {
+        return queryFactory.select(tags)
+                .from(tags)
+                .join(tags.blog, blog)
+                .where(blog.id.eq(blogId))
+                .fetch();
     }
 }

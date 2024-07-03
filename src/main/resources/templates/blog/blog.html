@@ -42,12 +42,23 @@
             <h3><a th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}"></a></h3>
         </div>
         <div class="mb-3">
-            <h4 class="card-title">내용</h4>
-            <h3 th:text="${post.content}"></h3>
+            <h4 class="card-title">간단설명</h4>
+            <h3 th:text="${post.postDescription}"></h3>
+        </div>
+        <div th:each="tag : ${post.tagName}">
+            <h3 class="card-title" th:text="${tag}"></h3>
         </div>
         <div class="mb-3">
             <h4 class="card-title">작성일자</h4>
             <h3 th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></h3>
+        </div>
+        <div class="mb-3">
+            <h4 class="card-title">댓글수</h4>
+            <h3 th:text="${post.comments}"></h3>
+        </div>
+        <div class="mb-3">
+            <h4 class="card-title">좋아요수</h4>
+            <h3 th:text="${post.likes}"></h3>
         </div>
     </div>
 

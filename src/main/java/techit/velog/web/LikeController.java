@@ -25,7 +25,6 @@ public class LikeController {
         rttr.addAttribute("postTitle", postTitle);
 
         return "redirect:/{blogName}/{postTitle}";
-
     }
 
 

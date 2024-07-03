@@ -1,6 +1,8 @@
 package techit.velog.web;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +25,16 @@ public class TagController {
     private final BlogService blogService;
 
     @GetMapping("/{blogName}/posts/{tagName}")
-    public String getTagPost(@PathVariable("blogName") String blogName, @PathVariable("tagName") String tagName, Model model) {
+    public String getTagPost(@PathVariable("blogName") String blogName, @PathVariable("tagName") String tagName, Model model, @CurrentSecurityContext SecurityContext securityContext) {
         // 결국 가져오는건 포스트 하지만 일대다는 안되니까 포스트태그에서 시작하는 수밖에 없다
-        List<PostRespDtoWebTag> posts = postService.getPostsByTagName(blogName, tagName);
+        List<PostRespDtoWebVelog> posts = postService.getPostsTagName(blogName, tagName, securityContext);
         BlogRespDtoWeb blog = blogService.getBlog(blogName);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
         model.addAttribute("posts", posts);
         model.addAttribute("tags", tags);
+
+
 
         return "blog/blog";
     }

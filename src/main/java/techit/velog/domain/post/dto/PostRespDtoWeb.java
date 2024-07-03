@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PostRespDtoWeb {
-    @Getter
-    @Setter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostRespDtoWebDetail {
@@ -26,7 +25,7 @@ public class PostRespDtoWeb {
         private LocalDateTime updateDate;
         private int views;
         private String nickname;
-        private int likes;
+        private Long likes;
         private List<String> tagName;
         private List<UploadFile> postImages;
         private IsSecret isSecret;
@@ -39,7 +38,6 @@ public class PostRespDtoWeb {
     @ToString
     public static class PostRespDtoWebAll{
         private Long postId;
-        private String content;
         private String title;
         private String postDescription;
         private LocalDateTime createDate;
@@ -88,9 +86,9 @@ public class PostRespDtoWeb {
     @Setter
     public static class PostRespDtoWebVelog{
         private Long postId;
-        private String blogName;
         private String title;
         private String postDescription;
+        private String blogName;
         private int views;
         private Long likes;
         private Long comments;
@@ -98,8 +96,6 @@ public class PostRespDtoWeb {
         private LocalDateTime updateDate;
         private List<String> tagName;
         private UploadFile postImage;
-        private String nickName;
-        private UploadFile userImage;
         private IsSecret isSecret;
 
     }

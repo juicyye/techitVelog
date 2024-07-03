@@ -127,7 +127,7 @@ public class Posts extends BaseEntity {
         this.title = postReqDtoWebUpdate.getTitle();
         this.content = postReqDtoWebUpdate.getContent();
         this.isSecret = postReqDtoWebUpdate.getIsSecret();
-        this.description = postReqDtoWebUpdate.getDescription();
+        this.description = postReqDtoWebUpdate.getPostDescription();
         if (postReqDtoWebUpdate.getIsTemp()) {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
@@ -135,11 +135,5 @@ public class Posts extends BaseEntity {
 
     public void removePostTag(){
         this.postTags.clear();
-    }
-
-    public void addPostTag(List<PostTag> postTags) {
-        for (PostTag postTag : postTags) {
-            addPostTag(postTag);
-        }
     }
 }

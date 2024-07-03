@@ -46,7 +46,7 @@ public class LikeService {
 
     }
 
-    public List<PostRespDtoWebDetail> getLikes(String blogName) {
+    public List<PostRespDtoWebAll> getLikes(String blogName) {
         Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그가 없습니다."));
         User user = userRepository.findByBlog_Id(blog.getId()).orElseThrow(() -> new CustomWebException("유저가 없습니다."));
         return likeRepository.findByLikePost(user.getId());

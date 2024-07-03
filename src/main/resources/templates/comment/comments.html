@@ -14,6 +14,8 @@
                 <button type="submit" class="btn btn-primary">답글 작성</button>
             </form>
         </div>
+        <button th:onclick="|location.href='@{|/${post.blogName}/${post.title}/${comment.commentId}/modify|}'|">수정</button>
+        <button th:onclick="|location.href='@{|/${post.blogName}/${post.title}/${comment.commentId}/delete|}'|">삭제</button>
 
         <!-- 자식 댓글 목록 -->
         <ul class="list-group">

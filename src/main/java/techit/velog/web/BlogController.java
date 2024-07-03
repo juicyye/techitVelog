@@ -8,13 +8,14 @@ import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.comment.service.CommentService;
 import techit.velog.domain.follow.service.FollowService;
 import techit.velog.domain.liks.service.LikeService;
+import techit.velog.domain.post.dto.PostReqDtoWeb;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 
@@ -86,9 +87,35 @@ public class BlogController {
 
     @GetMapping("/likes")
     public String likes(@PathVariable("blogName") String blogName, Model model) {
-        List<PostRespDtoWebDetail> postRespDtoWebDetails = likeService.getLikes(blogName);
+        List<PostRespDtoWebAll> postRespDtoWebDetails = likeService.getLikes(blogName);
         model.addAttribute("posts", postRespDtoWebDetails);
         return "posts/list";
+    }
+
+    @GetMapping("/{postName}/postModify/{postId}")
+    public String postModifyForm(@PathVariable("postId") Long postId, Model model) {
+        PostRespDtoWebUpdate post = postService.getUpdatePost(postId);
+        model.addAttribute("post", post);
+        return "posts/modify";
+    }
+
+    @PostMapping("/{postTitle}/postModify/{postId}")
+    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWeb.PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "posts/modify";
+        }
+        postService.update(postId, postReqDtoWebUpdate);
+        // todo 이게 정말 최선일까 생각해보기
+        tagService.removeTag(postReqDtoWebUpdate.getBlogId());
+        return "redirect:/{blogName}/{postTitle}";
+    }
+
+    @GetMapping("/postDelete/{postId}")
+    public String postDelete(@PathVariable("postId") Long postId, RedirectAttributes rttr) {
+        Long blogId = postService.delete(postId);
+        tagService.removeTag(blogId);
+        rttr.addAttribute("deleted", true);
+        return "redirect:/{blogName}";
     }
 
 }

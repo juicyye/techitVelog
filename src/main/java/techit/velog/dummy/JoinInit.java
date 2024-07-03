@@ -10,6 +10,7 @@ import techit.velog.domain.user.service.UserService;
 public class JoinInit extends DummyObject{
 
     @Bean
+    @Profile("dev")
     CommandLineRunner init(UserService userService) {
         return args -> {
             Long join = userService.join(adminUser());

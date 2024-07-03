@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static techit.velog.domain.comment.dto.CommentReqDto.*;
+import static techit.velog.domain.comment.dto.CommentReqDtoWeb.*;
 import static techit.velog.domain.comment.dto.CommentRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -29,12 +29,12 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long create(CommentReqDtoWeb commentReqDtoWeb, AccountDto accountDto) {
+    public Long create(CommentReqDtoWebBasic commentReqDtoWebBasic, AccountDto accountDto) {
         User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("유저를 찾을 수 없습니다."));
-        Posts posts = postRepository.findById(commentReqDtoWeb.getPostId()).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
-        Comment comment = new Comment(commentReqDtoWeb, posts, user);
-        if (commentReqDtoWeb.getCommentId() != null) {
-            Comment parent = commentRepository.findById(commentReqDtoWeb.getCommentId()).orElseThrow(() -> new CustomWebException("댓글을 찾을 수 없습니다."));
+        Posts posts = postRepository.findById(commentReqDtoWebBasic.getPostId()).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        Comment comment = new Comment(commentReqDtoWebBasic, posts, user);
+        if (commentReqDtoWebBasic.getCommentId() != null) {
+            Comment parent = commentRepository.findById(commentReqDtoWebBasic.getCommentId()).orElseThrow(() -> new CustomWebException("댓글을 찾을 수 없습니다."));
             parent.addChild(comment);
         }
         Comment savedComment = commentRepository.save(comment);
@@ -68,4 +68,20 @@ public class CommentService {
     }
 
 
+    public CommentReqDtoWebUpdate getComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomWebException("not found Comment"));
+        return new CommentReqDtoWebUpdate(comment);
+
+    }
+    @Transactional
+    public boolean update(Long commentId, String content) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomWebException("not found Comment"));
+        comment.changeContent(content);
+        return true;
+    }
+    @Transactional
+    public boolean deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
+        return true;
+    }
 }

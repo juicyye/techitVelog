@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.uploadfile.QUploadFile;
+import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
         QUploadFile userImage = new QUploadFile("userImage");
 
         List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
-                        posts.id.as("postId"), posts.content, posts.title, posts.createDate, posts.updateDate,posts.views,
-                        posts.description, user.nickname, blog.title.as("blogName"),
+                        posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate,posts.views,
+                        posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
                         posts.uploadFile.as("postImage"), userImage.as("userImage")))
                 .from(posts)
@@ -64,20 +65,17 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     }
 
     public List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isuser) {
-        QUploadFile userImage = new QUploadFile("userImage");
         List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
                         posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), posts.uploadFile.as("postImage"),
-                        posts.createDate,posts.updateDate, blog.title.as("blogName"), likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret,
-                        user.nickname, userImage.as("userImage")))
+                        posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")
+                        ))
                 .from(posts)
                 .join(posts.blog,blog)
-                .join(blog.user,user)
                 .leftJoin(posts.uploadFile, uploadFile)
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
-                .leftJoin(user.uploadFile, userImage)
-                .where(blog.title.eq(blogName))
-                .where(isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()))
+                .groupBy(posts.id, blog.title)
+                .where(blog.title.eq(blogName),isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()))
                 .fetch();
 
         for (PostRespDtoWebVelog result : results) {
@@ -95,42 +93,18 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
 
 
     @Override
-    public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
-        PostRespDtoWebDetail postRespDtoWebDetail = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
-                        posts.id.as("postId"), posts.title.as("title"), posts.content, posts.createDate, posts.updateDate, posts.views,
-                        blog.title.as("blogName"), user.nickname.as("nickname"), posts.uploadFiles.as("postImages")))
-                .from(posts)
-                .join(posts.blog, blog)
-                .join(blog.user, user)
-                .leftJoin(posts.uploadFiles, uploadFile)
-                .leftJoin(posts.postTags, postTag)
-                .where(posts.blog.title.eq(blogName), posts.title.eq(postTitle), posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()), posts.isReal.stringValue().eq(IsReal.REAL.name()))
-                .fetchOne();
-
-        int likesCount = queryFactory.select(likes)
-                .from(likes)
-                .join(likes.posts)
-                .fetch().size();
-        postRespDtoWebDetail.setLikes(likesCount);
-        return postRespDtoWebDetail;
-    }
-
-    @Override
     public List<PostRespDtoWebVelog> findPostsByTagName(String blogName, String tagName, boolean isUser) {
-        QUploadFile userImage = new QUploadFile("userImage");
         List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
                         posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), posts.uploadFile.as("postImage"),
-                        posts.createDate,posts.updateDate, blog.title.as("blogName"), likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret,
-                        user.nickname, userImage.as("userImage")))
+                        posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")))
                 .from(postTag)
                 .join(postTag.tags, tags)
                 .join(postTag.posts, posts)
                 .join(posts.blog, blog)
-                .join(blog.user, user)
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
                 .where(blog.title.eq(blogName).and(tags.name.eq(tagName)))
-                .groupBy(posts.id, user.nickname, posts.title,blog.title)
+                .groupBy(posts.id, blog.title)
                 .fetch();
 
         for (PostRespDtoWebVelog result : results) {
@@ -143,6 +117,28 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
             result.setTagName(tagList);
         }
         return results;
+    }
+
+    @Override
+    public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
+        PostRespDtoWebDetail postRespDtoWebDetail = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
+                        posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
+                        blog.title.as("blogName"), user.nickname.as("nickname"), likes.countDistinct().as("likes")))
+                .from(posts)
+                .join(posts.blog, blog)
+                .join(blog.user, user)
+                .leftJoin(posts.likes, likes)
+                .where(blog.title.eq(blogName), posts.title.eq(postTitle))
+                .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .fetchOne();
+
+        List<UploadFile> uploadFiles = queryFactory.select(uploadFile)
+                .from(uploadFile)
+                .where(uploadFile.posts.id.eq(postRespDtoWebDetail.getPostId()))
+                .fetch();
+
+        postRespDtoWebDetail.setPostImages(uploadFiles);
+        return postRespDtoWebDetail;
     }
 
     private BooleanExpression isTemp(Boolean temp) {

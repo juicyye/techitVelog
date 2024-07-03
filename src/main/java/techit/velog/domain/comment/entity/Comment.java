@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import techit.velog.domain.BaseEntity;
-import techit.velog.domain.comment.dto.CommentReqDto;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.user.entity.User;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static techit.velog.domain.comment.dto.CommentReqDto.*;
+import static techit.velog.domain.comment.dto.CommentReqDtoWeb.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -62,8 +61,8 @@ public class Comment extends BaseEntity {
      * 생성자
      */
 
-    public Comment(CommentReqDtoWeb commentReqDtoWeb, Posts posts, User user) {
-        this.content = commentReqDtoWeb.getContent();
+    public Comment(CommentReqDtoWebBasic commentReqDtoWebBasic, Posts posts, User user) {
+        this.content = commentReqDtoWebBasic.getContent();
         this.isDeleted = IsDeleted.NORMAL;
         this.user= user;
         addPost(posts);
@@ -81,5 +80,12 @@ public class Comment extends BaseEntity {
     public void addChild(Comment child) {
         this.getChild().add(child);
         child.parent = this;
+    }
+
+    /**
+     * 비지니스 메서드
+     */
+    public void changeContent(String content) {
+        this.content = content;
     }
 }

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +22,13 @@ import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
+import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
+import techit.velog.global.security.AccountContext;
 import techit.velog.global.util.SplitService;
 
 import java.io.IOException;
@@ -48,7 +53,10 @@ public class PostService {
     private final TagRepository tagRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
-    private EntityManager em;
+
+    /**
+     * Tag와 포스트를 저장하는 메서드
+     */
 
     @Transactional
     public Long create(PostReqDtoWebCreate postReqDtoWebCreate, AccountDto accountDto) {
@@ -61,16 +69,25 @@ public class PostService {
         postReqDtoWebCreate.setTitle(SplitService.split(postReqDtoWebCreate.getTitle()));
 
         // post 저장
-        Posts posts = new Posts(postReqDtoWebCreate,blog);
+        Posts posts = new Posts(postReqDtoWebCreate, blog);
         posts.changeUploadFile(uploadFiles, uploadFile);
-        splitTag(postReqDtoWebCreate.getTagName(),blog, posts);
+        splitTag(postReqDtoWebCreate.getTagName(), blog, posts);
 
         return postRepository.save(posts).getId();
     }
 
+    /**
+     * 메인페이지에서 보여주는 모든 포스트를 보여주는 메서드
+     * Paging 처리를 해야함
+     */
+
     public Page<PostRespDtoWebAll> getPosts(Pageable pageable) {
         return postRepository.findAllByLists(pageable);
     }
+
+    /**
+     * 포스트를 업데이트 해주는 메서드
+     */
 
     @Transactional
     public void update(Long postId, PostReqDtoWebUpdate postReqDtoWebUpdate) {
@@ -91,7 +108,6 @@ public class PostService {
             String[] split = tag.split("\\s*,\\s*|\\s+");
             HashSet<String> tags = new HashSet<>(Arrays.asList(split));
 
-            // todo 마지막 값 중복
             for (String s : tags) {
                 log.info("tag s {}", s);
                 Optional<Tags> _tag = tagRepository.findByName(s);
@@ -139,21 +155,31 @@ public class PostService {
         }
     }
 
-
-
+    /**
+     * 블로그의 모든 포스트를 보여주는 메서드
+     */
 
     public List<PostRespDtoWebVelog> getPostsVelog(String blogName, SecurityContext securityContext) {
-        if (securityContext.getAuthentication().isAuthenticated()) {
+        if (isUser(blogName, securityContext)) {
             return postRepository.findAllByVelog(blogName, true);
-        } else{
+        } else {
             return postRepository.findAllByVelog(blogName, false);
         }
 
     }
 
+    /**
+     * 포스트의 상세페이지를 보는 메서드
+     */
+
     public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle) {
         return postRepository.findPostDetail(blogName, postTitle);
     }
+
+    /**
+     * 쿠키가 있는지 확인하고 없으면 쿠키를 보내고 view + 1 해주고
+     * 있으면 그냥 그대로 두는 메서드
+     */
 
     @Transactional
     public void viewCountValidation(String blogName, String postTitle, HttpServletRequest
@@ -176,13 +202,18 @@ public class PostService {
         response.addCookie(cookie);
     }
 
+    /**
+     * viewCountValidation와 세트
+     * post의 view를 +1해주는 메서드
+     */
+
     private void addViewCount(String blogName, String postTitle) {
         Posts posts = postRepository.findPostBlogName(blogName, postTitle).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         posts.addView(posts.getViews() + 1);
     }
 
     /**
-     * post 업데이트 하는 메서드
+     * 기존 post 가져오고 업데이트할 값들 가져오기
      */
 
     public PostRespDtoWebUpdate getUpdatePost(Long postId) {
@@ -210,12 +241,12 @@ public class PostService {
      * todo 왜있는지 확인하기
      */
 
-    public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate,AccountDto accountDto) {
+    public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate, AccountDto accountDto) {
         Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
         Optional<Posts> _posts = postRepository.findPostBlogName(blog.getTitle(), postReqDtoWebCreate.getTitle());
-        if(_posts.isPresent()) {
+        if (_posts.isPresent()) {
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -233,4 +264,46 @@ public class PostService {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * tagName이 같은 post 찾기
+     */
+    public List<PostRespDtoWebVelog> getPostsTagName(String blogName, String tagName, SecurityContext securityContext) {
+        if (isUser(blogName, securityContext)) {
+            return postRepository.findPostsByTagName(blogName, tagName, true);
+        } else {
+            return postRepository.findPostsByTagName(blogName, tagName, false);
+        }
+    }
+
+    /**
+     * security context에 있는 유저가 post를 쓴 user와 같은지 확인
+     */
+    private boolean isUser(String blogName, SecurityContext securityContext) {
+        log.info("security context {} ", securityContext);
+        Authentication authentication = securityContext.getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        Optional<User> _user = userRepository.findByBlog_Name(blogName);
+        if (_user.isPresent()) {
+            User user = _user.get();
+            AccountDto accountDto = (AccountDto) securityContext.getAuthentication().getPrincipal();
+            log.info("user : {}", accountDto.getLoginId());
+            if (user.getLoginId().equals(accountDto.getLoginId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * post 삭제하고 post에 붙어있는 태그들도 삭제하기
+     */
+    @Transactional
+    public Long delete(Long postId) {
+        Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("not found Post"));
+        postRepository.delete(posts);
+        return posts.getBlog().getId();
+    }
 }
