@@ -1,6 +1,5 @@
 package techit.velog.domain.post.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,13 +21,11 @@ import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
-import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
-import techit.velog.global.security.AccountContext;
 import techit.velog.global.util.SplitService;
 
 import java.io.IOException;
@@ -65,7 +62,7 @@ public class PostService {
         Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
 
         List<UploadFile> uploadFiles = ImageFiles(postReqDtoWebCreate.getImageFiles());
-        UploadFile uploadFile = uploadFile(postReqDtoWebCreate.getUploadFile());
+        UploadFile uploadFile = uploadFile(postReqDtoWebCreate.getImageFile());
         postReqDtoWebCreate.setTitle(SplitService.split(postReqDtoWebCreate.getTitle()));
 
         // post 저장
@@ -93,11 +90,13 @@ public class PostService {
     public void update(Long postId, PostReqDtoWebUpdate postReqDtoWebUpdate) {
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         Blog blog = blogRepository.findById(postReqDtoWebUpdate.getBlogId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
+        List<UploadFile> uploadFiles = ImageFiles(postReqDtoWebUpdate.getImageFiles());
+        UploadFile uploadFile = uploadFile(postReqDtoWebUpdate.getImageFile());
         // post안에 있는 태그들을 다 삭제하고 다시 넣기
         posts.removePostTag();
         // todo 기존 태그는 삭제하고 새로운 태그는 더하기
         splitTag(postReqDtoWebUpdate.getTagName(), blog, posts);
-        posts.change(postReqDtoWebUpdate);
+        posts.change(postReqDtoWebUpdate, uploadFile,uploadFiles );
     }
 
     /**
@@ -125,7 +124,7 @@ public class PostService {
     }
 
     /**
-     * 파일저장하고 객체로 바꾸는 메소드
+     * 다중 이미지파일저장하고 객체로 바꾸는 메소드
      */
     private List<UploadFile> ImageFiles(List<MultipartFile> files) {
         if (files != null) {
@@ -138,9 +137,11 @@ public class PostService {
         } else {
             return null;
         }
-
-
     }
+
+    /**
+     * 싱글 이미지파일 저장하고 객체로 바꾸는 메소드
+     */
 
     private UploadFile uploadFile(MultipartFile file) {
         if (file != null) {

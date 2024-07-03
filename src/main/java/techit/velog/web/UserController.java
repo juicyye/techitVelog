@@ -2,7 +2,6 @@ package techit.velog.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,13 +17,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import techit.velog.domain.user.dto.UserReqDto;
-import techit.velog.domain.user.dto.UserRespDto;
+import techit.velog.domain.user.dto.UserRespDtoWeb;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.service.UserService;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDto.*;
+import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -91,21 +89,21 @@ public class UserController {
 
     @GetMapping("/account")
     public String account(Model model, @AuthenticationPrincipal AccountDto accountDto) {
-        UserRespDtoWeb user = userService.getUser(accountDto.getLoginId());
+        UserRespWebInfo user = userService.getUser(accountDto.getLoginId());
         model.addAttribute("user", user);
         return "user/info";
     }
 
     @GetMapping("/account/update")
     public String accountUpdateForm(Model model, @AuthenticationPrincipal AccountDto accountDto) {
-        // todo Dto 바꾸기
-        UserReqDtoWeb user = userService.getUpdateUser(accountDto.getLoginId());
+
+        UserRespDtoWebUpdate user = userService.getUserByUpdate(accountDto.getLoginId());
         model.addAttribute("user", user);
         return "user/update";
     }
 
     @PostMapping("/account/update")
-    public String update(@Validated @ModelAttribute("user") UserReqDtoWeb userReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto, RedirectAttributes rttr) {
+    public String update(@Validated @ModelAttribute("user") UserReqDtoWebUpdate userReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto, RedirectAttributes rttr) {
         if(bindingResult.hasErrors()) {
             log.info("update error {}",bindingResult.getAllErrors());
             return "user/update";
@@ -118,7 +116,6 @@ public class UserController {
             bindingResult.reject("password_not_confirm","비밀번호가 일치하지 않습니다.");
             return "user/update";
         }
-
 
         userService.updateInfo(userReqDtoWeb,accountDto);
         rttr.addAttribute("update",true);

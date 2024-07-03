@@ -3,6 +3,8 @@ package techit.velog.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,7 +20,9 @@ import techit.velog.domain.liks.service.LikeService;
 import techit.velog.domain.post.dto.PostReqDtoWeb;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
+import techit.velog.domain.uploadfile.FileStore;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
@@ -117,5 +121,7 @@ public class BlogController {
         rttr.addAttribute("deleted", true);
         return "redirect:/{blogName}";
     }
+
+
 
 }

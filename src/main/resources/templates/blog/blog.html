@@ -37,6 +37,11 @@
     </div>
 
     <div th:each="post : ${posts}" class="card mb-4 p-4">
+        <div th:if="${post.postImage != null}" th:with="image=${post.postImage}">
+            <a th:href="|/attach/${post.postId}|"></a>
+            <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
+        </div>
+
         <div class="mb-3">
             <h4 class="card-title">제목</h4>
             <h3><a th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}"></a></h3>

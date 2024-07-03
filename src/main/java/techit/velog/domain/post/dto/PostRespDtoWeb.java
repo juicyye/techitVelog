@@ -64,8 +64,8 @@ public class PostRespDtoWeb {
         private IsSecret isSecret;
         private Boolean isTemp;
         private String tagName;
-        private UploadFile uploadFile;
-        private List<UploadFile> uploadFiles = new ArrayList<>();
+        private UploadFile postImage;
+        private List<UploadFile> postImages = new ArrayList<>();
 
         public PostRespDtoWebUpdate(Posts posts) {
             this.postId = posts.getId();
@@ -76,8 +76,8 @@ public class PostRespDtoWeb {
             this.createDate = posts.getCreateDate();
             this.updateDate = posts.getUpdateDate();
             this.isSecret = posts.getIsSecret();
-            this.uploadFile = posts.getUploadFile();
-            this.uploadFiles = posts.getUploadFiles();
+            this.postImage = posts.getUploadFile();
+            this.postImages = posts.getUploadFiles();
             this.isTemp = posts.getIsReal().equals(IsReal.TEMP);
         }
     }

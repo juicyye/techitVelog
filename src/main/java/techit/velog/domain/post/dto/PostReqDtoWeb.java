@@ -26,8 +26,8 @@ public class PostReqDtoWeb {
         private Boolean isTemp;
         private IsSecret isSecret;
         private String tagName;
-        private List<MultipartFile> imageFiles;
-        private MultipartFile uploadFile;
+        private List<MultipartFile> imageFiles = new ArrayList<>();
+        private MultipartFile imageFile;
 
         /**
          * 테스트용
@@ -52,7 +52,7 @@ public class PostReqDtoWeb {
         private IsSecret isSecret;
         private Boolean isTemp;
         private String tagName;
-        private UploadFile uploadFile;
-        private List<UploadFile> uploadFiles = new ArrayList<>();
+        private MultipartFile imageFile;
+        private List<MultipartFile> imageFiles = new ArrayList<>();
     }
 }

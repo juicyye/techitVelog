@@ -9,13 +9,13 @@
 <body>
 <section class="container mt-4">
     <div class="card p-4">
-        <form th:action method="post" th:object="${user}">
+        <form th:action method="post" th:object="${user}" enctype="multipart/form-data">
             <div th:replace="~{/layout/fiederror :: fielderror}"></div>
 
             <div class="form-group">
-                <label for="description">블로그 소개</label>
-                <input type="text" id="description" th:field="*{description}" class="form-control">
-                <div th:errors="*{description}" class="error-class"></div>
+                <label for="blogDescription">블로그 소개</label>
+                <input type="text" id="blogDescription" th:field="*{blogDescription}" class="form-control">
+                <div th:errors="*{blogDescription}" class="error-class"></div>
             </div>
 
             <div class="form-group">
@@ -56,6 +56,11 @@
                 <input type="password" id="changePasswordConfirm" th:field="*{changePasswordConfirm}"
                        class="form-control">
                 <div th:errors="*{changePasswordConfirm}" class="error-class"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="imageFile">이미지 파일</label>
+                <input type="file" id="imageFile" name="userImage" class="form-control-file">
             </div>
 
             <button type="submit" class="btn btn-primary">제출</button>

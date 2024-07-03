@@ -9,8 +9,6 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.uploadfile.UploadFile;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -71,12 +69,13 @@ public class User extends BaseEntity {
      * 비지니스 메서드
      */
 
-    public void changeInfo(UserReqDtoWeb userReqDtoWeb) {
+    public void changeInfo(UserReqDtoWebUpdate userReqDtoWeb, UploadFile uploadFile) {
         EmailCheck emailCheck1 = userReqDtoWeb.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         this.nickname = userReqDtoWeb.getNickname();
         this.email = userReqDtoWeb.getEmail();
         this.password = userReqDtoWeb.getChangePassword();
         this.emailCheck = emailCheck1;
+        this.uploadFile = uploadFile;
 
     }
 }

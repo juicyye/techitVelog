@@ -1,30 +1,54 @@
 package techit.velog.domain.user.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.entity.EmailCheck;
 import techit.velog.domain.user.entity.User;
 
-public class UserRespDto {
+public class UserRespDtoWeb {
     @Getter
     @Setter
-    public static class UserRespDtoWeb{
-        private Long id;
-        private String userId;
-        private String name;
-        private String nickname;
+    public static class UserRespDtoWebUpdate {
+        private Long userId;
         private String email;
+        private String nickname;
+        private String password;
         private boolean emailCheck;
+        private String blogDescription;
+        private UploadFile userImage;
+        private String changePassword;
+        private String changePasswordConfirm;
 
-        private UploadFile image;
-
-        public UserRespDtoWeb(User user) {
-            this.id = user.getId();
-            this.userId = user.getUserId();
-            this.name = user.getName();
-            this.nickname = user.getNickname();
+        public UserRespDtoWebUpdate(User user) {
+            this.userId = user.getId();
             this.email = user.getEmail();
-            this.image = user.getUploadFile();
+            this.nickname = user.getNickname();
+            this.password = user.getPassword();
+            this.userImage = user.getUploadFile();
+            if (user.getEmailCheck().equals(EmailCheck.ALLOW)) {
+                this.emailCheck = true;
+            }
+        }
+    }
+
+    @Data
+    public static class UserRespWebInfo {
+        private Long userId;
+        private String email;
+        private String nickname;
+        private String name;
+        private boolean emailCheck;
+        private UploadFile userImage;
+
+        public UserRespWebInfo(User user) {
+            this.userId = user.getId();
+            this.email = user.getEmail();
+            this.nickname = user.getNickname();
+            this.name = user.getName();
+            this.emailCheck = user.getEmailCheck().equals(EmailCheck.ALLOW);
+            this.userImage = user.getUploadFile();
         }
     }
 }

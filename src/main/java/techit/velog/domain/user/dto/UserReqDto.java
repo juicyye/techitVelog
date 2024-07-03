@@ -5,39 +5,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.entity.User;
 @Slf4j
 public class UserReqDto {
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UserReqDtoWebUpdate{
-        private String email;
-        private String username;
-        private String nickname;
-        private String password;
-        private String changePassword;
-        private String changePasswordConfirm;
-        private boolean emailCheck;
 
-    }
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserReqDtoWeb{
+    public static class UserReqDtoWebUpdate {
+        private Long userId;
         private String email;
         private String nickname;
         private String password;
         private String changePassword;
         private String changePasswordConfirm;
         private boolean emailCheck;
-        private String description;
-
-        public UserReqDtoWeb(User user) {
-            this.email = user.getEmail();
-            this.nickname = user.getNickname();
-        }
+        private MultipartFile userImage;
+        private String blogDescription;
     }
     @Data
     @NoArgsConstructor

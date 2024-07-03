@@ -123,7 +123,7 @@ public class Posts extends BaseEntity {
     }
 
 
-    public void change(PostReqDtoWebUpdate postReqDtoWebUpdate) {
+    public void change(PostReqDtoWebUpdate postReqDtoWebUpdate, UploadFile uploadFile, List<UploadFile> uploadFiles) {
         this.title = postReqDtoWebUpdate.getTitle();
         this.content = postReqDtoWebUpdate.getContent();
         this.isSecret = postReqDtoWebUpdate.getIsSecret();
@@ -131,9 +131,20 @@ public class Posts extends BaseEntity {
         if (postReqDtoWebUpdate.getIsTemp()) {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
+        removeUpload();
+        this.uploadFile = uploadFile;
+        this.uploadFiles = uploadFiles;
     }
 
     public void removePostTag(){
         this.postTags.clear();
+    }
+
+    /**
+     * 이미지 파일 삭제
+     */
+    public void removeUpload(){
+        this.uploadFiles.clear();
+        this.uploadFile = null;
     }
 }
