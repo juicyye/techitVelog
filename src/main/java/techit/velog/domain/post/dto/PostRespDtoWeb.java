@@ -24,7 +24,6 @@ public class PostRespDtoWeb {
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
         private int views;
-        private String nickname;
         private Long likes;
         private List<String> tagName;
         private List<UploadFile> postImages;

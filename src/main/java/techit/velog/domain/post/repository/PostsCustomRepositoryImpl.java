@@ -121,24 +121,24 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
 
     @Override
     public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
-        PostRespDtoWebDetail postRespDtoWebDetail = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
+        PostRespDtoWebDetail result = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
-                        blog.title.as("blogName"), user.nickname.as("nickname"), likes.countDistinct().as("likes")))
+                        blog.title.as("blogName"), likes.countDistinct().as("likes")))
                 .from(posts)
                 .join(posts.blog, blog)
-                .join(blog.user, user)
                 .leftJoin(posts.likes, likes)
                 .where(blog.title.eq(blogName), posts.title.eq(postTitle))
-                .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .groupBy(posts.id, posts.title, blog.title)
                 .fetchOne();
 
         List<UploadFile> uploadFiles = queryFactory.select(uploadFile)
                 .from(uploadFile)
-                .where(uploadFile.posts.id.eq(postRespDtoWebDetail.getPostId()))
+                .join(uploadFile.posts, posts)
+                .where(posts.id.eq(result.getPostId()))
                 .fetch();
+        result.setPostImages(uploadFiles);
+        return result;
 
-        postRespDtoWebDetail.setPostImages(uploadFiles);
-        return postRespDtoWebDetail;
     }
 
     private BooleanExpression isTemp(Boolean temp) {

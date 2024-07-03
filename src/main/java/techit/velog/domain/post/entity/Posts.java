@@ -34,12 +34,11 @@ public class Posts extends BaseEntity {
     private IsSecret isSecret;
     private int views;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "upload_file_id")
     private UploadFile uploadFile;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     private List<UploadFile> uploadFiles = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -109,6 +108,14 @@ public class Posts extends BaseEntity {
         postTag.setPost(this);
     }
 
+    public void addImages(UploadFile uploadFile,List<UploadFile> uploadFiles) {
+        this.uploadFile = uploadFile;
+        this.uploadFiles.addAll(uploadFiles);
+        for (UploadFile file : uploadFiles) {
+            file.changePost(this);
+        }
+    }
+
     /**
      * 비즈니스 메서드
      */
@@ -116,12 +123,6 @@ public class Posts extends BaseEntity {
     public void addView(int views){
         this.views = views;
     }
-
-    public void changeUploadFile(List<UploadFile> uploadFiles, UploadFile uploadFile) {
-        this.uploadFiles = uploadFiles;
-        this.uploadFile = uploadFile;
-    }
-
 
     public void change(PostReqDtoWebUpdate postReqDtoWebUpdate, UploadFile uploadFile, List<UploadFile> uploadFiles) {
         this.title = postReqDtoWebUpdate.getTitle();
@@ -132,8 +133,7 @@ public class Posts extends BaseEntity {
             this.isReal = IsReal.TEMP;
         } else this.isReal = IsReal.REAL;
         removeUpload();
-        this.uploadFile = uploadFile;
-        this.uploadFiles = uploadFiles;
+        addImages(uploadFile,uploadFiles);
     }
 
     public void removePostTag(){

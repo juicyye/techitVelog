@@ -67,7 +67,7 @@ public class PostService {
 
         // post 저장
         Posts posts = new Posts(postReqDtoWebCreate, blog);
-        posts.changeUploadFile(uploadFiles, uploadFile);
+        posts.addImages(uploadFile,uploadFiles);
         splitTag(postReqDtoWebCreate.getTagName(), blog, posts);
 
         return postRepository.save(posts).getId();

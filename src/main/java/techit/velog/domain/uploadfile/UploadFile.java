@@ -18,14 +18,21 @@ public class UploadFile {
     private String storeFileName;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "uploadFile")
-    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uploadFiles")
     private Posts posts;
 
     public UploadFile(String uploadFileName, String storeFileName) {
         this.uploadFileName = uploadFileName;
         this.storeFileName = storeFileName;
+    }
+
+    /**
+     * 편의 메서드
+     */
+    public void changePost(Posts post) {
+        this.posts = post;
     }
 }
