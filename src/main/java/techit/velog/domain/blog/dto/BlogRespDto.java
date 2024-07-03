@@ -25,7 +25,7 @@ public class BlogRespDto {
         private String description;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
-        private UploadFile image;
+        private UploadFile userImage;
         private int followers;
         private int followings;
 

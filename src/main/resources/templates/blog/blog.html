@@ -11,6 +11,9 @@
 <section class="container mt-4">
     <div class="card mb-4 p-4">
         <div class="mb-3">
+            <div th:if="${blog.userImage != null}" th:with="image=${blog.userImage}">
+                <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
+            </div>
             <h4 class="card-title">닉네임</h4>
             <h3 th:text="${blog.nickname}"></h3>
         </div>
@@ -38,7 +41,6 @@
 
     <div th:each="post : ${posts}" class="card mb-4 p-4">
         <div th:if="${post.postImage != null}" th:with="image=${post.postImage}">
-            <a th:href="|/attach/${post.postId}|"></a>
             <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
         </div>
 

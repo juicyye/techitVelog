@@ -17,12 +17,11 @@ public class UploadFile {
     private String uploadFileName;
     private String storeFileName;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "uploadFile")
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
     private Posts posts;
 
     public UploadFile(String uploadFileName, String storeFileName) {

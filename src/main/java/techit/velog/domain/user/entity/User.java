@@ -39,7 +39,8 @@ public class User extends BaseEntity {
     @JoinColumn(name = "blog_id")
     private Blog blog;
 
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "upload_file_id")
     private UploadFile uploadFile;
     /**
      * 회원가입 Dto -> Entity
