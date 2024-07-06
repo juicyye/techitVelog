@@ -1,26 +1,34 @@
-package techit.velog.global.security;
+package techit.velog.global.dto;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import techit.velog.domain.user.dto.UserReqDto;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 @Getter
-public class AccountContext implements UserDetails {
-    private final AccountDto accountDto;
-    private final List<GrantedAuthority> authorities;
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
-    public AccountContext(AccountDto accountDto, List<GrantedAuthority> authorities) {
+    private final AccountDto accountDto;
+    private Map<String, Object> attributes = new HashMap<>();
+
+    public PrincipalDetails(AccountDto accountDto) {
         this.accountDto = accountDto;
-        this.authorities = authorities;
+    }
+
+    public PrincipalDetails(AccountDto accountDto, Map<String, Object> attributes) {
+        this.accountDto = accountDto;
+        this.attributes = attributes;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(accountDto.getRole().name()));
     }
 
     @Override
@@ -51,5 +59,17 @@ public class AccountContext implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    // Oauth2 메서드
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        return accountDto.getName();
     }
 }

@@ -21,6 +21,7 @@ import techit.velog.domain.post.dto.PostReqDtoWeb;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.uploadfile.FileStore;
+import techit.velog.global.dto.PrincipalDetails;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -69,8 +70,8 @@ public class BlogController {
     }
 
     @GetMapping("/follow")
-    public String follow(@PathVariable("blogName") String blogName, @AuthenticationPrincipal AccountDto accountDto) {
-        followService.follow(accountDto.getLoginId(),blogName);
+    public String follow(@PathVariable("blogName") String blogName, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        followService.follow(principalDetails.getUsername(),blogName);
 
         return "redirect:/{blogName}";
     }

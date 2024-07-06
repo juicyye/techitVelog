@@ -9,6 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.entity.User;
+import techit.velog.global.dto.OAuth2Response;
+import techit.velog.global.valid.Unique;
+
+import java.util.UUID;
+
 @Slf4j
 public class UserReqDto {
 
@@ -17,6 +22,7 @@ public class UserReqDto {
     @NoArgsConstructor
     public static class UserReqDtoWebUpdate {
         private Long userId;
+        private String name;
         private String email;
         private String nickname;
         private String password;
@@ -30,13 +36,17 @@ public class UserReqDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserJoinReq{
+        @Unique
         private String name;
+        @Unique
         private String loginId;
         private String password;
         private String passwordConfirm;
         private boolean emailCheck;
+        @Unique
         private String email;
         private Role role;
+        @Unique
         private String nickname;
     }
     @Data
@@ -53,16 +63,40 @@ public class UserReqDto {
     @Builder
     public static class AccountDto{
         private Long id;
+        private String name;
+        private String email;
         private String loginId;
         private String password;
         private Role role;
 
+        public AccountDto(User user) {
+            this.id = user.getId();
+            this.name = user.getName();
+            this.email = user.getEmail();
+            this.loginId = user.getLoginId();
+            this.role = user.getRole();
+        }
+
+        public AccountDto(Long id, String name, String loginId, Role role) {
+            this.id = id;
+            this.name = name;
+            this.loginId = loginId;
+            this.role = role;
+        }
+
+        public AccountDto(String loginId, String role) {
+            this.loginId = loginId;
+            this.role = Role.valueOf(role);
+        }
+
         public static AccountDto toDto(User user){
             return AccountDto.builder()
                     .id(user.getId())
+                    .name(user.getName())
                     .loginId(user.getLoginId())
                     .password(user.getPassword())
                     .role(user.getRole())
+                    .email(user.getEmail())
                     .build();
         }
 
@@ -72,4 +106,5 @@ public class UserReqDto {
     public static class UserReqDeleteDto{
         private String password;
     }
+
 }

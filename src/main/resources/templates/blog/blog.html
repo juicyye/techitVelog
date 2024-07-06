@@ -26,16 +26,16 @@
             <h3 th:text="${#temporals.format(blog.createDate,'yyyy-MM-dd')}"></h3>
         </div>
         <div class="d-flex justify-content-between mb-3">
-            <button class="btn btn-primary" th:onclick="|location.href='@{|/${blog.title}/follow|}'|">팔로우</button>
-            <button class="btn btn-secondary" th:onclick="|location.href='@{|/${blog.title}/likes|}'|">좋아한 포스트</button>
+            <button class="btn btn-primary" th:onclick="|location.href='@{|/${blog.blogName}/follow|}'|">팔로우</button>
+            <button class="btn btn-secondary" th:onclick="|location.href='@{|/${blog.blogName}/likes|}'|">좋아한 포스트</button>
         </div>
         <div class="mb-3">
             <h4 class="card-title">팔로워</h4>
-            <h3><a th:href="@{|/${blog.title}/followers|}" th:text="${blog.followers}"></a></h3>
+            <h3><a th:href="@{|/${blog.blogName}/followers|}" th:text="${blog.followers}"></a></h3>
         </div>
         <div class="mb-3">
             <h4 class="card-title">팔로잉</h4>
-            <h3><a th:href="@{|/${blog.title}/followings|}" th:text="${blog.followings}"></a></h3>
+            <h3><a th:href="@{|/${blog.blogName}/followings|}" th:text="${blog.followings}"></a></h3>
         </div>
     </div>
 

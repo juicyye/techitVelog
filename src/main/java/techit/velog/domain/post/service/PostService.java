@@ -25,6 +25,7 @@ import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
+import techit.velog.global.dto.PrincipalDetails;
 import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
 
@@ -56,10 +57,10 @@ public class PostService {
      */
 
     @Transactional
-    public Long create(PostReqDtoWebCreate postReqDtoWebCreate, AccountDto accountDto) {
+    public Long create(PostReqDtoWebCreate postReqDtoWebCreate, String loginId) {
 
         // 블로그 불러오고 필요한것들 바꾸기
-        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
+        Blog blog = blogRepository.findByLoginId(loginId).orElseThrow(() -> new IllegalArgumentException("블로그가 없습니다."));
 
         List<UploadFile> uploadFiles = ImageFiles(postReqDtoWebCreate.getImageFiles());
         UploadFile uploadFile = uploadFile(postReqDtoWebCreate.getImageFile());
@@ -242,8 +243,8 @@ public class PostService {
      * todo 왜있는지 확인하기
      */
 
-    public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate, AccountDto accountDto) {
-        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
+    public boolean duplicateBlogName(PostReqDtoWebCreate postReqDtoWebCreate, String loginId) {
+        Blog blog = blogRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
         Optional<Posts> _posts = postRepository.findPostBlogName(blog.getTitle(), postReqDtoWebCreate.getTitle());
         if (_posts.isPresent()) {
             return true;
@@ -256,8 +257,8 @@ public class PostService {
      * 임시 저장된 글만 보여주는 메소드
      */
 
-    public List<PostRespDtoWebSave> getPostSave(AccountDto accountDto) {
-        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("not found blog"));
+    public List<PostRespDtoWebSave> getPostSave(String loginId) {
+        Blog blog = blogRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("not found blog"));
         return postRepository.findByBlog_Id(blog.getId()).stream().filter(f -> f.getIsReal() == IsReal.TEMP).map(post -> {
             PostRespDtoWebSave postRespDtoWebSave = new PostRespDtoWebSave(post);
             postRespDtoWebSave.setBlogName(blog.getTitle());
@@ -288,9 +289,9 @@ public class PostService {
         Optional<User> _user = userRepository.findByBlog_Name(blogName);
         if (_user.isPresent()) {
             User user = _user.get();
-            AccountDto accountDto = (AccountDto) securityContext.getAuthentication().getPrincipal();
-            log.info("user : {}", accountDto.getLoginId());
-            if (user.getLoginId().equals(accountDto.getLoginId())) {
+            PrincipalDetails principal = (PrincipalDetails) securityContext.getAuthentication().getPrincipal();
+            log.info("user : {}", principal.getUsername());
+            if (user.getLoginId().equals(principal.getUsername())) {
                 return true;
             }
         }

@@ -13,20 +13,20 @@
     <div class="card p-4">
         <div class="mb-3">
             <h3>이름</h3>
-            <h3 class="card-title" th:text="${user.name}"></h3>
+            <h3 class="card-title" th:text="${blog.name}"></h3>
         </div>
         <div class="mb-3">
             <h3>닉네임</h3>
-            <h3 class="card-subtitle text-muted" th:text="${user.nickname}"></h3>
+            <h3 class="card-subtitle text-muted" th:text="${blog.nickname}"></h3>
         </div>
         <div class="mb-3">
             <h3>이메일</h3>
-            <h3 class="card-text" th:text="${user.email}"></h3>
+            <h3 class="card-text" th:text="${blog.email}"></h3>
         </div>
         <div class="form-group">
             <label>이메일 수신 설정</label>
             <div class="form-check">
-                <input type="checkbox" id="emailCheck" th:field="${user.emailCheck}" class="form-check-input" disabled>
+                <input type="checkbox" id="emailCheck" th:field="${blog.emailCheck}" class="form-check-input" disabled>
                 <label for="emailCheck" class="form-check-label">허용</label>
             </div>
         </div>

@@ -12,6 +12,7 @@ public class UserRespDtoWeb {
     @Setter
     public static class UserRespDtoWebUpdate {
         private Long userId;
+        private String name;
         private String email;
         private String nickname;
         private String password;
@@ -22,6 +23,7 @@ public class UserRespDtoWeb {
         private String changePasswordConfirm;
 
         public UserRespDtoWebUpdate(User user) {
+            this.name = user.getName();
             this.userId = user.getId();
             this.email = user.getEmail();
             this.nickname = user.getNickname();
@@ -36,14 +38,16 @@ public class UserRespDtoWeb {
     @Data
     public static class UserRespWebInfo {
         private Long userId;
+        private String blogName;
         private String email;
         private String nickname;
         private String name;
         private boolean emailCheck;
         private UploadFile userImage;
 
-        public UserRespWebInfo(User user) {
+        public UserRespWebInfo(User user, String blogName) {
             this.userId = user.getId();
+            this.blogName = blogName;
             this.email = user.getEmail();
             this.nickname = user.getNickname();
             this.name = user.getName();

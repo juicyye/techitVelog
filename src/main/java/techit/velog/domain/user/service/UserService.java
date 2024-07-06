@@ -2,6 +2,9 @@ package techit.velog.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +58,9 @@ public class UserService {
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + loginId);
         }
-        return new UserRespWebInfo(_user.get());
+        User user = _user.get();
+        Blog blog = blogRepository.findByUser_Id(user.getId()).orElseThrow(() -> new CustomWebException("not found blog"));
+        return new UserRespWebInfo(user,blog.getTitle());
     }
 
     public UserRespDtoWebUpdate getUserByUpdate(String loginId) {
@@ -69,28 +74,29 @@ public class UserService {
         return userRespDtoWebUpdate;
     }
 
-    public boolean checkPassword(AccountDto accountDto, String password) {
-        if (passwordEncoder.matches(password, accountDto.getPassword())) {
+    public boolean checkPassword(String loginId, String password) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("not found user"));
+        if (passwordEncoder.matches(password, user.getPassword())) {
             return true;
         } else{
             return false;
         }
     }
     @Transactional
-    public void updateInfo(UserReqDtoWebUpdate userReqDtoWeb, AccountDto accountDto) {
-        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+    public void updateInfo(UserReqDtoWebUpdate userReqDtoWeb, String loginId) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("user not found by loginId: " + loginId));
         userReqDtoWeb.setChangePassword(passwordEncoder.encode(userReqDtoWeb.getChangePassword()));
         UploadFile uploadFile = uploadFile(userReqDtoWeb.getUserImage());
         user.changeInfo(userReqDtoWeb,uploadFile);
         Blog blog = blogRepository.findByUser_Id(user.getId()).orElseThrow(() -> new CustomWebException("not found blog"));
-        blog.changeDescription(userReqDtoWeb.getBlogDescription());
+        blog.changeInfo(userReqDtoWeb.getBlogDescription(),"@"+user.getName());
     }
 
     @Transactional
-    public void deleteUser(AccountDto accountDto) {
+    public void deleteUser(String loginId) {
         // todo 연관관계 테이블들 삭제`
-        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
-        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("user not found by loginId: " + accountDto.getLoginId()));
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("user not found by loginId: " + loginId));
+        Blog blog = blogRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("user not found by loginId: " + loginId));
         postRepository.deleteByBlog_id(blog.getId());
         userRepository.delete(user);
     }
@@ -110,5 +116,18 @@ public class UserService {
         } else {
             return null;
         }
+    }
+
+    public boolean isUser(SecurityContext securityContext) {
+        Authentication authentication = securityContext.getAuthentication();
+        if(authentication instanceof AnonymousAuthenticationToken) {
+           return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean validationName(String name) {
+        return userRepository.existsByName(name);
     }
 }

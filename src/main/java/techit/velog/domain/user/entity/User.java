@@ -1,13 +1,11 @@
 package techit.velog.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.global.dto.OAuth2Response;
 
 import java.util.UUID;
 
@@ -60,6 +58,19 @@ public class User extends BaseEntity {
     }
 
     /**
+     * OAuth2 전용 생성자
+     */
+    public User(OAuth2Response oAuth2Response) {
+        this.userId = UUID.randomUUID().toString();
+        this.nickname = oAuth2Response.getName();
+        this.loginId = oAuth2Response.getLoginId();
+        this.name = oAuth2Response.getName();
+        this.email = oAuth2Response.getEmail();
+        this.emailCheck = EmailCheck.ALLOW;
+        this.role = Role.ROLE_USER;
+    }
+
+    /**
      * 편의 메서드
      */
     public void setBlog(Blog blog) {
@@ -77,6 +88,13 @@ public class User extends BaseEntity {
         this.password = userReqDtoWeb.getChangePassword();
         this.emailCheck = emailCheck1;
         this.uploadFile = uploadFile;
+        this.name = userReqDtoWeb.getName();
 
+    }
+
+    public void changeOauth(OAuth2Response oAuth2Response) {
+        this.email = oAuth2Response.getEmail();
+        this.name = oAuth2Response.getName();
+        this.email = oAuth2Response.getLoginId();
     }
 }

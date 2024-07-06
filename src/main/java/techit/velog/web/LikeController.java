@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.liks.service.LikeService;
 import techit.velog.domain.user.dto.UserReqDto;
+import techit.velog.global.dto.PrincipalDetails;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 
@@ -20,8 +21,8 @@ public class LikeController {
     private final LikeService likeService;
 
     @GetMapping("/like/{blogName}/{postId}")
-    public String like(@PathVariable("postId") Long postId, @AuthenticationPrincipal AccountDto accountDto, RedirectAttributes rttr) {
-        String postTitle = likeService.like(postId, accountDto);
+    public String like(@PathVariable("postId") Long postId, @AuthenticationPrincipal PrincipalDetails principalDetails, RedirectAttributes rttr) {
+        String postTitle = likeService.like(postId, principalDetails.getUsername());
         rttr.addAttribute("postTitle", postTitle);
 
         return "redirect:/{blogName}/{postTitle}";

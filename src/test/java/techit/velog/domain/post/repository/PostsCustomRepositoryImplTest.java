@@ -46,7 +46,7 @@ class PostsCustomRepositoryImplTest extends DummyObject {
         Blog blog = blogRepository.findByTitle("@user").orElseThrow();
         PostReqDtoWebCreate postReqDtoWebCreate = new PostReqDtoWebCreate("타이틀", "콘텐트");
         Posts posts = new Posts(postReqDtoWebCreate, blog);
-        postService.create(postReqDtoWebCreate, accountDto);
+        postService.create(postReqDtoWebCreate, "user");
     }
 
     @Test

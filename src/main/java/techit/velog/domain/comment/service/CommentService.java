@@ -29,8 +29,8 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long create(CommentReqDtoWebBasic commentReqDtoWebBasic, AccountDto accountDto) {
-        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("유저를 찾을 수 없습니다."));
+    public Long create(CommentReqDtoWebBasic commentReqDtoWebBasic, String loginId) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("유저를 찾을 수 없습니다."));
         Posts posts = postRepository.findById(commentReqDtoWebBasic.getPostId()).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         Comment comment = new Comment(commentReqDtoWebBasic, posts, user);
         if (commentReqDtoWebBasic.getCommentId() != null) {

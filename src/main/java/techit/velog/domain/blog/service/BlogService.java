@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.global.dto.PrincipalDetails;
 import techit.velog.global.exception.CustomWebException;
 
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
@@ -22,8 +23,8 @@ public class BlogService {
         return blogRepository.findAllByBlog(blog.getTitle());
     }
 
-    public BlogRespDtoWeb getBlog(AccountDto accountDto) {
-        Blog blog = blogRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
+    public BlogRespDtoWeb getBlog(PrincipalDetails principalDetails) {
+        Blog blog = blogRepository.findByLoginId(principalDetails.getUsername()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
         return new BlogRespDtoWeb(blog);
     }
 }

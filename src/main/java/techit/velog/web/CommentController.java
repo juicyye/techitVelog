@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.comment.service.CommentService;
+import techit.velog.global.dto.PrincipalDetails;
 
 import static techit.velog.domain.comment.dto.CommentReqDtoWeb.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -22,11 +23,11 @@ public class CommentController {
 
     @PostMapping("/comment")
     public String createComment(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
-                                @ModelAttribute("comment") CommentReqDtoWebBasic commentReqDtoWebBasic, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto) {
+                                @ModelAttribute("comment") CommentReqDtoWebBasic commentReqDtoWebBasic, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (bindingResult.hasErrors()) {
             return "redirect:/{blogName}/{postTitle}";
         }
-        commentService.create(commentReqDtoWebBasic, accountDto);
+        commentService.create(commentReqDtoWebBasic, principalDetails.getUsername());
         return "redirect:/{blogName}/{postTitle}";
     }
 

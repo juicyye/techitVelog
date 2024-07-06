@@ -21,7 +21,6 @@ public class BlogRespDto {
         private Long userId;
         private String blogName;
         private String nickname;
-        private String title;
         private String description;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;
@@ -32,7 +31,6 @@ public class BlogRespDto {
         public BlogRespDtoWeb(Blog blog) {
             this.blogId = blog.getId();
             this.blogName = blog.getTitle();
-            this.title = blog.getTitle();
             this.createDate = blog.getCreateDate();
             this.updateDate = blog.getUpdateDate();
             this.description = blog.getDescription();

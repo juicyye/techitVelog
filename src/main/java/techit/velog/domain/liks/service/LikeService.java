@@ -29,8 +29,8 @@ public class LikeService {
     private final PostsRepository postRepository;
 
     @Transactional
-    public String like(Long postId, AccountDto accountDto) {
-        User user = userRepository.findByLoginId(accountDto.getLoginId()).orElseThrow(() -> new CustomWebException("아이디가 없습니다."));
+    public String like(Long postId, String loginId) {
+        User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("아이디가 없습니다."));
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         Optional<Likes> _like = likeRepository.findByPosts_IdAndUser_Id(postId, user.getId());
 
