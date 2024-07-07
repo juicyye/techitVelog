@@ -9,71 +9,65 @@
 </head>
 <body>
 <section class="container mt-4">
-    <div class="card mb-4 p-4">
-        <div class="mb-3">
+    <div class="mb-4 p-4">
+        <div class="d-flex mb-3 align-items-center">
             <div th:if="${blog.userImage != null}" th:with="image=${blog.userImage}">
-                <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
+                <img th:src="|/images/${image.getStoreFileName()}|" width="100" height="100" class="rounded-circle"/>
             </div>
-            <h4 class="card-title">닉네임</h4>
-            <h3 th:text="${blog.nickname}"></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">블로그 소개</h4>
-            <h3 th:text="${blog.description}"></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">블로그 생성일자</h4>
-            <h3 th:text="${#temporals.format(blog.createDate,'yyyy-MM-dd')}"></h3>
+            <div class="ml-3">
+                <h4 class="mb-0" th:text="${blog.nickname}"></h4>
+                <div class="text-muted small">
+                    <span>팔로워: <a th:href="@{|/${blog.blogName}/followers|}" th:text="${blog.followers}"></a></span>
+                    <span class="ml-2">팔로잉: <a th:href="@{|/${blog.blogName}/followings|}" th:text="${blog.followings}"></a></span>
+                </div>
+            </div>
         </div>
         <div class="d-flex justify-content-between mb-3">
             <button class="btn btn-primary" th:onclick="|location.href='@{|/${blog.blogName}/follow|}'|">팔로우</button>
             <button class="btn btn-secondary" th:onclick="|location.href='@{|/${blog.blogName}/likes|}'|">좋아한 포스트</button>
         </div>
-        <div class="mb-3">
-            <h4 class="card-title">팔로워</h4>
-            <h3><a th:href="@{|/${blog.blogName}/followers|}" th:text="${blog.followers}"></a></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">팔로잉</h4>
-            <h3><a th:href="@{|/${blog.blogName}/followings|}" th:text="${blog.followings}"></a></h3>
-        </div>
+        <div class="divider"></div>
     </div>
 
-    <div th:each="post : ${posts}" class="card mb-4 p-4">
-        <div th:if="${post.postImage != null}" th:with="image=${post.postImage}">
-            <a th:href="@{|/${post.blogName}/${post.title}|}">
-            <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
-            </a>
-        </div>
 
-        <div class="mb-3">
-            <h4 class="card-title">제목</h4>
-            <h3 class="card-title" ><a href="" th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}"></a></h3>
+    <div class="row w-100">
+        <div class="col-md-3 custom-tag-list">
+            <h4>태그 목록</h4>
+            <div class="divider"></div>
+            <div th:each="tag : ${tags}" class="mb-2">
+                <h5>
+                    <a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name}" style="color: black"></a>
+                    <span th:text="'(' + ${tag.postTagCount} +')'"></span>
+                </h5>
+            </div>
         </div>
-        <div class="mb-3">
-            <h4 class="card-title">간단설명</h4>
-            <h3 th:text="${post.postDescription}"></h3>
-        </div>
-        <div th:each="tag : ${post.tagName}">
-            <h3 class="card-title" th:text="${tag}"></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">작성일자</h4>
-            <h3 th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">댓글수</h4>
-            <h3 th:text="${post.comments}"></h3>
-        </div>
-        <div class="mb-3">
-            <h4 class="card-title">좋아요수</h4>
-            <h3 th:text="${post.likes}"></h3>
-        </div>
-    </div>
+        <div class="col-md-9">
+            <div th:each="post : ${posts}" class="mb-4 p-4">
+                <div th:if="${post.postImage != null}" th:with="image=${post.postImage}" class="mb-3">
+                    <a th:href="@{|/${post.blogName}/${post.title}|}">
+                        <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100" class="img-fluid"/>
+                    </a>
+                </div>
 
-    <div th:each="tag : ${tags}" class="mb-4">
-        <h3><a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name}"></a></h3>
-        <p th:text="'(' + ${tag.postTagCount} +')'"></p>
+                <div class="mb-3">
+                    <h3><a href="" th:href="@{|/${post.blogName}/${post.title}|}"
+                           th:text="${post.title}" style="color:black"></a></h3>
+                </div>
+                <div class="mb-3">
+                    <p th:text="${post.postDescription}"></p>
+                </div>
+                <div class="mb-3">
+                    <div th:each="tag : ${post.tagName}">
+                        <span class="badge badge-secondary" ><a href="" th:href="@{|/${blog.blogName}/posts/${tag}|}" th:text="${tag}" style="color: white"></a></span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small custom-spacing">
+                    <span th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></span>
+                    <span>댓글수: <span th:text="${post.comments}"></span></span>
+                    <span>좋아요수: <span th:text="${post.likes}"></span></span>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 </body>

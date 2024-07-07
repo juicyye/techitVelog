@@ -6,13 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
-import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.entity.User;
-import techit.velog.global.dto.OAuth2Response;
-import techit.velog.global.valid.Unique;
-
-import java.util.UUID;
+import techit.velog.global.valid.JoinUnique;
+import techit.velog.global.valid.UserUpdate;
 
 @Slf4j
 public class UserReqDto {
@@ -22,8 +19,11 @@ public class UserReqDto {
     @NoArgsConstructor
     public static class UserReqDtoWebUpdate {
         private Long userId;
+        @UserUpdate
         private String name;
+        @UserUpdate
         private String email;
+        @UserUpdate
         private String nickname;
         private String password;
         private String changePassword;
@@ -36,17 +36,17 @@ public class UserReqDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserJoinReq{
-        @Unique
+        @JoinUnique
         private String name;
-        @Unique
+        @JoinUnique
         private String loginId;
         private String password;
         private String passwordConfirm;
         private boolean emailCheck;
-        @Unique
+        @JoinUnique
         private String email;
         private Role role;
-        @Unique
+        @JoinUnique
         private String nickname;
     }
     @Data

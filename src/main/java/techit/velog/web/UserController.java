@@ -124,15 +124,6 @@ public class UserController {
             bindingResult.reject("password_not_confirm","비밀번호가 일치하지 않습니다.");
             return "user/update";
         }
-        if(userService.validationEmail(userReqDtoWeb.getEmail())) {
-            bindingResult.reject("validated_email", "이메일이 이미 존재합니다.");
-            return "user/update";
-        }
-        if (userService.validationName(userReqDtoWeb.getName())) {
-            bindingResult.reject("validated_name", "이미 존재하는 블로그이름 또는 이름입니다.");
-            return "user/update";
-        }
-
 
         userService.updateInfo(userReqDtoWeb,principalDetails.getUsername());
         rttr.addAttribute("update",true);

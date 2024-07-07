@@ -97,4 +97,16 @@ public class User extends BaseEntity {
         this.name = oAuth2Response.getName();
         this.email = oAuth2Response.getLoginId();
     }
+
+    public boolean isUserEmail(String email) {
+        return this.email.equals(email);
+    }
+
+    public boolean isUserNickname(String nickname) {
+        return this.nickname.equals(nickname);
+    }
+    public boolean isUserName(String name) {
+        return this.name.equals(name);
+    }
+
 }

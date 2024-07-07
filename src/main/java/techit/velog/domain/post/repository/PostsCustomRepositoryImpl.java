@@ -1,5 +1,7 @@
 package techit.velog.domain.post.repository;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import techit.velog.domain.post.dto.PostSortType;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.uploadfile.QUploadFile;
@@ -37,8 +40,9 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     }
 
     @Override
-    public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable) {
+    public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType) {
         QUploadFile userImage = new QUploadFile("userImage");
+        OrderSpecifier orderSpecifier = createOrderSpecifier(postSortType);
 
         List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
                         posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate,posts.views,
@@ -54,6 +58,9 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .leftJoin(posts.uploadFile, uploadFile)
                 .groupBy(posts.id, user.nickname, posts.title, blog.title)
                 .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
+                .orderBy(orderSpecifier, posts.createDate.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
 
         int total = queryFactory.select(posts)
@@ -61,7 +68,17 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
                 .fetch().size();
 
+
         return new PageImpl<>(results, pageable, total);
+    }
+
+    private OrderSpecifier createOrderSpecifier(PostSortType sortType) {
+        return switch (sortType) {
+            case PostSortType.OLDEST -> new OrderSpecifier(Order.ASC, posts.createDate);
+            case PostSortType.LIKES -> new OrderSpecifier(Order.DESC, likes.countDistinct());
+            case PostSortType.NEWEST -> new OrderSpecifier(Order.DESC, posts.createDate);
+            default -> new OrderSpecifier(Order.DESC, posts.createDate);
+        };
     }
 
     public List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isuser) {
@@ -78,16 +95,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .where(blog.title.eq(blogName),isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()))
                 .fetch();
 
-        for (PostRespDtoWebVelog result : results) {
-            List<String> tagList = queryFactory.select(tags.name)
-                    .from(postTag)
-                    .join(postTag.tags, tags)
-                    .join(postTag.posts, posts)
-                    .where(posts.id.eq(result.getPostId()))
-                    .fetch();
-            result.setTagName(tagList);
-        }
-        return results;
+        return getTagNames(results);
     }
 
 
@@ -95,7 +103,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     @Override
     public List<PostRespDtoWebVelog> findPostsByTagName(String blogName, String tagName, boolean isUser) {
         List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
-                        posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), posts.uploadFile.as("postImage"),
+                        posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), uploadFile.as("postImage"),
                         posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")))
                 .from(postTag)
                 .join(postTag.tags, tags)
@@ -103,10 +111,15 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .join(posts.blog, blog)
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
+                .leftJoin(posts.uploadFile, uploadFile)
                 .where(blog.title.eq(blogName).and(tags.name.eq(tagName)))
                 .groupBy(posts.id, blog.title)
                 .fetch();
 
+        return getTagNames(results);
+    }
+
+    private List<PostRespDtoWebVelog> getTagNames(List<PostRespDtoWebVelog> results) {
         for (PostRespDtoWebVelog result : results) {
             List<String> tagList = queryFactory.select(tags.name)
                     .from(postTag)

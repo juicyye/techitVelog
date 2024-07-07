@@ -9,6 +9,14 @@
 </head>
 <body>
 <section class="container mt-4">
+    <div class="sort-container">
+        <button class="sort-toggle" onclick="toggleSortMenu()">정렬</button>
+        <div class="sort-menu" id="sortMenu">
+            <button onclick="setSortType('newest')">최신순</button>
+            <button onclick="setSortType('oldest')">오래된순</button>
+            <button onclick="setSortType('likes')">좋아요순</button>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div th:each="post : ${posts}" class="card mb-3">
@@ -48,13 +56,31 @@
                         <h5>블로그 이동</h5>
                         <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.nickname}"></a>
                     </div>
-
-
                 </div>
             </div>
-
         </div>
     </div>
+    <!-- 페이징 처리 시작 -->
+    <div th:if="${!posts.isEmpty()}" class="fixed-bottom-pagination">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item disabled">
+                <a class="page-link" th:href="@{|?page=${posts.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="post: ${#numbers.sequence(0, posts.totalPages-1)}"
+                th:if="${post >= posts.number-3 and post <= posts.number+3}"
+                th:classappend="${post == posts.number} ? 'active' : ''" class="page-item">
+                <a th:text="${post+1}" class="page-link" th:href="@{|?page=${post}|}"></a>
+            </li>
+            <li class="page-item disabled">
+                <a class="page-link" th:href="@{|?post=${posts.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징 처리 끝 -->
 </section>
 </body>
 </html>
