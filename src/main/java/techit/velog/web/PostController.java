@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.blog.service.BlogService;
+import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
@@ -68,15 +69,17 @@ public class PostController {
 
     @GetMapping
     public String posts(@PageableDefault(size = 3) Pageable pageable, Model model,
-                        @CurrentSecurityContext SecurityContext securityContext, @RequestParam(value = "sortType",required = false,defaultValue = "NEWEST") String sortType) {
+                        @CurrentSecurityContext SecurityContext securityContext, @RequestParam(value = "sortType",required = false,defaultValue = "NEWEST") String sortType,
+                        @ModelAttribute PostSearch search) {
         log.info("securityContext {}", securityContext);
+        log.info("search {}", search);
         BlogRespDtoWeb blog = null;
         if (userService.isUser(securityContext)) {
             log.info("principal {} ",securityContext.getAuthentication().getPrincipal());
             blog = blogService.getBlog((PrincipalDetails)securityContext.getAuthentication().getPrincipal());
         }
 
-        Page<PostRespDtoWebAll> posts = postService.getPosts(pageable, PostSortType.valueOf(sortType.toUpperCase()));
+        Page<PostRespDtoWebAll> posts = postService.getPosts(pageable, PostSortType.valueOf(sortType.toUpperCase()),search);
         model.addAttribute("posts", posts);
         model.addAttribute("blog", blog);
         return "posts/list";

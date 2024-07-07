@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.Posts;
@@ -80,8 +81,8 @@ public class PostService {
      * Paging 처리를 해야함
      */
 
-    public Page<PostRespDtoWebAll> getPosts(Pageable pageable, PostSortType postSortType) {
-        return postRepository.findAllByLists(pageable, postSortType);
+    public Page<PostRespDtoWebAll> getPosts(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
+        return postRepository.findAllByLists(pageable, postSortType,postSearch);
     }
 
     /**

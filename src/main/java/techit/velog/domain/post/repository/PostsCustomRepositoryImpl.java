@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.IsSecret;
@@ -40,7 +41,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     }
 
     @Override
-    public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType) {
+    public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
         QUploadFile userImage = new QUploadFile("userImage");
         OrderSpecifier orderSpecifier = createOrderSpecifier(postSortType);
 
@@ -57,7 +58,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .leftJoin(posts.comments, comment)
                 .leftJoin(posts.uploadFile, uploadFile)
                 .groupBy(posts.id, user.nickname, posts.title, blog.title)
-                .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
+                .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())),search(postSearch))
                 .orderBy(orderSpecifier, posts.createDate.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
@@ -68,8 +69,18 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .where(posts.isSecret.stringValue().eq(IsSecret.NORMAL.name()).and(posts.isReal.stringValue().eq(IsReal.REAL.name())))
                 .fetch().size();
 
-
         return new PageImpl<>(results, pageable, total);
+    }
+
+    private BooleanExpression search(PostSearch search) {
+        if (search.getKey() != null) {
+            if (search.getKey().equals("title")) {
+                return posts.title.contains(search.getValue()).or(posts.content.contains(search.getValue()));
+            } else if (search.getKey().equals("name")) {
+                return user.name.eq(search.getValue());
+            }
+        }
+        return null;
     }
 
     private OrderSpecifier createOrderSpecifier(PostSortType sortType) {
