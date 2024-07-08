@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      th:replace="~{/layout/header :: header(~{::title},~{::section})}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -24,12 +25,13 @@
                 <div class="card-body">
                     <div th:if="${post.postImage != null}" th:with="image=${post.postImage}">
                         <a th:href="@{|/${post.blogName}/${post.title}|}">
-                        <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
+                            <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100"/>
                         </a>
 
                     </div>
                     <h5 class="card-title">포스트 제목</h5>
-                    <h3 class="card-title" > <a th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}"></a></h3>
+                    <h3 class="card-title"><a th:href="@{|/${post.blogName}/${post.title}|}"
+                                              th:text="${post.title}"></a></h3>
 
                     <div class="card-text">
                         <h5>포스트 간단설명</h5>
@@ -57,9 +59,16 @@
                         <h5>블로그 이동</h5>
                         <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.nickname}"></a>
                     </div>
-                </div>
+                    <div sec:authorize="hasRole('ADMIN')" class="card-text">
+                        <form th:action="@{|/${post.blogName}/postDelete/${post.postId}|}" method="post"
+                              onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                        </form>
+                    </div>
+
             </div>
         </div>
+    </div>
     </div>
     <!-- 페이징 처리 시작 -->
     <div th:if="${!posts.isEmpty()}" class="fixed-bottom-pagination">

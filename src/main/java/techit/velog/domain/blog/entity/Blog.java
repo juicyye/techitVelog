@@ -51,4 +51,8 @@ public class Blog extends BaseEntity {
         this.description = description;
         this.title = title;
     }
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
 }

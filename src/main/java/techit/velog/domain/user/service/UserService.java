@@ -2,6 +2,9 @@ package techit.velog.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,6 +17,7 @@ import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.dto.UserRespDtoWeb;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
@@ -21,6 +25,7 @@ import techit.velog.global.exception.CustomWebException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
@@ -39,7 +44,8 @@ public class UserService {
     @Transactional
     public Long join(UserJoinReq userJoinReq) {
         userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
-        User savedUser = userRepository.save(User.toEntity(userJoinReq));
+        UploadFile uploadFile = new UploadFile("dev-jeans.png","dev-jeans.png");
+        User savedUser = userRepository.save(User.toEntity(userJoinReq, uploadFile));
         blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
         return savedUser.getId();
     }
@@ -49,7 +55,7 @@ public class UserService {
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + userId);
         }
-        return UserRespDtoWebAdmin.toDto(_user.get());
+        return new UserRespDtoWebAdmin(_user.get());
     }
 
     public UserRespDtoWebInfo getUser(String loginId) {
@@ -100,6 +106,14 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public void deleteUser(Long userId) {
+        // todo 연관관계 테이블들 삭제`
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomWebException("user not found by loginId: " + userId));
+        Blog blog = blogRepository.findByUser_Id(userId).orElseThrow(() -> new CustomWebException("user not found by loginId: " + userId));
+        blogRepository.delete(blog);
+        userRepository.delete(user);
+    }
     /**
      * 싱글 이미지파일 저장하고 객체로 바꾸는 메소드
      */
@@ -126,8 +140,16 @@ public class UserService {
         }
     }
 
-    public List<UserRespDtoWebAdmin> getUsers() {
-        List<User> users = userRepository.findAll();
-        return UserRespDtoWebAdmin.toDto(users);
+    public Page<UserRespDtoWebAdmin> getUsers(Pageable pageable) {
+        Page<User> users = userRepository.findAllByAdmin(pageable);
+        return users.map(UserRespDtoWebAdmin::new);
+    }
+    @Transactional
+    public void updateByAdmin(Long userId, UserReqDtoWebAdmin userReqDtoWebAdmin) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomWebException("user not found by userId: " + userId));
+        UploadFile uploadFile = uploadFile(userReqDtoWebAdmin.getUserImage());
+        user.changeInfoAdmin(userReqDtoWebAdmin, uploadFile);
+        Blog blog = blogRepository.findByUser_Id(userId).orElseThrow(() -> new CustomWebException("not found blog"));
+        blog.changeTitle("@"+userReqDtoWebAdmin.getName());
     }
 }

@@ -119,7 +119,7 @@ public class UserReqDto {
         private String nickname;
         private String name;
         private Role role;
-
+        private MultipartFile userImage;
 
     }
 

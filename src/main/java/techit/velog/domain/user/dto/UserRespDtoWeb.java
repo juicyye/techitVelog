@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.entity.EmailCheck;
 import techit.velog.domain.user.entity.Role;
@@ -62,7 +63,6 @@ public class UserRespDtoWeb {
     }
 
     @Data
-    @Builder
     public static class UserRespDtoWebAdmin {
         private Long userId;
         private String loginId;
@@ -70,23 +70,17 @@ public class UserRespDtoWeb {
         private String nickname;
         private String name;
         private Role role;
-        public static List<UserRespDtoWebAdmin> toDto(List<User> users) {
-            ArrayList<UserRespDtoWebAdmin> userList = new ArrayList<>();
-            for (User user : users) {
-                userList.add(toDto(user));
-            }
-            return userList;
-        }
+        private UploadFile userImage;
 
-        public static UserRespDtoWebAdmin toDto(User user) {
-            return UserRespDtoWebAdmin.builder()
-                    .userId(user.getId())
-                    .email(user.getEmail())
-                    .loginId(user.getLoginId())
-                    .nickname(user.getNickname())
-                    .name(user.getName())
-                    .role(user.getRole())
-                    .build();
+        public UserRespDtoWebAdmin(User user) {
+            this.userId = user.getId();
+            this.loginId = user.getLoginId();
+            this.email = user.getEmail();
+            this.nickname = user.getNickname();
+            this.name = user.getName();
+            this.role = user.getRole();
+            this.userImage = user.getUploadFile();
+
         }
     }
 }

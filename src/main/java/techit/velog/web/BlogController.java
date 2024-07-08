@@ -115,7 +115,7 @@ public class BlogController {
         return "redirect:/{blogName}/{postTitle}";
     }
 
-    @GetMapping("/postDelete/{postId}")
+    @PostMapping("/postDelete/{postId}")
     public String postDelete(@PathVariable("postId") Long postId, RedirectAttributes rttr) {
         Long blogId = postService.delete(postId);
         tagService.removeTag(blogId);

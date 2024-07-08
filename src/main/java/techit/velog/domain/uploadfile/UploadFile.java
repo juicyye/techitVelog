@@ -29,6 +29,10 @@ public class UploadFile {
         this.storeFileName = storeFileName;
     }
 
+    public UploadFile(String storeFileName) {
+        this.storeFileName = storeFileName;
+    }
+
     /**
      * 편의 메서드
      */
