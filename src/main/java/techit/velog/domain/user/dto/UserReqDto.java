@@ -11,6 +11,9 @@ import techit.velog.domain.user.entity.User;
 import techit.velog.global.valid.JoinUnique;
 import techit.velog.global.valid.UserUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class UserReqDto {
 
@@ -105,6 +108,19 @@ public class UserReqDto {
     @Data
     public static class UserReqDeleteDto{
         private String password;
+    }
+
+    @Data
+    @Builder
+    public static class UserReqDtoWebAdmin {
+        private Long userId;
+        private String loginId;
+        private String email;
+        private String nickname;
+        private String name;
+        private Role role;
+
+
     }
 
 }

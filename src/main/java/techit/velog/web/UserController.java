@@ -1,6 +1,5 @@
 package techit.velog.web;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +17,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import techit.velog.domain.user.dto.UserRespDtoWeb;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.service.UserService;
 import techit.velog.global.dto.PrincipalDetails;
-import techit.velog.global.security.jwt.JWTVO;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
@@ -97,7 +94,7 @@ public class UserController {
 
     @GetMapping("/account")
     public String account(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        UserRespWebInfo user = userService.getUser(principalDetails.getUsername());
+        UserRespDtoWebInfo user = userService.getUser(principalDetails.getUsername());
         model.addAttribute("blog", user);
         return "user/info";
     }

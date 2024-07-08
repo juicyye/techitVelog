@@ -48,4 +48,5 @@ public class CommentRespDto {
             this.updateDate = comment.getUpdateDate();
         }
     }
+
 }

@@ -74,14 +74,13 @@ public class CommentService {
 
     }
     @Transactional
-    public boolean update(Long commentId, String content) {
+    public void update(Long commentId, CommentReqDtoWebUpdate commentReqDtoWebUpdate) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomWebException("not found Comment"));
-        comment.changeContent(content);
-        return true;
+        comment.changeContent(commentReqDtoWebUpdate);
     }
     @Transactional
-    public boolean deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
-        return true;
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+        comment.deleteComment();
     }
 }

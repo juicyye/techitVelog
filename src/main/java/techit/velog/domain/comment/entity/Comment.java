@@ -85,7 +85,12 @@ public class Comment extends BaseEntity {
     /**
      * 비지니스 메서드
      */
-    public void changeContent(String content) {
-        this.content = content;
+    public void changeContent(CommentReqDtoWebUpdate commentReqDtoWebUpdate) {
+        this.content = commentReqDtoWebUpdate.getContent();
+    }
+
+    public void deleteComment() {
+        this.isDeleted = IsDeleted.DELETE;
+        this.content = IsDeleted.DELETE.getDescription();
     }
 }

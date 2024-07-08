@@ -14,12 +14,12 @@ import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
-import techit.velog.domain.user.dto.UserRespDtoWeb;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -44,23 +44,22 @@ public class UserService {
         return savedUser.getId();
     }
 
-
-    public boolean validationEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public UserRespDtoWebAdmin getUser(Long userId) {
+        Optional<User> _user = userRepository.findById(userId);
+        if (_user.isEmpty()) {
+            throw new CustomWebException("user not found by loginId: " + userId);
+        }
+        return UserRespDtoWebAdmin.toDto(_user.get());
     }
 
-    public boolean validationLoginId(String loginId) {
-        return userRepository.existsByLoginId(loginId);
-    }
-
-    public UserRespWebInfo getUser(String loginId) {
+    public UserRespDtoWebInfo getUser(String loginId) {
         Optional<User> _user = userRepository.findByLoginId(loginId);
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + loginId);
         }
         User user = _user.get();
         Blog blog = blogRepository.findByUser_Id(user.getId()).orElseThrow(() -> new CustomWebException("not found blog"));
-        return new UserRespWebInfo(user,blog.getTitle());
+        return new UserRespDtoWebInfo(user,blog.getTitle());
     }
 
     public UserRespDtoWebUpdate getUserByUpdate(String loginId) {
@@ -127,7 +126,8 @@ public class UserService {
         }
     }
 
-    public boolean validationName(String name) {
-        return userRepository.existsByName(name);
+    public List<UserRespDtoWebAdmin> getUsers() {
+        List<User> users = userRepository.findAll();
+        return UserRespDtoWebAdmin.toDto(users);
     }
 }

@@ -33,7 +33,7 @@ public class CommentController {
 
     @GetMapping("/{commentId}/modify")
     public String commentModifyForm(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
-                                @PathVariable("commentId") Long commentId, Model model) {
+                                    @PathVariable("commentId") Long commentId, Model model) {
         CommentReqDtoWebUpdate comment = commentService.getComment(commentId);
         model.addAttribute("comment", comment);
         return "comment/modify";
@@ -41,22 +41,19 @@ public class CommentController {
 
     @PostMapping("/{commentId}/modify")
     public String commentModify(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
-                                @PathVariable("commentId") Long commentId, @RequestParam("content") String content, RedirectAttributes rttr) {
+                                @PathVariable("commentId") Long commentId, @ModelAttribute("content") CommentReqDtoWebUpdate commentReqDtoWebUpdate, RedirectAttributes rttr) {
 
-        boolean isUpdated = commentService.update(commentId, content);
-        if (isUpdated) {
-            rttr.addAttribute("update", true);
-        }
+        commentService.update(commentId, commentReqDtoWebUpdate);
+        rttr.addAttribute("update", true);
+
         return "redirect:/{blogName}/{postTitle}";
     }
 
     @GetMapping("/{commentId}/delete")
     public String commentDelete(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                 @PathVariable("commentId") Long commentId, RedirectAttributes rttr) {
-        boolean isDeleted = commentService.deleteComment(commentId);
-        if (isDeleted) {
-            rttr.addAttribute("delete", true);
-        }
+        commentService.deleteComment(commentId);
+        rttr.addAttribute("delete", true);
         return "redirect:/{blogName}/{postTitle}";
     }
 }
