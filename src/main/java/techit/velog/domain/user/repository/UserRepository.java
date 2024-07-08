@@ -27,4 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select u from User u left join fetch u.uploadFile uf ", countQuery = "select count(u) from User u")
     Page<User> findAllByAdmin(Pageable pageable);
+
+    @Query("select u from User u join fetch u.blog b join fetch b.posts p where p.id = :postId")
+    Optional<User> findByPostId(@Param("postId") Long postId);
+    @Query("select u from User u join fetch u.comments c where c.id = :commentId")
+    Optional<User> findByCommentId(@Param("commentId") Long commentId);
 }

@@ -50,6 +50,13 @@ public class UserService {
         return savedUser.getId();
     }
 
+    @Transactional
+    public void special(UserJoinReq userJoinReq) {
+        userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
+        User savedUser = userRepository.save(User.toEntity(userJoinReq));
+        blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
+    }
+
     public UserRespDtoWebAdmin getUser(Long userId) {
         Optional<User> _user = userRepository.findById(userId);
         if (_user.isEmpty()) {
@@ -151,5 +158,22 @@ public class UserService {
         user.changeInfoAdmin(userReqDtoWebAdmin, uploadFile);
         Blog blog = blogRepository.findByUser_Id(userId).orElseThrow(() -> new CustomWebException("not found blog"));
         blog.changeTitle("@"+userReqDtoWebAdmin.getName());
+    }
+
+    /**
+     * post를 통해 loginId 가져오기
+     */
+    public String getLoginIdByPost(Long postId) {
+        User user = userRepository.findByPostId(postId).orElseThrow(() -> new CustomWebException("not found user"));
+        return user.getLoginId();
+    }
+
+    /**
+     * comment를 통해 loginId 가져오기
+     */
+
+    public String getLoginIdByComment(Long commentId) {
+        User user = userRepository.findByCommentId(commentId).orElseThrow(() -> new CustomWebException("not found user"));
+        return user.getLoginId();
     }
 }

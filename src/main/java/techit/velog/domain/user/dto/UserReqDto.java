@@ -48,7 +48,6 @@ public class UserReqDto {
         private boolean emailCheck;
         @JoinUnique
         private String email;
-        private Role role;
         @JoinUnique
         private String nickname;
     }

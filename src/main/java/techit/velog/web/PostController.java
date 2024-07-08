@@ -42,11 +42,6 @@ public class PostController {
     private final UserService userService;
 
 
-    @ModelAttribute("isSecret")
-    public IsSecret[] isSecrets() {
-        return IsSecret.values();
-    }
-
     @GetMapping("/create")
     public String postCreateForm(@ModelAttribute("post") PostReqDtoWebCreate postReqDtoWebCreate) {
         return "posts/create";

@@ -129,13 +129,6 @@
             <input type="checkbox" id="open" th:field="*{emailCheck}" class="form-check-input">
             <label for="open" class="form-check-label">이메일 수신 동의</label>
         </div>
-        <div class="form-select">
-            <label for="role">권한</label>
-            <select id="role" th:field="*{role}">
-                <option value="">==권한 선택==</option>
-                <option th:each="role : ${roles}" th:value="${role.name()}" th:text="${role.description}"></option>
-            </select>
-        </div>
         <input type="submit" value="회원가입">
     </form>
 </div>

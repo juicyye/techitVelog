@@ -64,7 +64,7 @@ public class Comment extends BaseEntity {
     public Comment(CommentReqDtoWebBasic commentReqDtoWebBasic, Posts posts, User user) {
         this.content = commentReqDtoWebBasic.getContent();
         this.isDeleted = IsDeleted.NORMAL;
-        this.user= user;
+        setUser(user);
         addPost(posts);
 
     }
@@ -80,6 +80,11 @@ public class Comment extends BaseEntity {
     public void addChild(Comment child) {
         this.getChild().add(child);
         child.parent = this;
+    }
+
+    private void setUser(User user) {
+        this.user = user;
+        user.getComments().add(this);
     }
 
     /**

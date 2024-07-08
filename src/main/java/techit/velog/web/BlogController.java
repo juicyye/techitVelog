@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
@@ -29,6 +31,7 @@ import java.util.List;
 import static techit.velog.domain.blog.dto.BlogRespDto.*;
 import static techit.velog.domain.comment.dto.CommentRespDto.*;
 import static techit.velog.domain.follow.dto.FollowRespDto.*;
+import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.tag.dto.TagRespDto.*;
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -98,6 +101,8 @@ public class BlogController {
     }
 
     @GetMapping("/{postName}/postModify/{postId}")
+    // todo 에러메시지 표시방법 고민
+    @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByPost(#postId) == principal.username")
     public String postModifyForm(@PathVariable("postId") Long postId, Model model) {
         PostRespDtoWebUpdate post = postService.getUpdatePost(postId);
         model.addAttribute("post", post);
@@ -105,7 +110,7 @@ public class BlogController {
     }
 
     @PostMapping("/{postTitle}/postModify/{postId}")
-    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWeb.PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
+    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "posts/modify";
         }
@@ -116,6 +121,8 @@ public class BlogController {
     }
 
     @PostMapping("/postDelete/{postId}")
+    // todo 에러메시지 표시방법 고민
+    @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByPost(#postId) == principal.username")
     public String postDelete(@PathVariable("postId") Long postId, RedirectAttributes rttr) {
         Long blogId = postService.delete(postId);
         tagService.removeTag(blogId);

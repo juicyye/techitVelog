@@ -2,6 +2,7 @@ package techit.velog.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +33,7 @@ public class CommentController {
     }
 
     @GetMapping("/{commentId}/modify")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByComment(#commentId) == principal.username")
     public String commentModifyForm(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                     @PathVariable("commentId") Long commentId, Model model) {
         CommentReqDtoWebUpdate comment = commentService.getComment(commentId);
@@ -50,6 +52,7 @@ public class CommentController {
     }
 
     @GetMapping("/{commentId}/delete")
+    @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByComment(#commentId) == principal.username")
     public String commentDelete(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                 @PathVariable("commentId") Long commentId, RedirectAttributes rttr) {
         commentService.deleteComment(commentId);

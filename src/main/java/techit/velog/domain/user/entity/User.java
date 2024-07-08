@@ -4,10 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
+import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.dto.UserRespDtoWeb;
 import techit.velog.global.dto.OAuth2Response;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
@@ -42,6 +45,9 @@ public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "upload_file_id")
     private UploadFile uploadFile;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
     /**
      * 회원가입 Dto -> Entity
      */
@@ -54,9 +60,26 @@ public class User extends BaseEntity {
                 .loginId(userJoinReq.getLoginId())
                 .password(userJoinReq.getPassword())
                 .email(userJoinReq.getEmail())
-                .role(userJoinReq.getRole())
                 .emailCheck(emailCheck1)
                 .uploadFile(uploadFile)
+                .role(Role.ROLE_USER)
+                .build();
+    }
+
+    /**
+     * 관리자 전용
+     */
+    public static User toEntity(UserJoinReq userJoinReq) {
+        EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
+        return User.builder()
+                .userId(UUID.randomUUID().toString())
+                .name(userJoinReq.getName())
+                .nickname(userJoinReq.getNickname())
+                .loginId(userJoinReq.getLoginId())
+                .password(userJoinReq.getPassword())
+                .email(userJoinReq.getEmail())
+                .emailCheck(emailCheck1)
+                .role(Role.ROLE_ADMIN)
                 .build();
     }
 
@@ -71,6 +94,14 @@ public class User extends BaseEntity {
         this.email = oAuth2Response.getEmail();
         this.emailCheck = EmailCheck.ALLOW;
         this.role = Role.ROLE_USER;
+    }
+
+    public User(String userId, String name, String nickname, String loginId, String password, String email) {
+        this.name = name;
+        this.nickname = nickname;
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
     }
 
     /**

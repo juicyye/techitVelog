@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<html th:replace="~{/layout/header :: header(~{::title},~{::section})}" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -46,7 +46,7 @@
             <h3 class="card-text">추천수: <span th:text="${post.likes}"></span></h3>
         </div>
 
-        <div>
+        <div sec:authorize="isAuthenticated()">
             <button th:onclick="|location.href='@{|/${post.blogName}/${post.title}/postModify/${post.postId}|}'|">수정하기</button>
             <form th:action="@{|/${post.blogName}/postDelete/${post.postId}|}" method="post"
                   onsubmit="return confirm('정말로 삭제하시겠습니까?');">

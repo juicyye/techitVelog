@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label>공개 설정</label>
-                <div th:each="type : ${isSecret}" class="form-check form-check-inline">
+                <div th:each="type : ${T(techit.velog.domain.post.entity.IsSecret).values()}" class="form-check form-check-inline">
                     <input type="radio" th:field="*{isSecret}" th:value="${type.name()}" class="form-check-input">
                     <label th:for="${#ids.prev('isSecret')}" th:text="${type.description}" class="form-check-label"></label>
                 </div>

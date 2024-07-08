@@ -8,7 +8,6 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 public class DummyObject {
     protected UserJoinReq adminUser(){
         UserJoinReq userJoinReq = new UserJoinReq();
-        userJoinReq.setRole(Role.ROLE_ADMIN);
         userJoinReq.setPassword("admin");
         userJoinReq.setEmail("admin@naver.com");
         userJoinReq.setEmailCheck(true);
@@ -21,7 +20,6 @@ public class DummyObject {
 
     protected UserJoinReq newUser(){
         UserJoinReq userJoinReq = new UserJoinReq();
-        userJoinReq.setRole(Role.ROLE_USER);
         userJoinReq.setPassword("user");
         userJoinReq.setEmail("user@naver.com");
         userJoinReq.setEmailCheck(true);
