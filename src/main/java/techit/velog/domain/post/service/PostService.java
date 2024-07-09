@@ -18,6 +18,7 @@ import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
 import techit.velog.domain.post.entity.IsReal;
+import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
@@ -176,8 +177,15 @@ public class PostService {
      * 포스트의 상세페이지를 보는 메서드
      */
 
-    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle) {
-        return postRepository.findPostDetail(blogName, postTitle);
+    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
+        PostRespDtoWebDetail postDetail = postRepository.findPostDetail(blogName, postTitle);
+        if(postDetail.getIsSecret().equals(IsSecret.SECRET)) {
+            if(isUser(blogName, securityContext)) {
+                return postDetail;
+            } else{
+                throw new CustomWebException("권한이 없습니다.");
+            }
+        } else return postDetail;
     }
 
     /**

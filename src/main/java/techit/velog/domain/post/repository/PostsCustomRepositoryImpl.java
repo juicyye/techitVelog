@@ -124,7 +124,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
                 .leftJoin(posts.uploadFile, uploadFile)
-                .where(blog.title.eq(blogName).and(tags.name.eq(tagName)))
+                .where(blog.title.eq(blogName).and(tags.name.eq(tagName)),isUser(isUser))
                 .groupBy(posts.id, blog.title)
                 .fetch();
 
@@ -148,7 +148,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
         PostRespDtoWebDetail result = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
-                        blog.title.as("blogName"), likes.countDistinct().as("likes")))
+                        blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret))
                 .from(posts)
                 .join(posts.blog, blog)
                 .leftJoin(posts.likes, likes)
