@@ -59,8 +59,8 @@ public class BlogController {
 
     @GetMapping("/{postTitle}")
     public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,
-                             HttpServletRequest request, HttpServletResponse response, @CurrentSecurityContext SecurityContext securityContext) {
-        PostRespDtoWebDetail postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext);
+                             HttpServletRequest request, HttpServletResponse response, @CurrentSecurityContext SecurityContext securityContext, @PageableDefault(size = 1) Pageable pageable) {
+        PostRespDtoWebDetail postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext, pageable);
         List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWebDetail.getPostId());
         postService.viewCountValidation(blogName, postTitle, request, response);
         model.addAttribute("post", postRespDtoWebDetail);

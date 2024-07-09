@@ -177,7 +177,7 @@ public class PostService {
      * 포스트의 상세페이지를 보는 메서드
      */
 
-    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
+    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext, Pageable pageable) {
         PostRespDtoWebDetail postDetail = postRepository.findPostDetail(blogName, postTitle);
         if(postDetail.getIsSecret().equals(IsSecret.SECRET)) {
             if(isUser(blogName, securityContext)) {

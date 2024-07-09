@@ -42,7 +42,7 @@
             </li>
 
             <li class="nav-item" sec:authorize="isAuthenticated()">
-                <a class="nav-link" th:href="@{|/${blog?.blogName}|}">내 벨로그</a>
+                <a class="nav-link" th:href="@{|/@${#authentication.getPrincipal().getName()}|}">내 벨로그</a>
             </li>
             <li class="nav-item" sec:authorize="isAuthenticated()">
                 <a class="nav-link" th:href="@{/posts/saves}">임시글</a>
