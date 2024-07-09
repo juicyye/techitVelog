@@ -11,7 +11,7 @@ import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 
 public interface PostsCustomRepository {
     Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch search);
-    List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isUser);
+    List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isUser, PostSearch postSearch);
 
     PostRespDtoWebDetail findPostDetail(String blogName, String postTitle);
 

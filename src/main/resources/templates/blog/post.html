@@ -15,61 +15,67 @@
     </li>
     <div class="card p-4">
 
-        <div class="mb-3">
-            <h3 class="card-title"><a href="" th:href="@{|/${post.blogName}|}" th:text="${post.blogName}"></a></h3>
+        <div class="mb-3 flex-div">
+            <h3 class="card-title"><span th:text="${post.title}"></span></h3>
+            <p th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}" class="date-class"></p>
+            <div sec:authorize="isAuthenticated()" class="post-title-secret">
+                    <span  th:if="${post.loginId == #authentication.principal.username and post.isSecret == T(techit.velog.domain.post.entity.IsSecret).SECRET}"
+                           class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">비공개
+                    </span>
+            </div>
+
         </div>
-        <div class="mb-3">
-            <h3 class="card-title">제목: <span th:text="${post.title}"></span></h3>
+        <hr>
+
+        <div class="flex-div">
+            <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.blogName}" class="anker"></a>
+            <p class="card-text">조회수: <span th:text="${post.views}"></span></p>
+            <p class="card-text">추천수: <span th:text="${post.likes}"></span></p>
+
         </div>
+        <hr>
+
         <div class="mb-3">
-            <h3 class="card-text">내용: <span th:text="${post.content}"></span></h3>
+            <h3 class="card-text"><span th:text="${post.content}"></span></h3>
         </div>
         <div th:each="image : ${post.postImages}">
             <img th:src="|/images/${image.getStoreFileName()}|" width="300" height="200"/>
         </div>
-        <div class="mb-3">
-            <h3 class="card-text">작성일자: <span th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}"></span></h3>
-        </div>
-        <div class="mb-3">
-            <h3 class="card-text">수정일자: <span th:text="${#temporals.format(post.updateDate,'yyyy-MM-dd')}"></span></h3>
-        </div>
-        <div class="mb-3">
-            <h3 class="card-text">조회수: <span th:text="${post.views}"></span></h3>
-        </div>
 
-        <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|" class="btn btn-primary mb-3">
-            추천하기
-        </button>
-        <div class="mb-3">
-            <h3 class="card-text">추천수: <span th:text="${post.likes}"></span></h3>
-        </div>
-
-        <div sec:authorize="isAuthenticated()">
-            <button th:onclick="|location.href='@{|/${post.blogName}/${post.title}/postModify/${post.postId}|}'|">수정하기</button>
+        <div class="flex-div-button" sec:authorize="isAuthenticated()">
+            <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|"
+                    class="btn btn-primary mb-3 btn-sm button-recommend">
+                추천
+            </button>
+            <button class="btn btn-info btn-sm mb-3"
+                    th:onclick="|location.href='@{|/${post.blogName}/${post.title}/postModify/${post.postId}|}'|">수정
+            </button>
             <form th:action="@{|/${post.blogName}/postDelete/${post.postId}|}" method="post"
                   onsubmit="return confirm('정말로 삭제하시겠습니까?');">
                 <button type="submit" class="btn btn-danger btn-sm">삭제</button>
             </form>
         </div>
 
-        <div class="mb-4">
-            <ul class="list-group list-unstyled">
-                <div th:each="comment : ${comments}">
-                    <div th:replace="~{comment/comments :: commentTemplate(${comment},${post})}"></div>
-                </div>
-            </ul>
-        </div>
 
-        <div class="mb-3">
-            <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
-                <div class="form-group mr-2">
-                    <label for="content" class="sr-only">댓글</label>
-                    <input type="hidden" name="postId" th:value="${post.postId}">
-                    <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
-                </div>
-                <button type="submit" class="btn btn-secondary">댓글</button>
-            </form>
-        </div>
+    </div>
+
+    <div class="mb-4">
+        <ul class="list-group list-unstyled">
+            <div th:each="comment : ${comments}">
+                <div th:replace="~{comment/comments :: commentTemplate(${comment},${post})}"></div>
+            </div>
+        </ul>
+    </div>
+
+    <div class="mb-3">
+        <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="content" class="sr-only">댓글</label>
+                <input type="hidden" name="postId" th:value="${post.postId}">
+                <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
+            </div>
+            <button type="submit" class="btn btn-secondary">댓글</button>
+        </form>
     </div>
 
 </section>

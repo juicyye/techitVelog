@@ -15,26 +15,26 @@
             <div class="form-group">
                 <label for="blogDescription">블로그 소개</label>
                 <input type="text" id="blogDescription" th:field="*{blogDescription}" class="form-control">
-                <div th:errors="*{blogDescription}" class="error-class"></div>
+                <div th:errors="*{blogDescription}"  class="field-error"></div>
             </div>
 
             <div class="form-group">
                 <label for="name">이름, 블로그 이름도 변경</label>
                 <input type="text" id="name" th:field="*{name}" class="form-control">
-                <div th:errors="*{name}" class="error-class"></div>
+                <div th:errors="*{name}"  class="field-error"></div>
             </div>
 
             <div class="form-group">
                 <label for="nickname">닉네임</label>
                 <input type="text" id="nickname" th:field="*{nickname}" class="form-control">
-                <div th:errors="*{nickname}" class="error-class"></div>
+                <div th:errors="*{nickname}"  class="field-error"></div>
             </div>
 
             <div class="form-group">
                 <label for="email">이메일</label>
                 <input type="text" id="email" th:field="*{email}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요"
                        class="form-control">
-                <div th:errors="*{email}" class="error-class"></div>
+                <div th:errors="*{email}"  class="field-error"></div>
             </div>
 
             <div class="form-group">
@@ -48,20 +48,20 @@
             <div class="form-group">
                 <label for="password">비밀번호</label>
                 <input type="password" id="password" th:field="*{password}" class="form-control">
-                <div th:errors="*{password}" class="error-class"></div>
+                <div th:errors="*{password}"  class="field-error"></div>
             </div>
 
             <div class="form-group">
                 <label for="changePassword">새 비밀번호</label>
                 <input type="password" id="changePassword" th:field="*{changePassword}" class="form-control">
-                <div th:errors="*{changePassword}" class="error-class"></div>
+                <div th:errors="*{changePassword}" class="field-error"></div>
             </div>
 
             <div class="form-group">
                 <label for="changePasswordConfirm">새 비밀번호 확인</label>
                 <input type="password" id="changePasswordConfirm" th:field="*{changePasswordConfirm}"
                        class="form-control">
-                <div th:errors="*{changePasswordConfirm}" class="error-class"></div>
+                <div th:errors="*{changePasswordConfirm}"  class="field-error"></div>
             </div>
 
             <div class="form-group">

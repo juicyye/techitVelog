@@ -92,7 +92,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
         };
     }
 
-    public List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isuser) {
+    public List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isuser, PostSearch search) {
         List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
                         posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), posts.uploadFile.as("postImage"),
                         posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")
@@ -103,11 +103,19 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .leftJoin(posts.likes, likes)
                 .leftJoin(posts.comments, comment)
                 .groupBy(posts.id, blog.title)
-                .where(blog.title.eq(blogName),isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()))
+                .where(blog.title.eq(blogName),isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()),postSearch(search))
                 .orderBy(posts.createDate.desc())
                 .fetch();
 
         return getTagNames(results);
+    }
+
+    private BooleanExpression postSearch(PostSearch postSearch) {
+        if (postSearch.getValue() != null) {
+            return posts.title.contains(postSearch.getValue()).or(posts.content.contains(postSearch.getValue()));
+        } else{
+            return null;
+        }
     }
 
 
@@ -148,9 +156,10 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
         PostRespDtoWebDetail result = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
-                        blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret))
+                        blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret, user.loginId))
                 .from(posts)
                 .join(posts.blog, blog)
+                .join(blog.user, user)
                 .leftJoin(posts.likes, likes)
                 .where(blog.title.eq(blogName), posts.title.eq(postTitle))
                 .groupBy(posts.id, posts.title, blog.title)

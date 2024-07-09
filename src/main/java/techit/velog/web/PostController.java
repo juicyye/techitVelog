@@ -59,7 +59,7 @@ public class PostController {
 
 
     @GetMapping
-    public String posts(@PageableDefault(size = 6) Pageable pageable, Model model,
+    public String posts(Pageable pageable, Model model,
                         @CurrentSecurityContext SecurityContext securityContext, @RequestParam(value = "sortType",required = false,defaultValue = "NEWEST") String sortType,
                         @ModelAttribute PostSearch search) {
         log.info("securityContext {}", securityContext);

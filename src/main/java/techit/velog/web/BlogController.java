@@ -3,6 +3,9 @@ package techit.velog.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -16,6 +19,7 @@ import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.comment.service.CommentService;
 import techit.velog.domain.follow.service.FollowService;
 import techit.velog.domain.liks.service.LikeService;
+import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 import techit.velog.global.dto.PrincipalDetails;
@@ -42,9 +46,9 @@ public class BlogController {
 
 
     @GetMapping
-    public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext) {
+    public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext, @ModelAttribute("search")PostSearch postSearch) {
         BlogRespDtoWebBasic blog = blogService.getBlog(blogName);
-        List<PostRespDtoWebVelog> posts = postService.getPostsVelog(blogName, securityContext);
+        List<PostRespDtoWebVelog> posts = postService.getPostsVelog(blogName, securityContext, postSearch);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
         model.addAttribute("posts", posts);
@@ -87,14 +91,13 @@ public class BlogController {
     }
 
     @GetMapping("/likes")
-    public String likes(@PathVariable("blogName") String blogName, Model model) {
-        List<PostRespDtoWebAll> postRespDtoWebDetails = likeService.getLikes(blogName);
+    public String likes(@PathVariable("blogName") String blogName, Model model, Pageable pageable) {
+        Page<PostRespDtoWebAll> postRespDtoWebDetails = likeService.getLikes(blogName, pageable);
         model.addAttribute("posts", postRespDtoWebDetails);
-        return "posts/list";
+        return "posts/likePosts";
     }
 
     @GetMapping("/{postName}/postModify/{postId}")
-    // todo 에러메시지 표시방법 고민
     @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByPost(#postId) == principal.username")
     public String postModifyForm(@PathVariable("postId") Long postId, Model model) {
         PostRespDtoWebUpdate post = postService.getUpdatePost(postId);
@@ -115,7 +118,6 @@ public class BlogController {
     }
 
     @PostMapping("/postDelete/{postId}")
-    // todo 에러메시지 표시방법 고민
     @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByPost(#postId) == principal.username")
     public String postDelete(@PathVariable("postId") Long postId, RedirectAttributes rttr) {
         Long blogId = postService.delete(postId);

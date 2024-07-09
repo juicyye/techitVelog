@@ -37,8 +37,14 @@
         </div>
         <div class="divider"></div>
     </div>
-
-
+    <form th:action="@{|/${blogName}}" method="get" class="w-25">
+        <div class="input-group search-button">
+            <input type="text" class="form-control search-button-input" name="value" size="10">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </div>
+    </form>
 
     <div class="row w-100">
         <div class="col-md-3 custom-tag-list">

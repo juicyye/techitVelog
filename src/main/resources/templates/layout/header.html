@@ -19,6 +19,9 @@
             integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
             crossorigin="anonymous"></script>
     <style>
+        *{
+            box-sizing: border-box;
+        }
         .field-error {
             color: #721c24; /* Dark red color */
             background-color: #f8d7da; /* Light red background */
@@ -137,6 +140,51 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+        .button-class{
+            display: flex;
+
+        }
+        .flex-div{
+            display: flex;
+            align-content: center;
+
+            justify-content: flex-start;
+        }
+
+        .flex-div p{
+            margin-left: 10px;
+        }
+        .flex-div a{
+            color: black;
+        }
+        .flex-div-button{
+            display: flex;
+            justify-content: flex-end;
+        }
+        .flex-div-button button{
+            margin-right: 10px;
+            bottom: 10px;
+        }
+        .date-class{
+            position: absolute;
+            right: 10px;
+            top: 30px;
+        }
+        .search-button{
+            position: absolute;
+            right: 300px;
+
+            width: 200px;
+        }
+        .search-button-input{
+            width: 100px;
+            font-size: 20px;
+        }
+        .post-title-secret{
+            position: absolute;
+            right: 100px;
+            top: 30px;
         }
 
     </style>

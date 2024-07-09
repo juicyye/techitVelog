@@ -1,6 +1,8 @@
 package techit.velog.domain.liks.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
@@ -46,9 +48,9 @@ public class LikeService {
 
     }
 
-    public List<PostRespDtoWebAll> getLikes(String blogName) {
+    public Page<PostRespDtoWebAll> getLikes(String blogName, Pageable pageable) {
         Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그가 없습니다."));
         User user = userRepository.findByBlog_Id(blog.getId()).orElseThrow(() -> new CustomWebException("유저가 없습니다."));
-        return likeRepository.findByLikePost(user.getId());
+        return likeRepository.findByLikePost(user.getId(), pageable);
     }
 }

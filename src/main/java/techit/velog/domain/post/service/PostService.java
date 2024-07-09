@@ -164,11 +164,11 @@ public class PostService {
      * 블로그의 모든 포스트를 보여주는 메서드
      */
 
-    public List<PostRespDtoWebVelog> getPostsVelog(String blogName, SecurityContext securityContext) {
+    public List<PostRespDtoWebVelog> getPostsVelog(String blogName, SecurityContext securityContext, PostSearch postSearch) {
         if (isUser(blogName, securityContext)) {
-            return postRepository.findAllByVelog(blogName, true);
+            return postRepository.findAllByVelog(blogName, true, postSearch);
         } else {
-            return postRepository.findAllByVelog(blogName, false);
+            return postRepository.findAllByVelog(blogName, false, postSearch);
         }
 
     }

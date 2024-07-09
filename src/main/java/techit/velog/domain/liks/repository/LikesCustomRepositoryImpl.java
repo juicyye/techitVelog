@@ -3,6 +3,9 @@ package techit.velog.domain.liks.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import techit.velog.domain.uploadfile.QUploadFile;
 import techit.velog.domain.uploadfile.UploadFile;
 
@@ -26,11 +29,11 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository{
     }
 
     @Override
-    public List<PostRespDtoWebAll> findByLikePost(Long userId) {
+    public Page<PostRespDtoWebAll> findByLikePost(Long userId, Pageable pageable) {
         QUploadFile userImage = new QUploadFile("userImage");
 
-        return queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
-                        posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate,posts.views,
+        List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
+                        posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate, posts.views,
                         posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
                         posts.uploadFile.as("postImage"), userImage.as("userImage")))
@@ -43,6 +46,17 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository{
                 .leftJoin(posts.uploadFile, uploadFile)
                 .where(user.id.eq(userId))
                 .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(posts.createDate.desc())
                 .fetch();
+
+        int total = queryFactory.select(posts)
+                .from(likes)
+                .join(likes.user, user)
+                .join(likes.posts, posts)
+                .where(user.id.eq(userId))
+                .fetch().size();
+        return new PageImpl<>(results, pageable, total);
     }
 }

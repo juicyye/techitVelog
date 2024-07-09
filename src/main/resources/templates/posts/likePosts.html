@@ -10,24 +10,6 @@
 </head>
 <body>
 <section class="container mt-4">
-    <li class="nav-item" th:if="${param.delete}">
-        <span class="navbar-text">삭제가 완료되었습니다.</span>
-    </li>
-
-    <!-- 정렬 버튼 -->
-    <div class="d-flex justify-content-end mb-4">
-        <div class="dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="sortMenuButton" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                정렬
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="sortMenuButton" id="sortMenu">
-                <li><a class="dropdown-item" href="#" onclick="setSortType('newest')">최신순</a></li>
-                <li><a class="dropdown-item" href="#" onclick="setSortType('oldest')">오래된순</a></li>
-                <li><a class="dropdown-item" href="#" onclick="setSortType('likes')">좋아요순</a></li>
-            </ul>
-        </div>
-    </div>
 
     <!-- 포스트 목록 -->
     <div class="col-md-12">

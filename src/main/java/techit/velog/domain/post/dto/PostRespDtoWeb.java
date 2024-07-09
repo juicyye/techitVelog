@@ -17,6 +17,7 @@ public class PostRespDtoWeb {
     @AllArgsConstructor
     public static class PostRespDtoWebDetail {
         private Long postId;
+        private String loginId;
         private String blogName;
         private String title;
         private String content;
