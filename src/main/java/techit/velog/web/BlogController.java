@@ -3,9 +3,6 @@ package techit.velog.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -19,22 +16,18 @@ import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.comment.service.CommentService;
 import techit.velog.domain.follow.service.FollowService;
 import techit.velog.domain.liks.service.LikeService;
-import techit.velog.domain.post.dto.PostReqDtoWeb;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
-import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.global.dto.PrincipalDetails;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
-import static techit.velog.domain.blog.dto.BlogRespDto.*;
+import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
 import static techit.velog.domain.comment.dto.CommentRespDto.*;
 import static techit.velog.domain.follow.dto.FollowRespDto.*;
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.tag.dto.TagRespDto.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,7 +43,7 @@ public class BlogController {
 
     @GetMapping
     public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext) {
-        BlogRespDtoWeb blog = blogService.getBlog(blogName);
+        BlogRespDtoWebBasic blog = blogService.getBlog(blogName);
         List<PostRespDtoWebVelog> posts = postService.getPostsVelog(blogName, securityContext);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
@@ -110,13 +103,14 @@ public class BlogController {
     }
 
     @PostMapping("/{postTitle}/postModify/{postId}")
-    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult) {
+    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult,RedirectAttributes rttr) {
         if (bindingResult.hasErrors()) {
             return "posts/modify";
         }
         postService.update(postId, postReqDtoWebUpdate);
         // todo 이게 정말 최선일까 생각해보기
         tagService.removeTag(postReqDtoWebUpdate.getBlogId());
+        rttr.addAttribute("update",true);
         return "redirect:/{blogName}/{postTitle}";
     }
 
@@ -126,7 +120,7 @@ public class BlogController {
     public String postDelete(@PathVariable("postId") Long postId, RedirectAttributes rttr) {
         Long blogId = postService.delete(postId);
         tagService.removeTag(blogId);
-        rttr.addAttribute("deleted", true);
+        rttr.addAttribute("delete", true);
         return "redirect:/{blogName}";
     }
 

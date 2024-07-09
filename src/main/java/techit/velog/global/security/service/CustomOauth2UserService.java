@@ -48,8 +48,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         if (_user.isEmpty()) {
 
             User savedUser = userRepository.save(new User(oAuth2Response));
-            Blog savedBlog = blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
-            savedUser.setBlog(savedBlog);
+            Blog savedBlog = blogRepository.saveAndFlush(new Blog("@" + savedUser.getName(), savedUser));
             return new PrincipalDetails(new AccountDto(savedUser), oAuth2Response.getAttributes());
         } else{
             User user = _user.get();

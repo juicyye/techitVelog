@@ -9,11 +9,9 @@
 </head>
 <body>
 <section class="container mt-4">
-    <li class="nav-item" th:if="${param.delete}">
-        <span class="navbar-text">삭제가 완료되었습니다.</span>
-    </li>
+
     <li class="nav-item" th:if="${param.update}">
-        <span class="navbar-text">수정이 완료되었습니다.</span>
+        <span>수정성공</span>
     </li>
     <div class="card p-4">
 
@@ -73,6 +71,7 @@
             </form>
         </div>
     </div>
+
 </section>
 
 </body>

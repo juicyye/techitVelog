@@ -11,14 +11,15 @@ import techit.velog.domain.uploadfile.UploadFile;
 import java.time.LocalDateTime;
 
 
-public class BlogRespDto {
+public class BlogRespDtoWeb {
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BlogRespDtoWeb{
+    public static class BlogRespDtoWebBasic {
         private Long blogId;
         private Long userId;
+        private String loginId;
         private String blogName;
         private String nickname;
         private String description;
@@ -28,7 +29,7 @@ public class BlogRespDto {
         private int followers;
         private int followings;
 
-        public BlogRespDtoWeb(Blog blog) {
+        public BlogRespDtoWebBasic(Blog blog) {
             this.blogId = blog.getId();
             this.blogName = blog.getTitle();
             this.createDate = blog.getCreateDate();

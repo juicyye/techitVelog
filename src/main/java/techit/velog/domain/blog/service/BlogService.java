@@ -8,8 +8,7 @@ import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.global.dto.PrincipalDetails;
 import techit.velog.global.exception.CustomWebException;
 
-import static techit.velog.domain.blog.dto.BlogRespDto.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
+import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,14 +16,14 @@ import static techit.velog.domain.user.dto.UserReqDto.*;
 public class BlogService {
     private final BlogRepository blogRepository;
 
-    // todo 리팩토링 필수
-    public BlogRespDtoWeb getBlog(String blogName) {
-        Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그를 찾을수 없습니다."));
-        return blogRepository.findAllByBlog(blog.getTitle());
+
+    public BlogRespDtoWebBasic getBlog(String blogName) {
+
+        return blogRepository.findAllByBlog(blogName);
     }
 
-    public BlogRespDtoWeb getBlog(PrincipalDetails principalDetails) {
+    public BlogRespDtoWebBasic getBlog(PrincipalDetails principalDetails) {
         Blog blog = blogRepository.findByLoginId(principalDetails.getUsername()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
-        return new BlogRespDtoWeb(blog);
+        return new BlogRespDtoWebBasic(blog);
     }
 }

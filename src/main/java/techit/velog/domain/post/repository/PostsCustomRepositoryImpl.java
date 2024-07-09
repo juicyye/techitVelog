@@ -104,6 +104,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .leftJoin(posts.comments, comment)
                 .groupBy(posts.id, blog.title)
                 .where(blog.title.eq(blogName),isUser(isuser),posts.isReal.stringValue().eq(IsReal.REAL.name()))
+                .orderBy(posts.createDate.desc())
                 .fetch();
 
         return getTagNames(results);

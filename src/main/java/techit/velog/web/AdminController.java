@@ -10,12 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import techit.velog.domain.user.dto.UserReqDto;
-import techit.velog.domain.user.dto.UserRespDtoWeb;
-import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.service.UserService;
 
-import java.util.List;
+
 
 import static techit.velog.domain.user.dto.UserReqDto.*;
 import static techit.velog.domain.user.dto.UserRespDtoWeb.*;

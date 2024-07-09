@@ -26,7 +26,7 @@
             <td th:text="${user.userId}"></td>
             <td><a th:href="@{|/admin/user/${user.userId}/modify|}" th:text="${user.name}"></a></td>
             <td th:text="${user.loginId}"></td>
-            <td th:text="${user.nickname}"></td>
+            <td><a href="" th:href="@{|/'@'+${user.name}|}" th:text="${user.nickname}"></a></td>
             <td th:text="${user.email}"></td>
             <td th:text="${user.role.name()}"></td>
             <td>

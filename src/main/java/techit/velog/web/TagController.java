@@ -13,7 +13,7 @@ import techit.velog.domain.tag.service.TagService;
 
 import java.util.List;
 
-import static techit.velog.domain.blog.dto.BlogRespDto.*;
+import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.tag.dto.TagRespDto.*;
 
@@ -28,7 +28,7 @@ public class TagController {
     public String getTagPost(@PathVariable("blogName") String blogName, @PathVariable("tagName") String tagName, Model model, @CurrentSecurityContext SecurityContext securityContext) {
         // 결국 가져오는건 포스트 하지만 일대다는 안되니까 포스트태그에서 시작하는 수밖에 없다
         List<PostRespDtoWebVelog> posts = postService.getPostsTagName(blogName, tagName, securityContext);
-        BlogRespDtoWeb blog = blogService.getBlog(blogName);
+        BlogRespDtoWebBasic blog = blogService.getBlog(blogName);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName);
         model.addAttribute("blog", blog);
         model.addAttribute("posts", posts);

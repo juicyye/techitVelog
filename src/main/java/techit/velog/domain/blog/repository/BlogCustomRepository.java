@@ -1,7 +1,7 @@
 package techit.velog.domain.blog.repository;
 
-import static techit.velog.domain.blog.dto.BlogRespDto.*;
+import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
 
 public interface BlogCustomRepository {
-    BlogRespDtoWeb findAllByBlog(String blogName);
+    BlogRespDtoWebBasic findAllByBlog(String blogName);
 }

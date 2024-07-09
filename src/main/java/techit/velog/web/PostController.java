@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -14,11 +13,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
-import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.user.service.UserService;
@@ -26,10 +23,9 @@ import techit.velog.global.dto.PrincipalDetails;
 
 import java.util.List;
 
-import static techit.velog.domain.blog.dto.BlogRespDto.*;
+import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -63,12 +59,12 @@ public class PostController {
 
 
     @GetMapping
-    public String posts(@PageableDefault(size = 3) Pageable pageable, Model model,
+    public String posts(@PageableDefault(size = 6) Pageable pageable, Model model,
                         @CurrentSecurityContext SecurityContext securityContext, @RequestParam(value = "sortType",required = false,defaultValue = "NEWEST") String sortType,
                         @ModelAttribute PostSearch search) {
         log.info("securityContext {}", securityContext);
         log.info("search {}", search);
-        BlogRespDtoWeb blog = null;
+        BlogRespDtoWebBasic blog = null;
         if (userService.isUser(securityContext)) {
             log.info("principal {} ",securityContext.getAuthentication().getPrincipal());
             blog = blogService.getBlog((PrincipalDetails)securityContext.getAuthentication().getPrincipal());

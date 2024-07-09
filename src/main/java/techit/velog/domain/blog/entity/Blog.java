@@ -25,6 +25,7 @@ public class Blog extends BaseEntity {
     private String title; // 블로그 제목
     private String description; // 블로그 설명
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "blog",cascade = CascadeType.ALL)
