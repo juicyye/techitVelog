@@ -23,6 +23,7 @@ import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
+import techit.velog.domain.s3.S3VO;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
@@ -153,7 +154,7 @@ public class PostService {
     private UploadFile uploadFile(MultipartFile file) {
         if (file != null) {
             try {
-                return fileStore.storeFile(file);
+                return fileStore.storeFile(file, S3VO.POST_THUMBNAIL_UPLOAD_DIRECTORY);
             } catch (IOException e) {
                 log.error("file error {}", e.getMessage());
                 throw new CustomWebException(e.getMessage());

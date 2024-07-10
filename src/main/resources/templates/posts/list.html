@@ -37,7 +37,7 @@
                     <div class="card-body card-body-fixed-size">
                         <div th:if="${post.postImage != null}" th:with="image=${post.postImage}" class="mb-3">
                             <a th:href="@{|/${post.blogName}/${post.title}|}">
-                                <img th:src="|/images/${image.getStoreFileName()}|" class="card-img-top"
+                                <img th:src="${image.getStoreFileName()}" class="card-img-top"
                                      alt="Post Image"/>
                             </a>
                         </div>

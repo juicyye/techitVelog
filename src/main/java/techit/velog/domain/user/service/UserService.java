@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.repository.PostsRepository;
+import techit.velog.domain.s3.S3VO;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
 import techit.velog.domain.user.dto.UserRespDtoWeb;
@@ -44,7 +45,7 @@ public class UserService {
     @Transactional
     public Long join(UserJoinReq userJoinReq) {
         userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
-        UploadFile uploadFile = new UploadFile("dev-jeans.png","dev-jeans.png");
+        UploadFile uploadFile = new UploadFile(S3VO.USER_DEFAULT_IMAGE,S3VO.USER_DEFAULT_IMAGE);
         User savedUser = userRepository.save(User.toEntity(userJoinReq, uploadFile));
         blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
         return savedUser.getId();
@@ -128,7 +129,7 @@ public class UserService {
     private UploadFile uploadFile(MultipartFile file) {
         if (file != null) {
             try {
-                return fileStore.storeFile(file);
+                return fileStore.storeFile(file, S3VO.USER_PROFILE_IMAGE_UPLOAD_DIRECTORY);
             } catch (IOException e) {
                 log.error("file error {}", e.getMessage());
                 throw new CustomWebException(e.getMessage());

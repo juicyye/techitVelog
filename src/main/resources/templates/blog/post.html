@@ -32,20 +32,13 @@
             <p class="card-text">추천수: <span th:text="${post.likes}"></span></p>
         </div>
 
-
-
-     <!--   <div class="mb-3">
+        <div class="mb-3">
             <span class="card-text" th:text="${post.content}"></span>
         </div>
--->
-
-
-
-
 
 
         <div th:each="image : ${post.postImages}">
-            <img th:src="|/images/${image.getStoreFileName()}|" width="300" height="200"/>
+            <img th:src="${image.getStoreFileName()}" width="300" height="200"/>
         </div>
 
 
@@ -89,7 +82,7 @@
             </ul>
         </div>
         <div>
-            <form th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
+            <form th:if="${post != null and post.blogName != null and post.title != null}" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
                 <div class="form-group mr-2">
                     <label for="content" class="sr-only">댓글</label>
                     <input type="hidden" name="postId" th:value="${post.postId}">

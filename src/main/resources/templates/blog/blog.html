@@ -15,7 +15,7 @@
     <div class="mb-4 p-4">
         <div class="d-flex mb-3 align-items-center">
             <div th:if="${blog.userImage != null}" th:with="image=${blog.userImage}">
-                <img th:src="|/images/${image.getStoreFileName()}|" width="100" height="100" class="rounded-circle"/>
+                <img th:src="${image.getStoreFileName()}" width="100" height="100" class="rounded-circle"/>
             </div>
             <div class="ml-3">
                 <h4 class="mb-0" th:text="${blog.nickname}"></h4>
@@ -65,7 +65,7 @@
             <div th:each="post : ${posts}" class="mb-4 p-4">
                 <div th:if="${post.postImage != null}" th:with="image=${post.postImage}" class="mb-3">
                     <a th:href="@{|/${post.blogName}/${post.title}|}">
-                        <img th:src="|/images/${image.getStoreFileName()}|" width="150" height="100" class="img-fluid"/>
+                        <img th:src="${image.getStoreFileName()}" width="150" height="100" class="img-fluid"/>
                     </a>
                 </div>
 

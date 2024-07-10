@@ -68,10 +68,6 @@ public class BlogController {
         model.addAttribute("post", postRespDtoWebDetail);
         model.addAttribute("nextPost", nextPost);
         model.addAttribute("previousPost", previousPost);
-        System.out.println("postRespDtoWebDetail = " + postRespDtoWebDetail.getBlogName());
-        System.out.println("postRespDtoWebDetail = " + postRespDtoWebDetail.getTitle());
-        System.out.println("postRespDtoWebDetail = " + postRespDtoWebDetail.getIsSecret());
-        System.out.println("comments = " + comments);
         for (CommentRespDtoWeb comment : comments) {
             System.out.println("comment.getContent() = " + comment.getContent());
         }
