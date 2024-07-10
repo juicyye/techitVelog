@@ -23,24 +23,51 @@
                            class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">비공개
                     </span>
             </div>
-
         </div>
-        <hr>
+        <div class="divider"></div>
 
         <div class="flex-div">
             <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.blogName}" class="anker"></a>
             <p class="card-text">조회수: <span th:text="${post.views}"></span></p>
             <p class="card-text">추천수: <span th:text="${post.likes}"></span></p>
-
         </div>
-        <hr>
 
-        <div class="mb-3">
-            <h3 class="card-text"><span th:text="${post.content}"></span></h3>
+        <div>
+            <div>
+                <ul class="list-group list-unstyled">
+                    <div th:each="comment : ${comments}">
+                        <div th:replace="~{comment/comments :: commentTemplate(comment=${comment}, post=${post})}"></div>
+                    </div>
+                </ul>
+            </div>
+            <div>
+                <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
+                    <div class="form-group mr-2">
+                        <label for="content" class="sr-only">댓글</label>
+                        <input type="hidden" name="postId" th:value="${post.postId}">
+                        <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">댓글</button>
+                </form>
+            </div>
         </div>
+
+
+     <!--   <div class="mb-3">
+            <span class="card-text" th:text="${post.content}"></span>
+        </div>
+-->
+
+
+
+
+
+
         <div th:each="image : ${post.postImages}">
             <img th:src="|/images/${image.getStoreFileName()}|" width="300" height="200"/>
         </div>
+
+
 
         <div class="flex-div-button" sec:authorize="isAuthenticated()">
             <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|"
@@ -72,24 +99,8 @@
         </div>
     </div>
 
-    <div class="mb-4">
-        <ul class="list-group list-unstyled">
-            <div th:each="comment : ${comments}">
-                <div th:replace="~{comment/comments :: commentTemplate(${comment},${post})}"></div>
-            </div>
-        </ul>
-    </div>
 
-    <div class="mb-3" >
-        <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
-            <div class="form-group mr-2">
-                <label for="content" class="sr-only">댓글</label>
-                <input type="hidden" name="postId" th:value="${post.postId}">
-                <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
-            </div>
-            <button type="submit" class="btn btn-secondary">댓글</button>
-        </form>
-    </div>
+
 </section>
 
 </body>
