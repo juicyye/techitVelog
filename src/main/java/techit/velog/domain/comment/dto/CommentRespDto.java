@@ -17,8 +17,7 @@ public class CommentRespDto {
     public static class CommentRespDtoWeb{
         private Long commentId;
         private Long parentId;
-        private String blogName;
-        private String postTitle;
+        private String nickname;
         private String content;
         private IsDeleted deleteStatus;
         @Builder.Default
@@ -31,6 +30,7 @@ public class CommentRespDto {
                     .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                     .content(comment.getContent())
                     .deleteStatus(comment.getIsDeleted())
+                    .nickname(comment.getUser().getNickname())
                     .build();
         }
     }

@@ -1,7 +1,11 @@
 <!-- fragments/comment.html -->
 <div th:fragment="commentTemplate(comment,post)" >
     <li class="list-group-item">
-        <div th:text="${comment.content}" class="mb-3"></div>
+       <!-- <div th:text="${comment.content}" class="mb-3"></div>-->
+
+        <div class="mb-3">
+            <h5 th:text="${comment.nickname}"></h5>  <span th:text="${comment.content}"></span>
+        </div>
 
         <!-- 대댓글 입력 양식 -->
         <div class="horizontal mb-3">
