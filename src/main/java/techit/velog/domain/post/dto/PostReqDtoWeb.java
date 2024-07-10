@@ -21,7 +21,10 @@ public class PostReqDtoWeb {
         @NotEmpty
         @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "제목은 2~20 이내로 적어주세요")
         private String title;
+        @NotEmpty
         private String content;
+        @NotEmpty
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "설명은 2~20 이내로 적어주세요")
         private String description;
         private Boolean isTemp;
         private IsSecret isSecret;
@@ -44,8 +47,13 @@ public class PostReqDtoWeb {
     public static class PostReqDtoWebUpdate{
         private Long postId;
         private Long blogId;
+        @NotEmpty
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "제목은 2~20 이내로 적어주세요")
         private String title;
+        @NotEmpty
         private String content;
+        @NotEmpty
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "설명은 2~20 이내로 적어주세요")
         private String postDescription;
         private LocalDateTime createDate;
         private LocalDateTime updateDate;

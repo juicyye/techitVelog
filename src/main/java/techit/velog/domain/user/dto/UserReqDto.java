@@ -1,5 +1,8 @@
 package techit.velog.domain.user.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,8 +26,11 @@ public class UserReqDto {
     public static class UserReqDtoWebUpdate {
         private Long userId;
         @UserUpdate
+        @NotEmpty
+
         private String name;
         @UserUpdate
+        @Email
         private String email;
         @UserUpdate
         private String nickname;
@@ -40,9 +46,16 @@ public class UserReqDto {
     @AllArgsConstructor
     public static class UserJoinReq{
         @JoinUnique
+        @Pattern(regexp = "^[a-zA-Z가-힣]{2,10}$",message = "블로그 이름은 영어, 한글 2~10 이내로 적어주세요")
         private String name;
         @JoinUnique
+        @Pattern(regexp = "^[a-zA-Z]{2,20}$",message = "아이디은 영문 2~20 이내로 적어주세요")
         private String loginId;
+        @NotEmpty
+        @Pattern(
+                regexp = "^(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{6,20}$",
+                message = "비밀번호는 6자 이상 20자 이하이어야 하며, 공백을 포함할 수 없고, 특수문자를 두 개 이상 포함해야 합니다."
+        )
         private String password;
         private String passwordConfirm;
         private boolean emailCheck;
@@ -55,7 +68,9 @@ public class UserReqDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserLoginReq{
+        @NotEmpty
         private String loginId;
+        @NotEmpty
         private String password;
     }
 
@@ -106,6 +121,7 @@ public class UserReqDto {
 
     @Data
     public static class UserReqDeleteDto{
+        @NotEmpty
         private String password;
     }
 
@@ -113,9 +129,16 @@ public class UserReqDto {
     @Builder
     public static class UserReqDtoWebAdmin {
         private Long userId;
+        @NotEmpty
+        @Pattern(regexp = "^[a-zA-Z]{2,20}$",message = "아이디은 영문 2~20 이내로 적어주세요")
         private String loginId;
+        @Email
+        @NotEmpty
         private String email;
+
         private String nickname;
+        @NotEmpty
+        @Pattern(regexp = "^[a-zA-Z가-힣]{2,10}$",message = "블로그 이름은 영어, 한글 2~10 이내로 적어주세요")
         private String name;
         private Role role;
         private MultipartFile userImage;

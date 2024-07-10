@@ -1,17 +1,12 @@
 package techit.velog.domain.comment.repository;
 
-import com.querydsl.core.Tuple;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import techit.velog.domain.comment.dto.CommentRespDto;
 import techit.velog.domain.comment.entity.Comment;
-import techit.velog.domain.comment.entity.QComment;
-import techit.velog.domain.user.entity.QUser;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import static techit.velog.domain.comment.dto.CommentRespDto.*;
+
 import static techit.velog.domain.comment.entity.QComment.*;
 import static techit.velog.domain.user.entity.QUser.*;
 

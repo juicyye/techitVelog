@@ -80,7 +80,7 @@
         </ul>
     </div>
 
-    <div class="mb-3"  sec:authorize="isAuthenticated()">
+    <div class="mb-3" >
         <form action="" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
             <div class="form-group mr-2">
                 <label for="content" class="sr-only">댓글</label>
