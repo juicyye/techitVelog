@@ -96,7 +96,7 @@
     <form th:action method="post" th:object="${user}">
         <div th:replace="~{layout/fiederror :: fielderror}"></div>
         <div>
-            <label for="username">사용자 이름 (블로그 이름에 적용)</label>
+            <label for="username">블로그 명</label>
             <input type="text" id="username" name="username" th:field="*{name}" required>
             <div th:errors="*{name}" class="error-class"></div>
         </div>

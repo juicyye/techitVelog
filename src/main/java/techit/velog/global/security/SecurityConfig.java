@@ -83,6 +83,7 @@ public class SecurityConfig {
                         .addLogoutHandler((request, response, authentication) -> {
                             for (Cookie cookie : request.getCookies()) {
                                 String cookieName = cookie.getName();
+                                if(cookie.getName().equals("view-count")) continue;
                                 Cookie cookieToDelete = new Cookie(cookieName, null);
                                 cookieToDelete.setMaxAge(0);
                                 response.addCookie(cookieToDelete);

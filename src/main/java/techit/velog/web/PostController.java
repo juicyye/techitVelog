@@ -57,7 +57,6 @@ public class PostController {
         return "redirect:/";
     }
 
-
     @GetMapping
     public String posts(Pageable pageable, Model model,
                         @CurrentSecurityContext SecurityContext securityContext, @RequestParam(value = "sortType",required = false,defaultValue = "NEWEST") String sortType,

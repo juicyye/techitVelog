@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import techit.velog.domain.post.entity.Posts;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +18,9 @@ public interface PostsRepository extends JpaRepository<Posts, Long>, PostsCustom
     @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.title = :postTitle")
     Optional<Posts> findPostBlogName(@Param("blogName") String blogName,@Param("postTitle") String postTitle);
 
+    @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.createDate < :createDate order by p.createDate desc")
+    List<Posts> findByPreviousPost(@Param("blogName") String blogName,@Param("createDate") LocalDateTime createDate);
+
+    @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.createDate > :createDate order by p.createDate asc")
+    List<Posts> findByNextPost(@Param("blogName") String blogName,@Param("createDate") LocalDateTime createDate);
 }

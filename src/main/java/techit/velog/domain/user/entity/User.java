@@ -87,7 +87,7 @@ public class User extends BaseEntity {
      */
     public User(OAuth2Response oAuth2Response) {
         this.userId = UUID.randomUUID().toString();
-        this.nickname = oAuth2Response.getName();
+        this.nickname = oAuth2Response.getLoginId().substring(0,8);
         this.loginId = oAuth2Response.getLoginId();
         this.name = oAuth2Response.getName();
         this.email = oAuth2Response.getEmail();

@@ -118,5 +118,22 @@ public class PostRespDtoWeb {
         }
     }
 
+    @Data
+    public static class PostRespDtoWebNextAndPrevious {
+        private Long postId;
+        private String title;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private IsSecret isSecret;
+
+        public PostRespDtoWebNextAndPrevious(Posts posts) {
+            this.postId = posts.getId();
+            this.title = posts.getTitle();
+            this.createDate = posts.getCreateDate();
+            this.updateDate = posts.getUpdateDate();
+            this.isSecret = posts.getIsSecret();
+        }
+    }
+
 
 }

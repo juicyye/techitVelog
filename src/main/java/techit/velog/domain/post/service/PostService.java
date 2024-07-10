@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
@@ -54,6 +56,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
+    private final PostsRepository postsRepository;
 
     /**
      * Tag와 포스트를 저장하는 메서드
@@ -177,7 +180,7 @@ public class PostService {
      * 포스트의 상세페이지를 보는 메서드
      */
 
-    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext, Pageable pageable) {
+    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
         PostRespDtoWebDetail postDetail = postRepository.findPostDetail(blogName, postTitle);
         if(postDetail.getIsSecret().equals(IsSecret.SECRET)) {
             if(isUser(blogName, securityContext)) {
@@ -185,7 +188,8 @@ public class PostService {
             } else{
                 throw new CustomWebException("권한이 없습니다.");
             }
-        } else return postDetail;
+        }
+        return postDetail;
     }
 
     /**
@@ -318,4 +322,31 @@ public class PostService {
         postRepository.delete(posts);
         return posts.getBlog().getId();
     }
+
+    public PostRespDtoWebNextAndPrevious getPreviousPost(PostRespDtoWebDetail postRespDtoWebDetail, SecurityContext securityContext) {
+        return postsRepository.findByPreviousPost(postRespDtoWebDetail.getBlogName(), postRespDtoWebDetail.getCreateDate())
+                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWebNextAndPrevious::new)
+                .findFirst().orElse(null);
+    }
+
+    public PostRespDtoWebNextAndPrevious getNextPost(PostRespDtoWebDetail postRespDtoWebDetail, SecurityContext securityContext) {
+        return postsRepository.findByNextPost(postRespDtoWebDetail.getBlogName(), postRespDtoWebDetail.getCreateDate())
+                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWebNextAndPrevious::new)
+                .findFirst().orElse(null);
+    }
+
+    private Predicate<Posts> secretUser(String loginId, SecurityContext securityContext) {
+        if(securityContext.getAuthentication() instanceof AnonymousAuthenticationToken) {
+            return post -> post.getIsSecret().equals(IsSecret.NORMAL);
+        }
+        PrincipalDetails principal = (PrincipalDetails) securityContext.getAuthentication().getPrincipal();
+        if(principal.getUsername().equals(loginId)) {
+            return post -> true;
+        } else{
+            return post -> post.getIsSecret().equals(IsSecret.NORMAL);
+        }
+
+    }
+
+
 }

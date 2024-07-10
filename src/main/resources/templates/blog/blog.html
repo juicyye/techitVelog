@@ -25,6 +25,9 @@
                                                th:text="${blog.followings}"></a></span>
                 </div>
             </div>
+            <div class="blog-description">
+                <span th:text="${blog.description}"></span>
+            </div>
         </div>
         <div class="d-flex justify-content-between mb-3">
             <div sec:authorize="isAuthenticated()">

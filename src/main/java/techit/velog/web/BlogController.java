@@ -44,7 +44,6 @@ public class BlogController {
     private final LikeService likeService;
     private final CommentService commentService;
 
-
     @GetMapping
     public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext, @ModelAttribute("search")PostSearch postSearch) {
         BlogRespDtoWebBasic blog = blogService.getBlog(blogName);
@@ -58,21 +57,24 @@ public class BlogController {
     }
 
     @GetMapping("/{postTitle}")
+    // todo 로그아웃햇을때 댓글이 제대로 안보이는 현상발생
     public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,
-                             HttpServletRequest request, HttpServletResponse response, @CurrentSecurityContext SecurityContext securityContext, @PageableDefault(size = 1) Pageable pageable) {
-        PostRespDtoWebDetail postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext, pageable);
+                             HttpServletRequest request, HttpServletResponse response, @CurrentSecurityContext SecurityContext securityContext) {
+        PostRespDtoWebDetail postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext);
+        PostRespDtoWebNextAndPrevious nextPost = postService.getNextPost(postRespDtoWebDetail, securityContext);
+        PostRespDtoWebNextAndPrevious previousPost = postService.getPreviousPost(postRespDtoWebDetail, securityContext);
         List<CommentRespDtoWeb> comments = commentService.getComments(postRespDtoWebDetail.getPostId());
         postService.viewCountValidation(blogName, postTitle, request, response);
         model.addAttribute("post", postRespDtoWebDetail);
+        model.addAttribute("nextPost", nextPost);
+        model.addAttribute("previousPost", previousPost);
         model.addAttribute("comments", comments);
-
         return "blog/post";
     }
 
     @GetMapping("/follow")
     public String follow(@PathVariable("blogName") String blogName, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         followService.follow(principalDetails.getUsername(),blogName);
-
         return "redirect:/{blogName}";
     }
 
@@ -125,7 +127,4 @@ public class BlogController {
         rttr.addAttribute("delete", true);
         return "redirect:/{blogName}";
     }
-
-
-
 }
