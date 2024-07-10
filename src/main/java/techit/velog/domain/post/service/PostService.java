@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,7 @@ import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.posttag.entity.PostTag;
-import techit.velog.domain.s3.S3VO;
+import techit.velog.domain.uploadfile.S3VO;
 import techit.velog.domain.tag.entity.Tags;
 import techit.velog.domain.tag.repository.TagRepository;
 import techit.velog.domain.uploadfile.FileStore;
@@ -45,7 +44,6 @@ import java.util.stream.Collectors;
 
 import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +73,7 @@ public class PostService {
 
         // post 저장
         Posts posts = new Posts(postReqDtoWebCreate, blog);
-        posts.addImages(uploadFile,uploadFiles);
+        posts.addImages(uploadFile, uploadFiles);
         splitTag(postReqDtoWebCreate.getTagName(), blog, posts);
 
         return postRepository.save(posts).getId();
@@ -83,11 +81,10 @@ public class PostService {
 
     /**
      * 메인페이지에서 보여주는 모든 포스트를 보여주는 메서드
-     * Paging 처리를 해야함
      */
 
     public Page<PostRespDtoWebAll> getPosts(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
-        return postRepository.findAllByLists(pageable, postSortType,postSearch);
+        return postRepository.findAllByLists(pageable, postSortType, postSearch);
     }
 
     /**
@@ -98,13 +95,34 @@ public class PostService {
     public void update(Long postId, PostReqDtoWebUpdate postReqDtoWebUpdate) {
         Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         Blog blog = blogRepository.findById(postReqDtoWebUpdate.getBlogId()).orElseThrow(() -> new CustomWebException("블로그를 찾을 수 없습니다."));
-        List<UploadFile> uploadFiles = ImageFiles(postReqDtoWebUpdate.getImageFiles());
-        UploadFile uploadFile = uploadFile(postReqDtoWebUpdate.getImageFile());
         // post안에 있는 태그들을 다 삭제하고 다시 넣기
         posts.removePostTag();
-        // todo 기존 태그는 삭제하고 새로운 태그는 더하기
         splitTag(postReqDtoWebUpdate.getTagName(), blog, posts);
-        posts.change(postReqDtoWebUpdate, uploadFile,uploadFiles );
+        UploadFile uploadFile = posts.getUploadFile();
+        List<UploadFile> uploadFiles = posts.getUploadFiles();
+        if (!postReqDtoWebUpdate.getImageFile().isEmpty()) {
+            log.info("posts.getUploadFiles() {}", postReqDtoWebUpdate.getImageFile().isEmpty());
+            deleteImage(uploadFile);
+            uploadFile = uploadFile(postReqDtoWebUpdate.getImageFile());
+
+        }
+        if (!postReqDtoWebUpdate.getImageFiles().isEmpty()) {
+            log.info("posts.getUploadFiles() {}", postReqDtoWebUpdate.getImageFiles().isEmpty());
+            deleteImages(uploadFiles);
+            uploadFiles = ImageFiles(postReqDtoWebUpdate.getImageFiles());
+        }
+
+        posts.change(postReqDtoWebUpdate, uploadFile, uploadFiles);
+    }
+
+    private void deleteImage(UploadFile uploadFile) {
+        fileStore.deleteFile(uploadFile.getStoreFileName());
+    }
+
+    private void deleteImages(List<UploadFile> uploadFiles) {
+        for (UploadFile uploadFile : uploadFiles) {
+            fileStore.deleteFile(uploadFile.getStoreFileName());
+        }
     }
 
     /**
@@ -136,12 +154,7 @@ public class PostService {
      */
     private List<UploadFile> ImageFiles(List<MultipartFile> files) {
         if (files != null) {
-            try {
-                return fileStore.storeFiles(files);
-            } catch (IOException e) {
-                log.error("file error {}", e.getMessage());
-                throw new CustomWebException(e.getMessage());
-            }
+            return fileStore.storeFiles(files);
         } else {
             return null;
         }
@@ -153,13 +166,8 @@ public class PostService {
 
     private UploadFile uploadFile(MultipartFile file) {
         if (file != null) {
-            try {
-                return fileStore.storeFile(file, S3VO.POST_THUMBNAIL_UPLOAD_DIRECTORY);
-            } catch (IOException e) {
-                log.error("file error {}", e.getMessage());
-                throw new CustomWebException(e.getMessage());
-            }
-        } else {
+            return fileStore.storeFile(file, S3VO.POST_THUMBNAIL_UPLOAD_DIRECTORY);
+        }else {
             return null;
         }
     }
@@ -183,10 +191,10 @@ public class PostService {
 
     public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
         PostRespDtoWebDetail postDetail = postRepository.findPostDetail(blogName, postTitle);
-        if(postDetail.getIsSecret().equals(IsSecret.SECRET)) {
-            if(isUser(blogName, securityContext)) {
+        if (postDetail.getIsSecret().equals(IsSecret.SECRET)) {
+            if (isUser(blogName, securityContext)) {
                 return postDetail;
-            } else{
+            } else {
                 throw new CustomWebException("권한이 없습니다.");
             }
         }
@@ -234,7 +242,7 @@ public class PostService {
      */
 
     public PostRespDtoWebUpdate getUpdatePost(Long postId) {
-        Posts posts = postRepository.findById(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        Posts posts = postRepository.findPostByImage(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
         PostRespDtoWebUpdate postRespDtoWebUpdate = new PostRespDtoWebUpdate(posts);
         postRespDtoWebUpdate.setTagName(changeTag(posts.getPostTags()));
         return postRespDtoWebUpdate;
@@ -337,13 +345,13 @@ public class PostService {
     }
 
     private Predicate<Posts> secretUser(String loginId, SecurityContext securityContext) {
-        if(securityContext.getAuthentication() instanceof AnonymousAuthenticationToken) {
+        if (securityContext.getAuthentication() instanceof AnonymousAuthenticationToken) {
             return post -> post.getIsSecret().equals(IsSecret.NORMAL);
         }
         PrincipalDetails principal = (PrincipalDetails) securityContext.getAuthentication().getPrincipal();
-        if(principal.getUsername().equals(loginId)) {
+        if (principal.getUsername().equals(loginId)) {
             return post -> true;
-        } else{
+        } else {
             return post -> post.getIsSecret().equals(IsSecret.NORMAL);
         }
 

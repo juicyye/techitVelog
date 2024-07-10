@@ -27,6 +27,7 @@ public class UploadFile {
     public UploadFile(String uploadFileName, String storeFileName) {
         this.uploadFileName = uploadFileName;
         this.storeFileName = storeFileName;
+
     }
 
     public UploadFile(String storeFileName) {

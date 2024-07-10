@@ -48,8 +48,8 @@ public class AdminController {
     }
 
     @PostMapping("/user/{id}/delete")
-    public String userDelete(@PathVariable("id") Long userId, RedirectAttributes rttr) {
-        userService.deleteUser(userId);
+    public String userDelete(@PathVariable("id") String loginId, RedirectAttributes rttr) {
+        userService.deleteUser(loginId);
         rttr.addAttribute("delete", true);
         return "redirect:/admin/users";
     }

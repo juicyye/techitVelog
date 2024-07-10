@@ -23,4 +23,8 @@ public interface PostsRepository extends JpaRepository<Posts, Long>, PostsCustom
 
     @Query("select p from Posts p join fetch p.blog b where b.title = :blogName and p.createDate > :createDate order by p.createDate asc")
     List<Posts> findByNextPost(@Param("blogName") String blogName,@Param("createDate") LocalDateTime createDate);
+
+    @EntityGraph(attributePaths = {"uploadFile","uploadFiles"})
+    @Query("select p from Posts p where p.id = :id")
+    Optional<Posts> findPostByImage(@Param("id") Long postId);
 }

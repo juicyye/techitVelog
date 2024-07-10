@@ -5,13 +5,11 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import techit.velog.domain.s3.S3VO;
 import techit.velog.global.exception.CustomWebException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +28,7 @@ public class FileStore {
 
 
 
-    public List<UploadFile> storeFiles(List<MultipartFile> files) throws IOException {
+    public List<UploadFile> storeFiles(List<MultipartFile> files) {
         List<UploadFile> uploadFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             if(!file.isEmpty()) {
@@ -40,8 +38,8 @@ public class FileStore {
         }
         return uploadFiles;
     }
-
-    public UploadFile storeFile(MultipartFile file, String directory) throws IOException {
+    @Transactional
+    public UploadFile storeFile(MultipartFile file, String directory) {
         if (file.isEmpty()) {
             return null;
         }
@@ -61,6 +59,8 @@ public class FileStore {
             throw new CustomWebException(e.getMessage());
         }
     }
+
+
 
     private String getUrl(String directory) {
         return bucket + "/" + directory;
@@ -85,5 +85,14 @@ public class FileStore {
         }
         return uuid + "." + ext;
 
+    }
+    @Transactional
+    public void deleteFile(String fileName) {
+        String deleteFile = fileName.substring(fileName.indexOf("/", 10)+1);
+        try {
+            amazonS3.deleteObject(bucket, deleteFile);
+        } catch (Exception e) {
+            throw new CustomWebException(e.getMessage());
+        }
     }
 }

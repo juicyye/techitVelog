@@ -1,4 +1,4 @@
-package techit.velog.domain.s3;
+package techit.velog.domain.uploadfile;
 
 public interface S3VO {
     String POST_IMAGE_UPLOAD_DIRECTORY ="post-images";
