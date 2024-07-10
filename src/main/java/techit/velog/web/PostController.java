@@ -13,9 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import techit.velog.domain.blog.dto.BlogRespDtoWeb;
 import techit.velog.domain.blog.service.BlogService;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebCreate;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.tag.service.TagService;
 import techit.velog.domain.user.service.UserService;
@@ -23,9 +26,6 @@ import techit.velog.global.dto.PrincipalDetails;
 
 import java.util.List;
 
-import static techit.velog.domain.blog.dto.BlogRespDtoWeb.*;
-import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -63,13 +63,14 @@ public class PostController {
                         @ModelAttribute PostSearch search) {
         log.info("securityContext {}", securityContext);
         log.info("search {}", search);
-        BlogRespDtoWebBasic blog = null;
+        BlogRespDtoWeb blog = null;
         if (userService.isUser(securityContext)) {
+            log.info("(userService.isUser(securityContext) {} ", userService.isUser(securityContext));
             log.info("principal {} ",securityContext.getAuthentication().getPrincipal());
             blog = blogService.getBlog((PrincipalDetails)securityContext.getAuthentication().getPrincipal());
         }
 
-        Page<PostRespDtoWebAll> posts = postService.getPosts(pageable, PostSortType.valueOf(sortType.toUpperCase()),search);
+        Page<PostRespDtoWeb> posts = postService.getPosts(pageable, PostSortType.valueOf(sortType.toUpperCase()),search);
         model.addAttribute("posts", posts);
         model.addAttribute("blog", blog);
         return "posts/list";
@@ -77,7 +78,7 @@ public class PostController {
 
     @GetMapping("/saves")
     public String savePost(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
-        List<PostRespDtoWebSave> postSave = postService.getPostSave(principalDetails.getUsername());
+        List<PostRespDtoWeb> postSave = postService.getPostSave(principalDetails.getUsername());
         model.addAttribute("posts", postSave);
         return "posts/saves";
     }

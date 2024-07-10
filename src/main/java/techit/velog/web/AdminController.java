@@ -10,12 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdmin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdminUpdate;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
+import techit.velog.domain.user.dto.webresp.UserRespDtoWeb;
 import techit.velog.domain.user.service.UserService;
 
 
-
-import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,20 +26,20 @@ public class AdminController {
 
     @GetMapping("/users")
     public String users(Model model, @PageableDefault(size = 20) Pageable pageable) {
-        Page<UserRespDtoWebAdmin> users = userService.getUsers(pageable);
+        Page<UserRespDtoWeb> users = userService.getUsers(pageable);
         model.addAttribute("users", users);
         return "admin/users";
     }
 
     @GetMapping("/user/{id}/modify")
     public String userModifyForm(@PathVariable("id") Long userId, Model model) {
-        UserRespDtoWebAdmin user = userService.getUser(userId);
+        UserRespDtoWeb user = userService.getUser(userId);
         model.addAttribute("user", user);
         return "admin/userModify";
     }
 
     @PostMapping("/user/{id}/modify")
-    public String userModify(@PathVariable("id") Long userId, @Valid @ModelAttribute("user") UserReqDtoWebAdmin user, BindingResult bindingResult, RedirectAttributes rttr) {
+    public String userModify(@PathVariable("id") Long userId, @Valid @ModelAttribute("user") UserReqDtoWebAdminUpdate user, BindingResult bindingResult, RedirectAttributes rttr) {
         if(bindingResult.hasErrors()) {
             return "admin/userModify";
         }

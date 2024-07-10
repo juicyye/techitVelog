@@ -11,14 +11,10 @@ import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
-import techit.velog.global.dto.GoogleResponse;
-import techit.velog.global.dto.NaverResponse;
-import techit.velog.global.dto.OAuth2Response;
-import techit.velog.global.dto.PrincipalDetails;
+import techit.velog.global.dto.*;
 
 import java.util.Optional;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Component
 @RequiredArgsConstructor
@@ -48,7 +44,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         if (_user.isEmpty()) {
 
             User savedUser = userRepository.save(new User(oAuth2Response));
-            Blog savedBlog = blogRepository.saveAndFlush(new Blog("@" + savedUser.getName(), savedUser));
+            blogRepository.saveAndFlush(new Blog("@" + savedUser.getName(), savedUser));
             return new PrincipalDetails(new AccountDto(savedUser), oAuth2Response.getAttributes());
         } else{
             User user = _user.get();

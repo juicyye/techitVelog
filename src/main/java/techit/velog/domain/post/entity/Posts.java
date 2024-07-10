@@ -8,13 +8,14 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.liks.entity.Likes;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebCreate;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebUpdate;
 import techit.velog.domain.posttag.entity.PostTag;
 import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
 
 @Entity
 @NoArgsConstructor
@@ -69,7 +70,7 @@ public class Posts extends BaseEntity {
         this.title = postReqDtoWebCreate.getTitle();
         this.content = postReqDtoWebCreate.getContent();
         this.isSecret = postReqDtoWebCreate.getIsSecret();
-        this.description = postReqDtoWebCreate.getDescription();
+        this.description = postReqDtoWebCreate.getPostDescription();
         if (blog != null) {
             setBlog(blog);
         }
@@ -82,7 +83,7 @@ public class Posts extends BaseEntity {
         this.title = postReqDtoWebCreate.getTitle();
         this.content = postReqDtoWebCreate.getContent();
         this.isSecret = postReqDtoWebCreate.getIsSecret();
-        this.description = postReqDtoWebCreate.getDescription();
+        this.description = postReqDtoWebCreate.getPostDescription();
         if (postReqDtoWebCreate.getIsTemp()) {
             this.isReal = IsReal.TEMP;
         } else{

@@ -10,13 +10,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
-import techit.velog.domain.user.entity.Role;
+
+import techit.velog.global.dto.AccountDto;
 import techit.velog.global.dto.PrincipalDetails;
 
 import java.io.IOException;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final JwtProcess jwtProcess;

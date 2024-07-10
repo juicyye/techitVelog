@@ -1,9 +1,12 @@
 package techit.velog.domain.tag.repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import techit.velog.domain.post.entity.IsReal;
+import techit.velog.domain.post.entity.IsSecret;
+import techit.velog.domain.tag.dto.TagRespDtoWeb;
 import techit.velog.domain.tag.entity.Tags;
 
 
@@ -14,7 +17,6 @@ import static techit.velog.domain.blog.entity.QBlog.*;
 
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.posttag.entity.QPostTag.*;
-import static techit.velog.domain.tag.dto.TagRespDto.*;
 import static techit.velog.domain.tag.entity.QTags.*;
 
 public class TagRepositoryCustomImpl implements TagRepositoryCustom {
@@ -27,19 +29,21 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
     }
 
     @Override
-    public List<TagRespDtoWeb> findAllByTagName(String blogName) {
+    public List<TagRespDtoWeb> findAllByTagName(String blogName,Boolean isUser) {
 
         List<TagRespDtoWeb> results = queryFactory.select(Projections.fields(TagRespDtoWeb.class,
                         tags.id.as("id"),tags.name.as("name")))
-                .from(tags)
+                .from(postTag)
+                .join(postTag.tags, tags)
+                .join(postTag.posts, posts)
                 .join(tags.blog, blog)
-                .where(blog.title.eq(blogName))
+                .where(blog.title.eq(blogName),posts.isReal.stringValue().eq(IsReal.REAL.name())
+                        ,isUser(isUser))
                 .fetch();
         for (TagRespDtoWeb result : results) {
             int size = queryFactory.select(postTag.id)
                     .from(postTag)
                     .leftJoin(postTag.tags, tags)
-                    .leftJoin(postTag.posts, posts)
                     .where(tags.id.eq(result.getId()))
                     .fetch().size();
             result.setPostTagCount(size);
@@ -54,5 +58,9 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
                 .join(tags.blog, blog)
                 .where(blog.id.eq(blogId))
                 .fetch();
+    }
+
+    private BooleanExpression isUser(Boolean isUser) {
+        return isUser ? null : posts.isSecret.stringValue().eq(IsSecret.NORMAL.name());
     }
 }

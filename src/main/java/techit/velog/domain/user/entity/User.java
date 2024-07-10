@@ -6,15 +6,15 @@ import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.uploadfile.UploadFile;
-import techit.velog.domain.user.dto.UserRespDtoWeb;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdminUpdate;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
 import techit.velog.global.dto.OAuth2Response;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,7 +50,7 @@ public class User extends BaseEntity {
     /**
      * 회원가입 Dto -> Entity
      */
-    public static User toEntity(UserJoinReq userJoinReq, UploadFile uploadFile) {
+    public static User toEntity(UserReqDtoWebJoin userJoinReq, UploadFile uploadFile) {
         EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         return User.builder()
                 .userId(UUID.randomUUID().toString())
@@ -68,7 +68,7 @@ public class User extends BaseEntity {
     /**
      * 관리자 전용
      */
-    public static User toEntity(UserJoinReq userJoinReq) {
+    public static User toEntity(UserReqDtoWebJoin userJoinReq) {
         EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         return User.builder()
                 .userId(UUID.randomUUID().toString())
@@ -142,12 +142,12 @@ public class User extends BaseEntity {
         return this.name.equals(name);
     }
 
-    public void changeInfoAdmin(UserReqDtoWebAdmin userReqDtoWebAdmin, UploadFile uploadFile) {
-        this.email = userReqDtoWebAdmin.getEmail();
-        this.name = userReqDtoWebAdmin.getName();
-        this.nickname = userReqDtoWebAdmin.getNickname();
-        this.loginId = userReqDtoWebAdmin.getLoginId();
-        this.role = userReqDtoWebAdmin.getRole();
+    public void changeInfoAdmin(UserReqDtoWebAdminUpdate userReqDtoWebUpdate, UploadFile uploadFile) {
+        this.email = userReqDtoWebUpdate.getEmail();
+        this.name = userReqDtoWebUpdate.getName();
+        this.nickname = userReqDtoWebUpdate.getNickname();
+        this.loginId = userReqDtoWebUpdate.getLoginId();
+        this.role = userReqDtoWebUpdate.getRole();
         this.uploadFile = uploadFile;
     }
 }

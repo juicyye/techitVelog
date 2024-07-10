@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.follow.dto.FollowRespDtoWeb;
 import techit.velog.domain.follow.entity.Follow;
 import techit.velog.domain.follow.repository.FollowRepository;
 import techit.velog.global.exception.CustomWebException;
 
 import java.util.List;
 import java.util.Optional;
-
-import static techit.velog.domain.follow.dto.FollowRespDto.*;
 
 @Service
 @Transactional(readOnly = true)

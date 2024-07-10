@@ -8,7 +8,7 @@ import techit.velog.global.exception.CustomWebException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomWebException.class)
+    /*@ExceptionHandler(CustomWebException.class)
     public String CustomWebExceptionHandler(Exception exception, Model model) {
         model.addAttribute("exception", exception);
         return "error/4xx";
@@ -18,5 +18,5 @@ public class GlobalExceptionHandler {
     public String exceptionHandler(Exception exception, Model model) {
         model.addAttribute("exception", exception.getMessage());
         return "error/5xx";
-    }
+    }*/
 }

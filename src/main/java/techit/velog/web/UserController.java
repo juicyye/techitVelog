@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,15 +17,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import techit.velog.domain.user.entity.Role;
-import techit.velog.domain.user.entity.User;
+
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebDelete;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
+import techit.velog.domain.user.dto.webresp.UserRespDtoWeb;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.domain.user.service.UserService;
 import techit.velog.global.dto.PrincipalDetails;
-import techit.velog.global.exception.CustomWebException;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -44,12 +43,12 @@ public class UserController {
 
 
     @GetMapping("/join")
-    public String joinForm(@ModelAttribute("user") UserJoinReq userJoinReq) {
+    public String joinForm(@ModelAttribute("user") UserReqDtoWebJoin userJoinReq) {
         return "login/join";
     }
 
     @PostMapping("/join")
-    public String join(@Validated @ModelAttribute("user") UserJoinReq userJoinReq, BindingResult bindingResult, Model model) {
+    public String join(@Validated @ModelAttribute("user") UserReqDtoWebJoin userJoinReq, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             log.info("join error {}",bindingResult.getAllErrors());
             return "login/join";
@@ -72,7 +71,7 @@ public class UserController {
 
     @GetMapping("/account")
     public String account(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        UserRespDtoWebInfo user = userService.getUser(principalDetails.getUsername());
+        UserRespDtoWeb user = userService.getUser(principalDetails.getUsername());
         model.addAttribute("blog", user);
         return "user/info";
     }
@@ -80,7 +79,7 @@ public class UserController {
     @GetMapping("/account/update")
     public String accountUpdateForm(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-        UserRespDtoWebUpdate user = userService.getUserByUpdate(principalDetails.getUsername());
+        UserRespDtoWeb user = userService.getUserByUpdate(principalDetails.getUsername());
         model.addAttribute("user", user);
         return "user/update";
     }
@@ -106,12 +105,12 @@ public class UserController {
     }
 
     @GetMapping("/account/delete")
-    public String deleteForm(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto) {
+    public String deleteForm(@ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto) {
         return "user/delete";
     }
 
     @PostMapping("/account/delete")
-    public String delete(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto, BindingResult bindingResult
+    public String delete(@ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto, BindingResult bindingResult
             , @AuthenticationPrincipal PrincipalDetails principalDetails, RedirectAttributes rttr, HttpServletRequest request, HttpServletResponse response) {
         if(!userService.checkPassword(principalDetails.getUsername(),userReqDeleteDto.getPassword())) {
             bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");

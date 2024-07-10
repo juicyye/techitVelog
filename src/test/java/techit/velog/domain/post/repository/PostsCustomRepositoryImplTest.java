@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.blog.service.BlogService;
-import techit.velog.domain.post.dto.PostRespDtoWeb;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.user.entity.Role;

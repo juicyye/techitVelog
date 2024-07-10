@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import techit.velog.domain.comment.dto.webresp.CommentRespDtoWeb;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.comment.repository.CommentRepository;
 import techit.velog.domain.post.entity.Posts;
@@ -12,7 +13,6 @@ import techit.velog.domain.post.repository.PostsRepository;
 
 import java.util.List;
 
-import static techit.velog.domain.comment.dto.CommentRespDto.*;
 
 @SpringBootTest
 @Transactional

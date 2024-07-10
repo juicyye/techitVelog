@@ -3,6 +3,9 @@ package techit.velog.domain.comment.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebCreate;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebUpdate;
+import techit.velog.domain.comment.dto.webresp.CommentRespDtoWeb;
 import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.comment.repository.CommentRepository;
 import techit.velog.domain.post.entity.Posts;
@@ -16,9 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static techit.velog.domain.comment.dto.CommentReqDtoWeb.*;
-import static techit.velog.domain.comment.dto.CommentRespDto.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,12 +29,12 @@ public class CommentService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long create(CommentReqDtoWebBasic commentReqDtoWebBasic, String loginId) {
+    public Long create(CommentReqDtoWebCreate commentReqDtoWebCreate, String loginId) {
         User user = userRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("유저를 찾을 수 없습니다."));
-        Posts posts = postRepository.findById(commentReqDtoWebBasic.getPostId()).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
-        Comment comment = new Comment(commentReqDtoWebBasic, posts, user);
-        if (commentReqDtoWebBasic.getCommentId() != null) {
-            Comment parent = commentRepository.findById(commentReqDtoWebBasic.getCommentId()).orElseThrow(() -> new CustomWebException("댓글을 찾을 수 없습니다."));
+        Posts posts = postRepository.findById(commentReqDtoWebCreate.getPostId()).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
+        Comment comment = new Comment(commentReqDtoWebCreate, posts, user);
+        if (commentReqDtoWebCreate.getCommentId() != null) {
+            Comment parent = commentRepository.findById(commentReqDtoWebCreate.getCommentId()).orElseThrow(() -> new CustomWebException("댓글을 찾을 수 없습니다."));
             parent.addChild(comment);
         }
         Comment savedComment = commentRepository.save(comment);
@@ -68,9 +68,9 @@ public class CommentService {
     }
 
 
-    public CommentReqDtoWebUpdate getComment(Long commentId) {
+    public CommentRespDtoWeb getComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomWebException("not found Comment"));
-        return new CommentReqDtoWebUpdate(comment);
+        return new CommentRespDtoWeb(comment);
 
     }
     @Transactional

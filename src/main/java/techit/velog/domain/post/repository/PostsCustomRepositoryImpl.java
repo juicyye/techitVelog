@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.uploadfile.QUploadFile;
@@ -23,7 +24,6 @@ import java.util.List;
 import static techit.velog.domain.blog.entity.QBlog.*;
 import static techit.velog.domain.comment.entity.QComment.*;
 import static techit.velog.domain.liks.entity.QLikes.*;
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.posttag.entity.QPostTag.*;
 import static techit.velog.domain.tag.entity.QTags.*;
@@ -41,11 +41,11 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     }
 
     @Override
-    public Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
+    public Page<PostRespDtoWeb> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
         QUploadFile userImage = new QUploadFile("userImage");
         OrderSpecifier orderSpecifier = createOrderSpecifier(postSortType);
 
-        List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
+        List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate,posts.views,
                         posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
@@ -92,8 +92,8 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
         };
     }
 
-    public List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isuser, PostSearch search) {
-        List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
+    public List<PostRespDtoWeb> findAllByVelog(String blogName, boolean isuser, PostSearch search) {
+        List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), posts.uploadFile.as("postImage"),
                         posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")
                         ))
@@ -121,8 +121,8 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
 
 
     @Override
-    public List<PostRespDtoWebVelog> findPostsByTagName(String blogName, String tagName, boolean isUser) {
-        List<PostRespDtoWebVelog> results = queryFactory.select(Projections.fields(PostRespDtoWebVelog.class,
+    public List<PostRespDtoWeb> findPostsByTagName(String blogName, String tagName, boolean isUser) {
+        List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title,posts.views, posts.description.as("postDescription"), uploadFile.as("postImage"),
                         posts.createDate,posts.updateDate, likes.countDistinct().as("likes"), comment.countDistinct().as("comments"), posts.isSecret, blog.title.as("blogName")))
                 .from(postTag)
@@ -139,22 +139,22 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
         return getTagNames(results);
     }
 
-    private List<PostRespDtoWebVelog> getTagNames(List<PostRespDtoWebVelog> results) {
-        for (PostRespDtoWebVelog result : results) {
+    private List<PostRespDtoWeb> getTagNames(List<PostRespDtoWeb> results) {
+        for (PostRespDtoWeb result : results) {
             List<String> tagList = queryFactory.select(tags.name)
                     .from(postTag)
                     .join(postTag.tags, tags)
                     .join(postTag.posts, posts)
                     .where(posts.id.eq(result.getPostId()))
                     .fetch();
-            result.setTagName(tagList);
+            result.setTagNames(tagList);
         }
         return results;
     }
 
     @Override
-    public PostRespDtoWebDetail findPostDetail(String blogName, String postTitle) {
-        PostRespDtoWebDetail result = queryFactory.select(Projections.fields(PostRespDtoWebDetail.class,
+    public PostRespDtoWeb findPostDetail(String blogName, String postTitle) {
+        PostRespDtoWeb result = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
                         blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret, user.loginId))
                 .from(posts)

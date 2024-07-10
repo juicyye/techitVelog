@@ -4,18 +4,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 
 import java.util.List;
 
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
-
 public interface PostsCustomRepository {
-    Page<PostRespDtoWebAll> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch search);
-    List<PostRespDtoWebVelog> findAllByVelog(String blogName, boolean isUser, PostSearch postSearch);
+    Page<PostRespDtoWeb> findAllByLists(Pageable pageable, PostSortType postSortType, PostSearch search);
+    List<PostRespDtoWeb> findAllByVelog(String blogName, boolean isUser, PostSearch postSearch);
 
-    PostRespDtoWebDetail findPostDetail(String blogName, String postTitle);
+    PostRespDtoWeb findPostDetail(String blogName, String postTitle);
 
-    List<PostRespDtoWebVelog> findPostsByTagName(String blogName, String tagName, boolean isUser);
+    List<PostRespDtoWeb> findPostsByTagName(String blogName, String tagName, boolean isUser);
 
 
 

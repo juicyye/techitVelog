@@ -11,8 +11,8 @@
 <section class="container mt-4">
     <div class="card p-4">
         <h3 class="card-title mb-4">댓글 수정</h3>
-        <form th:action method="post" th:object="${comment}" enctype="multipart/form-data">
-            <input type="hidden" id="blogName" th:field="*{commentId}">
+        <form th:action method="post" th:object="${comment}">
+            <input type="hidden" id="commentId" th:field="*{commentId}">
             <div class="form-group">
                 <label for="content">내용</label>
                 <textarea id="content" th:field="*{content}" class="form-control"></textarea>

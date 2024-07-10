@@ -6,15 +6,15 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.uploadfile.QUploadFile;
-import techit.velog.domain.uploadfile.UploadFile;
 
 import java.util.List;
 
 import static techit.velog.domain.blog.entity.QBlog.*;
 import static techit.velog.domain.comment.entity.QComment.comment;
 import static techit.velog.domain.liks.entity.QLikes.*;
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
+
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.uploadfile.QUploadFile.*;
 import static techit.velog.domain.user.entity.QUser.*;
@@ -29,10 +29,10 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository{
     }
 
     @Override
-    public Page<PostRespDtoWebAll> findByLikePost(Long userId, Pageable pageable) {
+    public Page<PostRespDtoWeb> findByLikePost(Long userId, Pageable pageable) {
         QUploadFile userImage = new QUploadFile("userImage");
 
-        List<PostRespDtoWebAll> results = queryFactory.select(Projections.fields(PostRespDtoWebAll.class,
+        List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate, posts.views,
                         posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),

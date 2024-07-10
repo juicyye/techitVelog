@@ -17,15 +17,19 @@ import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.uploadfile.S3VO;
 import techit.velog.domain.uploadfile.FileStore;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdmin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdminUpdate;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
+import techit.velog.domain.user.dto.webresp.UserRespDtoWeb;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 
-import java.io.IOException;
+
 import java.util.Optional;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDtoWeb.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -39,7 +43,7 @@ public class UserService {
     private final FileStore fileStore;
 
     @Transactional
-    public Long join(UserJoinReq userJoinReq) {
+    public Long join(UserReqDtoWebJoin userJoinReq) {
         userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
         UploadFile uploadFile = new UploadFile(S3VO.USER_DEFAULT_IMAGE, S3VO.USER_DEFAULT_IMAGE);
         User savedUser = userRepository.save(User.toEntity(userJoinReq, uploadFile));
@@ -48,36 +52,36 @@ public class UserService {
     }
 
     @Transactional
-    public void special(UserJoinReq userJoinReq) {
+    public void special(UserReqDtoWebJoin userJoinReq) {
         userJoinReq.setPassword(passwordEncoder.encode(userJoinReq.getPassword()));
         User savedUser = userRepository.save(User.toEntity(userJoinReq));
         blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
     }
 
-    public UserRespDtoWebAdmin getUser(Long userId) {
+    public UserRespDtoWeb getUser(Long userId) {
         Optional<User> _user = userRepository.findById(userId);
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + userId);
         }
-        return new UserRespDtoWebAdmin(_user.get());
+        return new UserRespDtoWeb(_user.get());
     }
 
-    public UserRespDtoWebInfo getUser(String loginId) {
+    public UserRespDtoWeb getUser(String loginId) {
         Optional<User> _user = userRepository.findByLoginId(loginId);
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + loginId);
         }
         User user = _user.get();
         Blog blog = blogRepository.findByUser_Id(user.getId()).orElseThrow(() -> new CustomWebException("not found blog"));
-        return new UserRespDtoWebInfo(user, blog.getTitle());
+        return new UserRespDtoWeb(user, blog.getTitle());
     }
 
-    public UserRespDtoWebUpdate getUserByUpdate(String loginId) {
+    public UserRespDtoWeb getUserByUpdate(String loginId) {
         Optional<User> _user = userRepository.findByLoginId(loginId);
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + loginId);
         }
-        UserRespDtoWebUpdate userRespDtoWebUpdate = new UserRespDtoWebUpdate(_user.get());
+        UserRespDtoWeb userRespDtoWebUpdate = new UserRespDtoWeb(_user.get());
         Blog blog = blogRepository.findByUser_Id(userRespDtoWebUpdate.getUserId()).orElseThrow(() -> new CustomWebException("not found blog "));
         userRespDtoWebUpdate.setBlogDescription(blog.getDescription());
         return userRespDtoWebUpdate;
@@ -141,18 +145,18 @@ public class UserService {
         }
     }
 
-    public Page<UserRespDtoWebAdmin> getUsers(Pageable pageable) {
+    public Page<UserRespDtoWeb> getUsers(Pageable pageable) {
         Page<User> users = userRepository.findAllByAdmin(pageable);
-        return users.map(UserRespDtoWebAdmin::new);
+        return users.map(UserRespDtoWeb::new);
     }
 
     @Transactional
-    public void updateByAdmin(Long userId, UserReqDtoWebAdmin userReqDtoWebAdmin) {
+    public void updateByAdmin(Long userId, UserReqDtoWebAdminUpdate userReqDtoWebUpdate) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomWebException("user not found by userId: " + userId));
-        UploadFile uploadFile = uploadFile(userReqDtoWebAdmin.getUserImage());
-        user.changeInfoAdmin(userReqDtoWebAdmin, uploadFile);
+        UploadFile uploadFile = uploadFile(userReqDtoWebUpdate.getUserImage());
+        user.changeInfoAdmin(userReqDtoWebUpdate, uploadFile);
         Blog blog = blogRepository.findByUser_Id(userId).orElseThrow(() -> new CustomWebException("not found blog"));
-        blog.changeTitle("@" + userReqDtoWebAdmin.getName());
+        blog.changeTitle("@" + userReqDtoWebUpdate.getName());
     }
 
     /**
@@ -161,6 +165,11 @@ public class UserService {
     public String getLoginIdByPost(Long postId) {
         User user = userRepository.findByPostId(postId).orElseThrow(() -> new CustomWebException("not found user"));
         return user.getLoginId();
+    }
+
+    public String getLoginIdByBlogName(String blogName) {
+        Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("not found blog"));
+        return blog.getUser().getLoginId();
     }
 
     /**

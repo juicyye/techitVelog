@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
 @Getter
 public class PrincipalDetails implements UserDetails, OAuth2User {
 

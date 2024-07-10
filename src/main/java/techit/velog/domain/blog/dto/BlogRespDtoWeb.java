@@ -1,40 +1,33 @@
 package techit.velog.domain.blog.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.uploadfile.UploadFile;
 
 
 import java.time.LocalDateTime;
 
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BlogRespDtoWeb {
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BlogRespDtoWebBasic {
-        private Long blogId;
-        private Long userId;
-        private String loginId;
-        private String blogName;
-        private String nickname;
-        private String description;
-        private LocalDateTime createDate;
-        private LocalDateTime updateDate;
-        private UploadFile userImage;
-        private int followers;
-        private int followings;
+    private Long blogId;
+    private Long userId;
+    private String loginId;
+    private String blogName;
+    private String nickname;
+    private String description;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
+    private UploadFile userImage;
+    private int followers;
+    private int followings;
 
-        public BlogRespDtoWebBasic(Blog blog) {
-            this.blogId = blog.getId();
-            this.blogName = blog.getTitle();
-            this.createDate = blog.getCreateDate();
-            this.updateDate = blog.getUpdateDate();
-            this.description = blog.getDescription();
-        }
+    public BlogRespDtoWeb(Blog blog) {
+        this.blogId = blog.getId();
+        this.blogName = blog.getTitle();
+        this.createDate = blog.getCreateDate();
+        this.updateDate = blog.getUpdateDate();
+        this.description = blog.getDescription();
     }
 }

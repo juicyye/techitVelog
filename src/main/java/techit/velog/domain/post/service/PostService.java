@@ -17,6 +17,9 @@ import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.post.dto.PostSearch;
 import techit.velog.domain.post.dto.PostSortType;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebCreate;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebUpdate;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.post.entity.IsReal;
 import techit.velog.domain.post.entity.IsSecret;
 import techit.velog.domain.post.entity.Posts;
@@ -33,7 +36,7 @@ import techit.velog.global.dto.PrincipalDetails;
 import techit.velog.global.exception.CustomWebException;
 import techit.velog.global.util.SplitService;
 
-import java.io.IOException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,9 +44,6 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +83,7 @@ public class PostService {
      * 메인페이지에서 보여주는 모든 포스트를 보여주는 메서드
      */
 
-    public Page<PostRespDtoWebAll> getPosts(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
+    public Page<PostRespDtoWeb> getPosts(Pageable pageable, PostSortType postSortType, PostSearch postSearch) {
         return postRepository.findAllByLists(pageable, postSortType, postSearch);
     }
 
@@ -176,7 +176,7 @@ public class PostService {
      * 블로그의 모든 포스트를 보여주는 메서드
      */
 
-    public List<PostRespDtoWebVelog> getPostsVelog(String blogName, SecurityContext securityContext, PostSearch postSearch) {
+    public List<PostRespDtoWeb> getPostsVelog(String blogName, SecurityContext securityContext, PostSearch postSearch) {
         if (isUser(blogName, securityContext)) {
             return postRepository.findAllByVelog(blogName, true, postSearch);
         } else {
@@ -189,8 +189,8 @@ public class PostService {
      * 포스트의 상세페이지를 보는 메서드
      */
 
-    public PostRespDtoWebDetail getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
-        PostRespDtoWebDetail postDetail = postRepository.findPostDetail(blogName, postTitle);
+    public PostRespDtoWeb getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
+        PostRespDtoWeb postDetail = postRepository.findPostDetail(blogName, postTitle);
         if (postDetail.getIsSecret().equals(IsSecret.SECRET)) {
             if (isUser(blogName, securityContext)) {
                 return postDetail;
@@ -241,9 +241,9 @@ public class PostService {
      * 기존 post 가져오고 업데이트할 값들 가져오기
      */
 
-    public PostRespDtoWebUpdate getUpdatePost(Long postId) {
+    public PostRespDtoWeb getUpdatePost(Long postId) {
         Posts posts = postRepository.findPostByImage(postId).orElseThrow(() -> new CustomWebException("포스트를 찾을 수 없습니다."));
-        PostRespDtoWebUpdate postRespDtoWebUpdate = new PostRespDtoWebUpdate(posts);
+        PostRespDtoWeb postRespDtoWebUpdate = new PostRespDtoWeb(posts);
         postRespDtoWebUpdate.setTagName(changeTag(posts.getPostTags()));
         return postRespDtoWebUpdate;
     }
@@ -280,10 +280,10 @@ public class PostService {
      * 임시 저장된 글만 보여주는 메소드
      */
 
-    public List<PostRespDtoWebSave> getPostSave(String loginId) {
+    public List<PostRespDtoWeb> getPostSave(String loginId) {
         Blog blog = blogRepository.findByLoginId(loginId).orElseThrow(() -> new CustomWebException("not found blog"));
         return postRepository.findByBlog_Id(blog.getId()).stream().filter(f -> f.getIsReal() == IsReal.TEMP).map(post -> {
-            PostRespDtoWebSave postRespDtoWebSave = new PostRespDtoWebSave(post);
+            PostRespDtoWeb postRespDtoWebSave = new PostRespDtoWeb(post);
             postRespDtoWebSave.setBlogName(blog.getTitle());
             return postRespDtoWebSave;
         }).collect(Collectors.toList());
@@ -292,7 +292,7 @@ public class PostService {
     /**
      * tagName이 같은 post 찾기
      */
-    public List<PostRespDtoWebVelog> getPostsTagName(String blogName, String tagName, SecurityContext securityContext) {
+    public List<PostRespDtoWeb> getPostsTagName(String blogName, String tagName, SecurityContext securityContext) {
         if (isUser(blogName, securityContext)) {
             return postRepository.findPostsByTagName(blogName, tagName, true);
         } else {
@@ -332,15 +332,15 @@ public class PostService {
         return posts.getBlog().getId();
     }
 
-    public PostRespDtoWebNextAndPrevious getPreviousPost(PostRespDtoWebDetail postRespDtoWebDetail, SecurityContext securityContext) {
+    public PostRespDtoWeb getPreviousPost(PostRespDtoWeb postRespDtoWebDetail, SecurityContext securityContext) {
         return postsRepository.findByPreviousPost(postRespDtoWebDetail.getBlogName(), postRespDtoWebDetail.getCreateDate())
-                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWebNextAndPrevious::new)
+                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWeb::new)
                 .findFirst().orElse(null);
     }
 
-    public PostRespDtoWebNextAndPrevious getNextPost(PostRespDtoWebDetail postRespDtoWebDetail, SecurityContext securityContext) {
+    public PostRespDtoWeb getNextPost(PostRespDtoWeb postRespDtoWebDetail, SecurityContext securityContext) {
         return postsRepository.findByNextPost(postRespDtoWebDetail.getBlogName(), postRespDtoWebDetail.getCreateDate())
-                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWebNextAndPrevious::new)
+                .stream().filter(secretUser(postRespDtoWebDetail.getLoginId(), securityContext)).map(PostRespDtoWeb::new)
                 .findFirst().orElse(null);
     }
 

@@ -9,11 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebCreate;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebUpdate;
+import techit.velog.domain.comment.dto.webresp.CommentRespDtoWeb;
 import techit.velog.domain.comment.service.CommentService;
 import techit.velog.global.dto.PrincipalDetails;
 
-import static techit.velog.domain.comment.dto.CommentReqDtoWeb.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class CommentController {
 
     @PostMapping("/comment")
     public String createComment(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
-                                @ModelAttribute("comment") CommentReqDtoWebBasic commentReqDtoWebBasic, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                @ModelAttribute("comment") CommentReqDtoWebCreate commentReqDtoWebBasic, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (bindingResult.hasErrors()) {
             return "redirect:/{blogName}/{postTitle}";
         }
@@ -36,7 +38,8 @@ public class CommentController {
     @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByComment(#commentId) == principal.username")
     public String commentModifyForm(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                     @PathVariable("commentId") Long commentId, Model model) {
-        CommentReqDtoWebUpdate comment = commentService.getComment(commentId);
+        CommentRespDtoWeb comment = commentService.getComment(commentId);
+        log.info("comment {}", comment);
         model.addAttribute("comment", comment);
         return "comment/modify";
     }
@@ -44,7 +47,7 @@ public class CommentController {
     @PostMapping("/{commentId}/modify")
     public String commentModify(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                 @PathVariable("commentId") Long commentId, @ModelAttribute("content") CommentReqDtoWebUpdate commentReqDtoWebUpdate, RedirectAttributes rttr) {
-
+        log.info("commentController commentId {}", commentId);
         commentService.update(commentId, commentReqDtoWebUpdate);
         rttr.addAttribute("update", true);
 

@@ -9,17 +9,17 @@ import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.liks.entity.Likes;
 import techit.velog.domain.liks.repository.LikeRepository;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.user.entity.User;
 import techit.velog.domain.user.repository.UserRepository;
 import techit.velog.global.exception.CustomWebException;
 
-import java.util.List;
+
 import java.util.Optional;
 
-import static techit.velog.domain.post.dto.PostRespDtoWeb.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -48,7 +48,7 @@ public class LikeService {
 
     }
 
-    public Page<PostRespDtoWebAll> getLikes(String blogName, Pageable pageable) {
+    public Page<PostRespDtoWeb> getLikes(String blogName, Pageable pageable) {
         Blog blog = blogRepository.findByTitle(blogName).orElseThrow(() -> new CustomWebException("블로그가 없습니다."));
         User user = userRepository.findByBlog_Id(blog.getId()).orElseThrow(() -> new CustomWebException("유저가 없습니다."));
         return likeRepository.findByLikePost(user.getId(), pageable);
