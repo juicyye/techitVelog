@@ -39,8 +39,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: ECR에 로그인하기
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        run: aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com
 
       - name: Docker 이미지 생성
         run: docker build -t tecitlog-server .
@@ -61,6 +60,6 @@ jobs:
           script: |
             docker stop techitlog-server || true
             docker rm techitlog-server || true
-            docker pull ${{ steps.lgoin-ecr-outputs.registry }}/teckitlog-server:latest
-            docker run -d --name techitlog-server -p 8080:8080 ${{ steps.lgoin-ecr-outputs.registry }}/teckitlog-server:latest
+            docker pull 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server
+            docker run -d --name techitlog-server -p 8080:8080 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server
             
