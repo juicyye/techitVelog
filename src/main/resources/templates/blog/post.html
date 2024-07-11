@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>블로그</title>
+    <title>포스트</title>
 
 </head>
 <body>
 <div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#" th:href="@{/}">홈</a>
         <div sec:authorize="hasRole('ADMIN')">
             <a class="navbar-brand" href="#" th:href="@{/admin/users}">관리자</a>
@@ -128,7 +128,7 @@
             </ul>
         </div>
         <div>
-            <form th:if="${post != null and post.blogName != null and post.title != null}" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
+            <form sec:authorize="isAuthenticated()" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
                 <div class="form-group mr-2">
                     <label for="content" class="sr-only">댓글</label>
                     <input type="hidden" name="postId" th:value="${post.postId}">
@@ -175,6 +175,48 @@
 
             // 새로고침
             window.location.href = url;
+        });
+    });
+    // post로 보내는 형식
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form and CSRF token elements
+        const form = document.getElementById('commentForm');
+        const csrfToken = document.getElementById('csrfToken').value;
+        const csrfParameterName = document.getElementById('csrfParameterName').value;
+        const postUrl = 'YOUR_POST_URL_HERE';  // Change this to your POST URL
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission
+
+            // Create FormData object
+            const formData = new FormData(form);
+            formData.append(csrfParameterName, csrfToken);  // Add CSRF token to form data
+
+            // Send POST request using Fetch API
+            fetch(postUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',  // Request JSON response
+                    // 'Content-Type': 'application/x-www-form-urlencoded'  // Uncomment if using FormData
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle successful response
+                    console.log('Success:', data);
+                    // Example: alert('Comment submitted successfully!');
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('Error:', error);
+                    // Example: alert('There was an error submitting your comment.');
+                });
         });
     });
 </script>

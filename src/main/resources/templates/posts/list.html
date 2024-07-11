@@ -56,6 +56,8 @@
                             <span>조회수: <span th:text="${post.views}"></span></span>
                         </div>
                         <div class="card-text mb-2">
+                            <img th:if="${post.userImage != null}" th:src="${post.userImage.getStoreFileName()}"
+                                 width="35" height="35" class="rounded-circle">
                             <a href="" th:href="@{|/${post.blogName}|}" th:text="${post.nickname}"></a>
                         </div>
                         <div sec:authorize="hasRole('ADMIN')" class="mt-3">

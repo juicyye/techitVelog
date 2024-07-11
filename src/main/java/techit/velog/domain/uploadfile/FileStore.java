@@ -89,6 +89,10 @@ public class FileStore {
     @Transactional
     public void deleteFile(String fileName) {
         String deleteFile = fileName.substring(fileName.indexOf("/", 10)+1);
+        String jeans = S3VO.USER_DEFAULT_IMAGE.substring(fileName.indexOf("/", 10) + 1);
+        if (deleteFile.equals(jeans)) {
+            return;
+        }
         try {
             amazonS3.deleteObject(bucket, deleteFile);
         } catch (Exception e) {

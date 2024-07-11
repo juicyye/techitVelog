@@ -1,4 +1,4 @@
-<html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
+<html th:replace="~{layout/header :: header(~{::title},~{::section})}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -11,7 +11,7 @@
     <div>
 
         <form action="" th:action method="post" th:object="${user}">
-            <div th:replace="~{/layout/fiederror :: fielderror}"></div>
+            <div th:replace="~{layout/fiederror :: fielderror}"></div>
             <div>
                 <label for="password">비밀번호</label>
                 <input type="password" id=password th:field="*{password}">

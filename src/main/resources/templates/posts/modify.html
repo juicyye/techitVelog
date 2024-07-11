@@ -12,6 +12,7 @@
     <div class="card p-4">
         <h3 class="card-title mb-4">글 쓰기</h3>
         <form action="" th:action method="post" th:object="${post}" enctype="multipart/form-data">
+            <div th:replace="~{layout/fiederror :: fielderror}"></div>
             <input type="hidden" id="blogName" th:field="*{blogId}">
             <div class="form-group">
                 <label for="title">제목</label>
