@@ -1,4 +1,4 @@
-<html th:fragment="header(title,section)">
+<html th:fragment="header(title,section)" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -213,7 +213,7 @@
 
 </head>
 <body>
-<div th:replace="~{/layout/navbar :: navbar}"></div>
+<div th:replace="~{layout/navbar :: navbar}"></div>
 <div th:replace="${section}"></div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
