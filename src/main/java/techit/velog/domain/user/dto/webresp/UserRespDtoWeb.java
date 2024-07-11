@@ -30,7 +30,9 @@ public class UserRespDtoWeb {
         this.name = user.getName();
         this.userId = user.getId();
         this.email = user.getEmail();
+        this.loginId = user.getLoginId();
         this.nickname = user.getNickname();
+        this.role = user.getRole();
         this.password = user.getPassword();
         this.userImage = user.getUploadFile();
         if (user.getEmailCheck().equals(EmailCheck.ALLOW)) {
