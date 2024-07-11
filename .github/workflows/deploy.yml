@@ -5,12 +5,11 @@ on:
     branches:
       - main
 
-
 jobs:
-  Deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Github Repository 파일 불어오기
+      - name: Github Repository 파일 불러오기
         uses: actions/checkout@v4
 
       - name: JDK 21버전 설치
@@ -19,17 +18,23 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: application.properties 파일 만들기
-        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
-
       - name: application.yml 파일 만들기
         run: echo "${{ secrets.APPLICATION_PROPERTIES_YML }}" > ./src/main/resources/application.yml
+
+      - name: application.properties 파일 만들기
+        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
 
 
       - name: 테스트 및 빌드하기
         run: |
-          chmod 777 ./gradlew
+          chmod 777 gradlew
           ./gradlew clean build
+
+      - name: 빌드된 파일 이름 변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
+
+      - name: 압축하기
+        run: tar -czvf $GITHUB_SHA.tar.gz project.jar appspec.yml scripts
 
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,28 +43,12 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: ECR에 로그인하기
-        run: aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com
+      - name: S3에 프로젝트 폴더 업로드하기
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://jyvelogbucket/$GITHUB_SHA.tar.gz
 
-      - name: Docker 이미지 생성
-        run: docker build -t tecitlog-server .
-
-      - name: Docker 이미지에 Tag 붙이기
-        run: docker tag tecitlog-server:latest 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
-
-      - name: ECR에  Docker 이미지 Push
-        run: docker push 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
-
-      - name: SSH로 EC2에 접속하기
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            docker stop techitlog-server || true
-            docker rm techitlog-server || true
-            docker pull 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server
-            docker run -d --name techitlog-server -p 8080:8080 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
-            
+      - name: Code Deploy를 활용해 EC2에 프로젝트 코드 배포
+        run: aws deploy create-deployment
+          --application-name techit-server
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name Production
+          --s3-location bucket=jyvelogbucket,bundleType=tgz,key=$GITHUB_SHA.tar.gz
