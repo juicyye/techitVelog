@@ -16,7 +16,7 @@ public class UserReqDtoWebJoin {
     private String loginId;
     @NotEmpty
     @Pattern(
-            regexp = "\"(?=.*[!@#$%]).{8,20}\"",
+            regexp = "(?=.*[!@#$%]).{8,20}",
             message = "8~20자 사이의 비밀번호는 한글, 영어, 숫자, 특수문자를 포함해야합니다. (!@#$%)"
     )
     private String password;
