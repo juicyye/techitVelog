@@ -113,7 +113,8 @@ public class BlogController {
     }
 
     @PostMapping("/{postTitle}/postModify/{postId}")
-    public String postModify(@PathVariable("postId") Long postId, @Valid @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult, RedirectAttributes rttr) {
+    public String postModify(@PathVariable("postId") Long postId,
+                             @Valid @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult, RedirectAttributes rttr) {
         if (bindingResult.hasErrors()) {
             return "posts/modify";
         }
@@ -121,7 +122,8 @@ public class BlogController {
         // todo 이게 정말 최선일까 생각해보기
         tagService.removeTag(postReqDtoWebUpdate.getBlogId());
         rttr.addAttribute("update",true);
-        return "redirect:/{blogName}/{postTitle}";
+        rttr.addAttribute("updateTitle", postReqDtoWebUpdate.getTitle());
+        return "redirect:/{blogName}/{updateTitle}";
     }
 
     @PostMapping("/postDelete/{postId}")

@@ -6,6 +6,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,8 @@ import static techit.velog.domain.tag.entity.QTags.*;
 import static techit.velog.domain.uploadfile.QUploadFile.*;
 import static techit.velog.domain.user.entity.QUser.*;
 
-@Repository
+
+@Slf4j
 public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     private EntityManager em;
     private JPAQueryFactory queryFactory;
@@ -164,7 +166,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
                 .where(blog.title.eq(blogName), posts.title.eq(postTitle))
                 .groupBy(posts.id, posts.title, blog.title)
                 .fetchOne();
-
+        log.info("result: {}", result);
         List<UploadFile> uploadFiles = queryFactory.select(uploadFile)
                 .from(uploadFile)
                 .join(uploadFile.posts, posts)
