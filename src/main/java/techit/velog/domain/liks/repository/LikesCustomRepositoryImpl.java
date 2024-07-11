@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.uploadfile.QUploadFile;
+import techit.velog.domain.user.entity.QUser;
 
 import java.util.List;
 
@@ -31,21 +32,23 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository{
     @Override
     public Page<PostRespDtoWeb> findByLikePost(Long userId, Pageable pageable) {
         QUploadFile userImage = new QUploadFile("userImage");
+        QUser crushUser = new QUser("crushUser");
 
         List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate, posts.views,
-                        posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
+                        posts.description.as("postDescription"), crushUser.nickname, blog.title.as("blogName"),
                         likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
                         posts.uploadFile.as("postImage"), userImage.as("userImage")))
                 .from(likes)
                 .join(likes.posts, posts)
                 .join(likes.user, user)
-                .join(user.blog, blog)
-                .leftJoin(user.uploadFile, userImage)
+                .join(posts.blog, blog)
+                .join(blog.user, crushUser)
+                .leftJoin(crushUser.uploadFile, userImage)
                 .leftJoin(posts.comments, comment)
                 .leftJoin(posts.uploadFile, uploadFile)
                 .where(user.id.eq(userId))
-                .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .groupBy(posts.id, posts.title, blog.title)
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(posts.createDate.desc())

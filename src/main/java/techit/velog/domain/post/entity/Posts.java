@@ -26,6 +26,7 @@ public class Posts extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String description;
 
