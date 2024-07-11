@@ -9,16 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
 import techit.velog.domain.blog.service.BlogService;
+import techit.velog.domain.post.dto.webreq.PostReqDtoWebCreate;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.post.service.PostService;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.service.UserService;
 import techit.velog.dummy.DummyObject;
+import techit.velog.global.dto.AccountDto;
 
 import java.util.List;
 
-import static techit.velog.domain.post.dto.PostReqDtoWeb.*;
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -57,7 +58,7 @@ class PostsCustomRepositoryImplTest extends DummyObject {
             System.out.println("blog.getTitle() = " + blog.getTitle());
         }
         // given
-        PostRespDtoWeb.PostRespDtoWebDetail result = postRepository.findPostDetail("@user", "타이틀");
+        PostRespDtoWeb result = postRepository.findPostDetail("@user", "타이틀");
 
         // when
         System.out.println("result = " + result);

@@ -19,7 +19,7 @@ public class PostReqDtoWebUpdate {
     @NotEmpty
     private String content;
     @NotEmpty
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "설명은 2~20 이내로 적어주세요")
+    @Pattern(regexp = "^(?=.*[ㄱ-ㅎ가-힣a-zA-Z0-9])[ㄱ-ㅎ가-힣a-zA-Z0-9\\s]{2,18}[ㄱ-ㅎ가-힣a-zA-Z0-9]$", message = "2~20자 이내로 적어주세요")
     private String postDescription;
     private IsSecret isSecret;
     private Boolean isTemp;

@@ -10,7 +10,7 @@ import techit.velog.domain.user.entity.Role;
 @Data
 public class UserReqDtoWebAdmin {
     @NotEmpty
-    @Pattern(regexp = "^[a-zA-Z]{2,20}$",message = "아이디은 영문 2~20 이내로 적어주세요")
+    @Pattern(regexp = "^[a-zA-Z가-힣ㄱ-ㅎ0-9]{2,20}$",message = "아이디은 영문 2~20 이내로 적어주세요")
     private String loginId;
     @Email
     @NotEmpty

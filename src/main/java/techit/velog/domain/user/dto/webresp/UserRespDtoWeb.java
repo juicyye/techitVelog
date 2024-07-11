@@ -45,7 +45,6 @@ public class UserRespDtoWeb {
         this.nickname = user.getNickname();
         this.emailCheck = user.getEmailCheck().equals(EmailCheck.ALLOW);
         this.userImage = user.getUploadFile();
-
         this.blogName = blogName;
         this.loginId = user.getLoginId();
         this.role = user.getRole();

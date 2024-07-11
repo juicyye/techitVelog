@@ -77,11 +77,12 @@ public class UserService {
     }
 
     public UserRespDtoWeb getUserByUpdate(String loginId) {
-        Optional<User> _user = userRepository.findByLoginId(loginId);
+        Optional<User> _user = userRepository.findByLoginIdImage(loginId);
         if (_user.isEmpty()) {
             throw new CustomWebException("user not found by loginId: " + loginId);
         }
         UserRespDtoWeb userRespDtoWebUpdate = new UserRespDtoWeb(_user.get());
+        log.info("UserService user Id {}",userRespDtoWebUpdate.getUserId());
         Blog blog = blogRepository.findByUser_Id(userRespDtoWebUpdate.getUserId()).orElseThrow(() -> new CustomWebException("not found blog "));
         userRespDtoWebUpdate.setBlogDescription(blog.getDescription());
         return userRespDtoWebUpdate;
@@ -102,7 +103,9 @@ public class UserService {
         userReqDtoWeb.setChangePassword(passwordEncoder.encode(userReqDtoWeb.getChangePassword()));
         UploadFile uploadFile = user.getUploadFile();
         if (!userReqDtoWeb.getUserImage().isEmpty()) {
-           deleteImage(uploadFile);
+            if (uploadFile != null) {
+                deleteImage(uploadFile);
+            }
             uploadFile = uploadFile(userReqDtoWeb.getUserImage());
         }
         user.changeInfo(userReqDtoWeb, uploadFile);

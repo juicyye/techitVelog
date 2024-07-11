@@ -1,5 +1,6 @@
 package techit.velog.web;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comment")
+    @PreAuthorize("isAuthenticated()")
     public String createComment(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
                                 @ModelAttribute("comment") CommentReqDtoWebCreate commentReqDtoWebBasic, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if (bindingResult.hasErrors()) {
@@ -46,7 +48,10 @@ public class CommentController {
 
     @PostMapping("/{commentId}/modify")
     public String commentModify(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle,
-                                @PathVariable("commentId") Long commentId, @ModelAttribute("content") CommentReqDtoWebUpdate commentReqDtoWebUpdate, RedirectAttributes rttr) {
+                                @PathVariable("commentId") Long commentId, @Valid @ModelAttribute("content") CommentReqDtoWebUpdate commentReqDtoWebUpdate, BindingResult bindingResult,RedirectAttributes rttr) {
+        if(bindingResult.hasErrors()) {
+            return "redirect:/{blogName}/{postTitle}";
+        }
         log.info("commentController commentId {}", commentId);
         commentService.update(commentId, commentReqDtoWebUpdate);
         rttr.addAttribute("update", true);

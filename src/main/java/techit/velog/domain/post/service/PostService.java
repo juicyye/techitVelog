@@ -102,13 +102,17 @@ public class PostService {
         List<UploadFile> uploadFiles = posts.getUploadFiles();
         if (!postReqDtoWebUpdate.getImageFile().isEmpty()) {
             log.info("posts.getUploadFiles() {}", postReqDtoWebUpdate.getImageFile().isEmpty());
-            deleteImage(uploadFile);
+            if(uploadFile != null) {
+                deleteImage(uploadFile);
+            }
             uploadFile = uploadFile(postReqDtoWebUpdate.getImageFile());
 
         }
         if (!postReqDtoWebUpdate.getImageFiles().isEmpty()) {
             log.info("posts.getUploadFiles() {}", postReqDtoWebUpdate.getImageFiles().isEmpty());
-            deleteImages(uploadFiles);
+            if (uploadFiles != null) {
+                deleteImages(uploadFiles);
+            }
             uploadFiles = ImageFiles(postReqDtoWebUpdate.getImageFiles());
         }
 

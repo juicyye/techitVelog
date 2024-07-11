@@ -2,6 +2,7 @@ package techit.velog.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -78,7 +79,7 @@ public class UserController {
 
     @GetMapping("/account/update")
     public String accountUpdateForm(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-
+        log.info("userController principal {}", principalDetails.getUsername());
         UserRespDtoWeb user = userService.getUserByUpdate(principalDetails.getUsername());
         model.addAttribute("user", user);
         return "user/update";
@@ -110,8 +111,11 @@ public class UserController {
     }
 
     @PostMapping("/account/delete")
-    public String delete(@ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto, BindingResult bindingResult
+    public String delete(@Valid @ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto, BindingResult bindingResult
             , @AuthenticationPrincipal PrincipalDetails principalDetails, RedirectAttributes rttr, HttpServletRequest request, HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            return "user/delete";
+        }
         if(!userService.checkPassword(principalDetails.getUsername(),userReqDeleteDto.getPassword())) {
             bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
             return "user/delete";

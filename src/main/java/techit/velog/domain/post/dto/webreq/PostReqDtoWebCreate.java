@@ -24,4 +24,9 @@ public class PostReqDtoWebCreate {
     private String tagName;
     private MultipartFile imageFile;
     private List<MultipartFile> imageFiles = new ArrayList<>();
+
+    public PostReqDtoWebCreate(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

@@ -2,6 +2,7 @@ package techit.velog.domain.user.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +11,7 @@ import techit.velog.domain.user.entity.User;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByLoginId(String loginId);
     boolean existsByLoginId(String loginId);
     boolean existsByEmail(String email);
@@ -32,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPostId(@Param("postId") Long postId);
     @Query("select u from User u join fetch u.comments c where c.id = :commentId")
     Optional<User> findByCommentId(@Param("commentId") Long commentId);
+
+    @Query("select u from User u left join fetch u.uploadFile where u.loginId = :loginId")
+    Optional<User> findByLoginIdImage(@Param("loginId") String loginId);
 }

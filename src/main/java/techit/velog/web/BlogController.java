@@ -2,6 +2,7 @@ package techit.velog.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -112,7 +113,7 @@ public class BlogController {
     }
 
     @PostMapping("/{postTitle}/postModify/{postId}")
-    public String postModify(@PathVariable("postId") Long postId, @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult, RedirectAttributes rttr) {
+    public String postModify(@PathVariable("postId") Long postId, @Valid @ModelAttribute("post") PostReqDtoWebUpdate postReqDtoWebUpdate, BindingResult bindingResult, RedirectAttributes rttr) {
         if (bindingResult.hasErrors()) {
             return "posts/modify";
         }
