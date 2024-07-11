@@ -156,6 +156,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
 
     @Override
     public PostRespDtoWeb findPostDetail(String blogName, String postTitle) {
+        log.info("blogName {} , postTitle {}", blogName, postTitle);
         PostRespDtoWeb result = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
                         blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret, posts.isReal, user.loginId))
