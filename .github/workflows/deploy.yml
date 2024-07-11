@@ -61,5 +61,5 @@ jobs:
             docker stop techitlog-server || true
             docker rm techitlog-server || true
             docker pull 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server
-            docker run -d --name techitlog-server -p 8080:8080 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server
+            docker run -d --name techitlog-server -p 8080:8080 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
             
