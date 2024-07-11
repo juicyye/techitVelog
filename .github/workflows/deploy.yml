@@ -21,6 +21,7 @@ jobs:
 
       - name: application.yml 파일 만들기
         run: echo ${{ secrets.APPLICATION_PROPERTIES_YML }}" > ./src/main/resources/application.yml
+      - name: application.properties 파일 만들기
         run: echo ${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
 
       - name: 테스트 및 빌드하기
