@@ -46,6 +46,7 @@ public class User extends BaseEntity {
     private UploadFile uploadFile;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
     /**
      * 회원가입 Dto -> Entity
