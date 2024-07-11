@@ -1,24 +1,28 @@
+<!DOCTYPE html>
 <html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>블로그</title>
+    <title>좋아요한 블로그</title>
 </head>
 <body>
-<section>
-    <div>
-        <div th:each="post :${posts}">
-            <h3><a href="" th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}">></a></h3>
+<section class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">좋아요한 포스트</h2>
+                    <div th:each="post : ${posts}" class="mb-3">
+                        <h4>
+                            <a href="" th:href="@{|/${post.blogName}/${post.title}|}" th:text="${post.title}" class="text-primary"></a>
+                        </h4>
+                        <hr>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
     </div>
-
-
-
 </section>
-
 </body>
 </html>

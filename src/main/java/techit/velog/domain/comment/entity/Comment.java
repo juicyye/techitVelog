@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import techit.velog.domain.BaseEntity;
-import techit.velog.domain.comment.dto.CommentReqDto;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebCreate;
+import techit.velog.domain.comment.dto.webreq.CommentReqDtoWebUpdate;
 import techit.velog.domain.post.entity.Posts;
 import techit.velog.domain.user.entity.User;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static techit.velog.domain.comment.dto.CommentReqDto.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,15 +42,30 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Comment> child = new LinkedList<>();
+    /**
+     * 테스트
+     */
+    public Comment(String content,Posts posts) {
+        this.content = content;
+        addPost(posts);
+    }
+
+    public Comment(String content, Comment parent,Posts posts) {
+        this.content = content;
+        parent.addChild(this);
+        this.parent = parent;
+        addPost(posts);
+    }
+
 
     /**
      * 생성자
      */
 
-    public Comment(CommentReqDtoWeb commentReqDtoWeb, Posts posts, User user) {
-        this.content = commentReqDtoWeb.getContent();
+    public Comment(CommentReqDtoWebCreate commentReqDtoWebBasic, Posts posts, User user) {
+        this.content = commentReqDtoWebBasic.getContent();
         this.isDeleted = IsDeleted.NORMAL;
-        this.user= user;
+        setUser(user);
         addPost(posts);
 
     }
@@ -66,5 +81,22 @@ public class Comment extends BaseEntity {
     public void addChild(Comment child) {
         this.getChild().add(child);
         child.parent = this;
+    }
+
+    private void setUser(User user) {
+        this.user = user;
+        user.getComments().add(this);
+    }
+
+    /**
+     * 비지니스 메서드
+     */
+    public void changeContent(CommentReqDtoWebUpdate commentReqDtoWebUpdate) {
+        this.content = commentReqDtoWebUpdate.getContent();
+    }
+
+    public void deleteComment() {
+        this.isDeleted = IsDeleted.DELETE;
+        this.content = IsDeleted.DELETE.getDescription();
     }
 }

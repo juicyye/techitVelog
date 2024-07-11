@@ -3,19 +3,18 @@ package techit.velog.domain.liks.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import techit.velog.domain.blog.entity.QBlog;
-import techit.velog.domain.liks.entity.QLikes;
-import techit.velog.domain.post.dto.PostRespDto;
-import techit.velog.domain.post.entity.QPosts;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 import techit.velog.domain.uploadfile.QUploadFile;
-import techit.velog.domain.uploadfile.UploadFile;
-import techit.velog.domain.user.entity.QUser;
 
 import java.util.List;
 
 import static techit.velog.domain.blog.entity.QBlog.*;
+import static techit.velog.domain.comment.entity.QComment.comment;
 import static techit.velog.domain.liks.entity.QLikes.*;
-import static techit.velog.domain.post.dto.PostRespDto.*;
+
 import static techit.velog.domain.post.entity.QPosts.*;
 import static techit.velog.domain.uploadfile.QUploadFile.*;
 import static techit.velog.domain.user.entity.QUser.*;
@@ -30,23 +29,34 @@ public class LikesCustomRepositoryImpl implements LikesCustomRepository{
     }
 
     @Override
-    public List<PostRespDtoWeb> findByLikePost(Long userId) {
+    public Page<PostRespDtoWeb> findByLikePost(Long userId, Pageable pageable) {
+        QUploadFile userImage = new QUploadFile("userImage");
+
         List<PostRespDtoWeb> results = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
-                        posts.id.as("postId"), posts.title,blog.title.as("blogName")))
+                        posts.id.as("postId"), posts.title, posts.createDate, posts.updateDate, posts.views,
+                        posts.description.as("postDescription"), user.nickname, blog.title.as("blogName"),
+                        likes.countDistinct().as("likes"), comment.countDistinct().as("comments"),
+                        posts.uploadFile.as("postImage"), userImage.as("userImage")))
                 .from(likes)
                 .join(likes.posts, posts)
                 .join(likes.user, user)
                 .join(user.blog, blog)
+                .leftJoin(user.uploadFile, userImage)
+                .leftJoin(posts.comments, comment)
+                .leftJoin(posts.uploadFile, uploadFile)
                 .where(user.id.eq(userId))
+                .groupBy(posts.id, user.nickname, posts.title, blog.title)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .orderBy(posts.createDate.desc())
                 .fetch();
 
-        for (PostRespDtoWeb result : results) {
-            List<UploadFile> uploadFiles = queryFactory.select(uploadFile)
-                    .from(uploadFile)
-                    .where(uploadFile.posts.id.eq(result.getPostId()))
-                    .fetch();
-            result.setPostImages(uploadFiles);
-        }
-        return results;
+        int total = queryFactory.select(posts)
+                .from(likes)
+                .join(likes.user, user)
+                .join(likes.posts, posts)
+                .where(user.id.eq(userId))
+                .fetch().size();
+        return new PageImpl<>(results, pageable, total);
     }
 }

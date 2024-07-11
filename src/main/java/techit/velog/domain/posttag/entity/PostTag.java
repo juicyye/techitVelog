@@ -29,11 +29,18 @@ public class PostTag extends BaseEntity {
     /**
      * 생성메서드
      */
-    public static void ChangeTag(Tags tags, Posts posts) {
+    public PostTag(Tags tags, Posts posts) {
         PostTag postTag = new PostTag();
         postTag.setTags(tags);
         postTag.changePost(posts);
     }
+
+    public PostTag(Tags tags) {
+        PostTag postTag = new PostTag();
+        postTag.setTags(tags);
+    }
+
+
 
     /**
      * 편의 메서드
@@ -48,5 +55,9 @@ public class PostTag extends BaseEntity {
     public void changePost(Posts posts) {
         this.posts = posts;
         posts.getPostTags().add(this);
+    }
+
+    public void setPost(Posts posts) {
+        this.posts = posts;
     }
 }

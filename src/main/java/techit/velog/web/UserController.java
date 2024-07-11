@@ -2,7 +2,7 @@ package techit.velog.web;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -18,30 +18,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import techit.velog.domain.user.dto.UserReqDto;
-import techit.velog.domain.user.dto.UserRespDto;
-import techit.velog.domain.user.entity.Role;
-import techit.velog.domain.user.service.UserService;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
-import static techit.velog.domain.user.dto.UserRespDto.*;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebDelete;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
+import techit.velog.domain.user.dto.webresp.UserRespDtoWeb;
+import techit.velog.domain.user.repository.UserRepository;
+import techit.velog.domain.user.service.UserService;
+import techit.velog.global.dto.PrincipalDetails;
+
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class UserController {
     private final UserService userService;
-
-    @ModelAttribute("roles")
-    public Role[] roles(){
-        return Role.values();
-    }
-
-    // todo 추후 삭제예정
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
+    private final UserRepository userRepository;
 
     @GetMapping("/login")
     public String login(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception, Model model) {
@@ -52,22 +44,14 @@ public class UserController {
 
 
     @GetMapping("/join")
-    public String joinForm(@ModelAttribute("user") UserJoinReq userJoinReq) {
+    public String joinForm(@ModelAttribute("user") UserReqDtoWebJoin userJoinReq) {
         return "login/join";
     }
 
     @PostMapping("/join")
-    public String join(@Validated @ModelAttribute("user") UserJoinReq userJoinReq, BindingResult bindingResult, Model model) {
+    public String join(@Validated @ModelAttribute("user") UserReqDtoWebJoin userJoinReq, BindingResult bindingResult, Model model) {
         if(bindingResult.hasErrors()) {
             log.info("join error {}",bindingResult.getAllErrors());
-            return "login/join";
-        }
-        if (userService.validationEmail(userJoinReq.getEmail())) {
-            bindingResult.reject("vali_email", "이미 등록된 이메일이 있습니다.");
-            return "login/join";
-        }
-        if (userService.validationLoginId(userJoinReq.getLoginId())) {
-            bindingResult.reject("vali_loginId", "이미 등록된 아이디가 있습니다.");
             return "login/join";
         }
         if (!userJoinReq.getPassword().equals(userJoinReq.getPasswordConfirm())) {
@@ -79,15 +63,6 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
-        if(authentication != null) {
-            new SecurityContextLogoutHandler().logout(request,response,authentication);
-        }
-        return "redirect:/";
-    }
-
     @GetMapping("/denied")
     public String denied(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception, Model model) {
         model.addAttribute("error", error);
@@ -96,26 +71,27 @@ public class UserController {
     }
 
     @GetMapping("/account")
-    public String account(Model model, @AuthenticationPrincipal AccountDto accountDto) {
-        UserRespDtoWeb user = userService.getUser(accountDto.getLoginId());
-        model.addAttribute("user", user);
+    public String account(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        UserRespDtoWeb user = userService.getUser(principalDetails.getUsername());
+        model.addAttribute("blog", user);
         return "user/info";
     }
 
     @GetMapping("/account/update")
-    public String accountUpdateForm(Model model, @AuthenticationPrincipal AccountDto accountDto) {
-        UserReqDtoWeb user = userService.getUpdateUser(accountDto.getLoginId());
+    public String accountUpdateForm(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        log.info("userController principal {}", principalDetails.getUsername());
+        UserRespDtoWeb user = userService.getUserByUpdate(principalDetails.getUsername());
         model.addAttribute("user", user);
         return "user/update";
     }
 
     @PostMapping("/account/update")
-    public String update(@Validated @ModelAttribute("user") UserReqDtoWeb userReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal AccountDto accountDto, RedirectAttributes rttr) {
+    public String update(@Validated @ModelAttribute("user") UserReqDtoWebUpdate userReqDtoWeb, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails, RedirectAttributes rttr) {
         if(bindingResult.hasErrors()) {
             log.info("update error {}",bindingResult.getAllErrors());
             return "user/update";
         }
-        if (!userService.checkPassword(accountDto,userReqDtoWeb.getPassword())) {
+        if (!userService.checkPassword(principalDetails.getUsername(),userReqDtoWeb.getPassword())) {
             bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
             return "user/update";
         }
@@ -124,24 +100,27 @@ public class UserController {
             return "user/update";
         }
 
-        userService.updateInfo(userReqDtoWeb,accountDto);
+        userService.updateInfo(userReqDtoWeb,principalDetails.getUsername());
         rttr.addAttribute("update",true);
         return "redirect:/";
     }
 
     @GetMapping("/account/delete")
-    public String deleteForm(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto) {
+    public String deleteForm(@ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto) {
         return "user/delete";
     }
 
     @PostMapping("/account/delete")
-    public String delete(@ModelAttribute("user") UserReqDeleteDto userReqDeleteDto, BindingResult bindingResult
-            , @AuthenticationPrincipal AccountDto accountDto,RedirectAttributes rttr, HttpServletRequest request, HttpServletResponse response) {
-        if(!userService.checkPassword(accountDto,userReqDeleteDto.getPassword())) {
+    public String delete(@Valid @ModelAttribute("user") UserReqDtoWebDelete userReqDeleteDto, BindingResult bindingResult
+            , @AuthenticationPrincipal PrincipalDetails principalDetails, RedirectAttributes rttr, HttpServletRequest request, HttpServletResponse response) {
+        if (bindingResult.hasErrors()) {
+            return "user/delete";
+        }
+        if(!userService.checkPassword(principalDetails.getUsername(),userReqDeleteDto.getPassword())) {
             bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
             return "user/delete";
         }
-        userService.deleteUser(accountDto);
+        userService.deleteUser(principalDetails.getUsername());
         rttr.addAttribute("delete",true);
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         if(authentication != null) {
@@ -149,6 +128,8 @@ public class UserController {
         }
         return "redirect:/";
     }
+
+
 
 
 }

@@ -1,59 +1,80 @@
+<!DOCTYPE html>
 <html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>개인정보 수정</title>
 </head>
 <body>
-<section>
-    <div>
-
-        <form action="" th:action method="post" th:object="${user}">
+<section class="container mt-4">
+    <div class="card p-4">
+        <form th:action method="post" th:object="${user}" enctype="multipart/form-data">
             <div th:replace="~{/layout/fiederror :: fielderror}"></div>
-            <div>
-                <label for="username">이름</label>
-                <input type="text" id=username th:field="*{username}">
-                <div th:erros="*{username}" class="error-class"></div>
+
+            <div class="form-group">
+                <label for="blogDescription">블로그 소개</label>
+                <input type="text" id="blogDescription" th:field="*{blogDescription}" class="form-control">
+                <div th:errors="*{blogDescription}"  class="field-error"></div>
             </div>
-            <div>
+
+            <div class="form-group">
+                <label for="name">블로그명</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control">
+                <div th:errors="*{name}"  class="field-error"></div>
+            </div>
+
+            <div class="form-group">
                 <label for="nickname">닉네임</label>
-                <input type="text" id=nickname th:field="*{nickname}">
-                <div th:erros="*{nickname}" class="error-class"></div>
+                <input type="text" id="nickname" th:field="*{nickname}" class="form-control">
+                <div th:errors="*{nickname}"  class="field-error"></div>
             </div>
-            <div>
+
+            <div class="form-group">
                 <label for="email">이메일</label>
-                <input type="text" id=email th:field="*{email}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요">
-                <div th:erros="*{email}" class="error-class"></div>
+                <input type="text" id="email" th:field="*{email}" placeholder="띄어쓰기 아니면 콤마로 구분해주세요"
+                       class="form-control">
+                <div th:errors="*{email}"  class="field-error"></div>
             </div>
-            <div>이메일 수신 설정</div>
-            <div>
+
+            <div class="form-group">
+                <label>이메일 수신 설정</label>
                 <div class="form-check">
                     <input type="checkbox" id="emailCheck" th:field="*{emailCheck}" class="form-check-input">
                     <label for="emailCheck" class="form-check-label">허용</label>
                 </div>
             </div>
-            <div>
+
+            <div class="form-group">
                 <label for="password">비밀번호</label>
-                <input type="password" id=password th:field="*{password}">
-                <div th:erros="*{password}" class="error-class"></div>
-            </div>
-            <div>
-                <label for="changePassword">새 비밀번호</label>
-                <input type="password" id=changePassword th:field="*{changePassword}" >
-                <div th:erros="*{changePassword}" class="error-class"></div>
-            </div>
-            <div>
-                <label for="changePasswordConfirm">새 비밀번호 확인</label>
-                <input type="password" id=changePasswordConfirm th:field="*{changePasswordConfirm}" >
-                <div th:erros="*{changePasswordConfirm}" class="error-class"></div>
+                <input type="password" id="password" th:field="*{password}" class="form-control">
+                <div th:errors="*{password}"  class="field-error"></div>
             </div>
 
-            <input type="submit" value="제출">
+            <div class="form-group">
+                <label for="changePassword">새 비밀번호</label>
+                <input type="password" id="changePassword" th:field="*{changePassword}" class="form-control">
+                <div th:errors="*{changePassword}" class="field-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="changePasswordConfirm">새 비밀번호 확인</label>
+                <input type="password" id="changePasswordConfirm" th:field="*{changePasswordConfirm}"
+                       class="form-control">
+                <div th:errors="*{changePasswordConfirm}"  class="field-error"></div>
+            </div>
+
+            <div class="form-group">
+                <div th:if="${user.userImage != null}" >
+                    <img th:src="${user.userImage.getStoreFileName()}" width="50" height="50">
+                </div>
+                <label for="imageFile">이미지 파일</label>
+                <input type="file" id="imageFile" name="userImage" class="form-control-file">
+            </div>
+
+            <button type="submit" class="btn btn-primary">제출</button>
         </form>
     </div>
 </section>
-
 </body>
 </html>

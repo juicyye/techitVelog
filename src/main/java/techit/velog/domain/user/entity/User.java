@@ -1,18 +1,20 @@
 package techit.velog.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import techit.velog.domain.BaseEntity;
 import techit.velog.domain.blog.entity.Blog;
+import techit.velog.domain.comment.entity.Comment;
 import techit.velog.domain.uploadfile.UploadFile;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebAdminUpdate;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebUpdate;
+import techit.velog.global.dto.OAuth2Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,27 +38,69 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "blog_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private Blog blog;
 
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "upload_file_id")
     private UploadFile uploadFile;
+
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
     /**
      * 회원가입 Dto -> Entity
      */
-    public static User toEntity(UserJoinReq userJoinReq) {
+    public static User toEntity(UserReqDtoWebJoin userJoinReq, UploadFile uploadFile) {
         EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
         return User.builder()
-                .userId(userJoinReq.getUserId())
+                .userId(UUID.randomUUID().toString())
                 .name(userJoinReq.getName())
                 .nickname(userJoinReq.getNickname())
                 .loginId(userJoinReq.getLoginId())
                 .password(userJoinReq.getPassword())
                 .email(userJoinReq.getEmail())
-                .role(userJoinReq.getRole())
                 .emailCheck(emailCheck1)
+                .uploadFile(uploadFile)
+                .role(Role.ROLE_USER)
                 .build();
+    }
+
+    /**
+     * 관리자 전용
+     */
+    public static User toEntity(UserReqDtoWebJoin userJoinReq) {
+        EmailCheck emailCheck1 = userJoinReq.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
+        return User.builder()
+                .userId(UUID.randomUUID().toString())
+                .name(userJoinReq.getName())
+                .nickname(userJoinReq.getNickname())
+                .loginId(userJoinReq.getLoginId())
+                .password(userJoinReq.getPassword())
+                .email(userJoinReq.getEmail())
+                .emailCheck(emailCheck1)
+                .role(Role.ROLE_ADMIN)
+                .build();
+    }
+
+    /**
+     * OAuth2 전용 생성자
+     */
+    public User(OAuth2Response oAuth2Response) {
+        this.userId = UUID.randomUUID().toString();
+        this.nickname = oAuth2Response.getLoginId().substring(0,8);
+        this.loginId = oAuth2Response.getLoginId();
+        this.name = oAuth2Response.getName();
+        this.email = oAuth2Response.getEmail();
+        this.emailCheck = EmailCheck.ALLOW;
+        this.role = Role.ROLE_USER;
+    }
+
+    public User(String userId, String name, String nickname, String loginId, String password, String email) {
+        this.name = name;
+        this.nickname = nickname;
+        this.loginId = loginId;
+        this.password = password;
+        this.email = email;
     }
 
     /**
@@ -70,13 +114,40 @@ public class User extends BaseEntity {
      * 비지니스 메서드
      */
 
-    public void changeInfo(UserReqDtoWeb userReqDtoWeb) {
+    public void changeInfo(UserReqDtoWebUpdate userReqDtoWeb, UploadFile uploadFile) {
         EmailCheck emailCheck1 = userReqDtoWeb.isEmailCheck() ? EmailCheck.ALLOW : EmailCheck.DENY;
-        this.name = userReqDtoWeb.getUsername();
         this.nickname = userReqDtoWeb.getNickname();
         this.email = userReqDtoWeb.getEmail();
         this.password = userReqDtoWeb.getChangePassword();
         this.emailCheck = emailCheck1;
+        this.uploadFile = uploadFile;
+        this.name = userReqDtoWeb.getName();
 
+    }
+
+    public void changeOauth(OAuth2Response oAuth2Response) {
+        this.email = oAuth2Response.getEmail();
+        this.name = oAuth2Response.getName();
+        this.email = oAuth2Response.getLoginId();
+    }
+
+    public boolean isUserEmail(String email) {
+        return this.email.equals(email);
+    }
+
+    public boolean isUserNickname(String nickname) {
+        return this.nickname.equals(nickname);
+    }
+    public boolean isUserName(String name) {
+        return this.name.equals(name);
+    }
+
+    public void changeInfoAdmin(UserReqDtoWebAdminUpdate userReqDtoWebUpdate, UploadFile uploadFile) {
+        this.email = userReqDtoWebUpdate.getEmail();
+        this.name = userReqDtoWebUpdate.getName();
+        this.nickname = userReqDtoWebUpdate.getNickname();
+        this.loginId = userReqDtoWebUpdate.getLoginId();
+        this.role = userReqDtoWebUpdate.getRole();
+        this.uploadFile = uploadFile;
     }
 }

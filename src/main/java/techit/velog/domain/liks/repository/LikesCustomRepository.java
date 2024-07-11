@@ -1,9 +1,10 @@
 package techit.velog.domain.liks.repository;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import techit.velog.domain.post.dto.webresp.PostRespDtoWeb;
 
-import static techit.velog.domain.post.dto.PostRespDto.*;
 
 public interface LikesCustomRepository {
-    List<PostRespDtoWeb> findByLikePost(Long userId);
+    Page<PostRespDtoWeb> findByLikePost(Long userId, Pageable pageable);
 }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/layout/adminHeader :: header(~{::title},~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>유저목록</title>
+</head>
+<body>
+<section class="container mt-5">
+    <table class="table table-hover">
+        <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>이름</th>
+            <th>로그인아이디</th>
+            <th>닉네임</th>
+            <th>이메일</th>
+            <th>Role</th>
+            <th>이미지</th>
+            <th>삭제하기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.userId}"></td>
+            <td><a th:href="@{|/admin/user/${user.userId}/modify|}" th:text="${user.name}"></a></td>
+            <td th:text="${user.loginId}"></td>
+            <td><a href="" th:href="@{|/'@'+${user.name}|}" th:text="${user.nickname}"></a></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.role.name()}"></td>
+            <td>
+                <div th:if="${user.userImage != null}" th:with="image=${user.userImage}">
+                    <img th:src="${image.getStoreFileName()}" class="img-thumbnail" width="50px" height="50px"/>
+                </div>
+            </td>
+            <td>
+                <form th:action="@{|/admin/user/${user.loginId}/delete|}" method="post" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-danger btn-sm">유저삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- 페이징 처리 시작 -->
+    <div th:if="${!users.isEmpty()}" class="fixed-bottom-pagination">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item" th:classappend="${users.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{|?page=${users.number-1}|}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo; 이전</span>
+                </a>
+            </li>
+            <li th:each="user: ${#numbers.sequence(0, users.totalPages-1)}"
+                th:if="${user >= users.number-3 and user <= users.number+3}"
+                th:classappend="${user == users.number} ? 'active' : ''" class="page-item">
+                <a th:text="${user+1}" class="page-link" th:href="@{|?page=${user}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${users.hasNext()} ? '' : 'disabled'">
+                <a class="page-link" th:href="@{|?page=${users.number+1}|}" aria-label="Next">
+                    <span aria-hidden="true">다음 &raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징 처리 끝 -->
+</section>
+</body>
+</html>

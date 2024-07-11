@@ -1,35 +1,40 @@
+<!DOCTYPE html>
 <html th:replace="~{/layout/header :: header(~{::title},~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>블로그</title>
+
 </head>
 <body>
-<section>
-    <div>
-        <h2 th:text="${#lists.size(follows)}"></h2>
-        <div th:each="follow : ${follows}">
-            <div> 블로그이름:
-            <h3><a href="" th:href="@{|/${follow.blogName}|}" th:text="${follow.blogName}">></a></h3>
+<section class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4" th:text="${#lists.size(follows)} + ' 팔로우'"></h2>
+                    <div th:each="follow : ${follows}" class="mb-3">
+                        <div class="media mb-3">
+                            <div class="media-body">
+                                <h4 class="mt-0">
+                                    블로그 이름:
+                                    <a href="" th:href="@{|/${follow.blogName}|}" th:text="${follow.blogName}" class="text-primary"></a>
+                                </h4>
+                                <p class="mb-1">
+                                    <strong>블로그 소개:</strong> <span th:text="${follow.description}"></span>
+                                </p>
+                                <p>
+                                    <strong>닉네임:</strong> <span th:text="${follow.nickname}"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
             </div>
-            <div> 블로그 소개:
-                <h3 th:text="${follow.description}"></h3>
-            </div>
-            <div>닉네임:
-                <h3 th:text="${follow.nickname}"></h3>
-            </div>
-
         </div>
-
-
-
     </div>
-
-
-
 </section>
-
 </body>
 </html>

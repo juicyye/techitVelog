@@ -1,14 +1,14 @@
 package techit.velog.dummy;
 
-import techit.velog.domain.user.entity.Role;
+
+import techit.velog.domain.user.dto.webreq.UserReqDtoWebJoin;
 import techit.velog.domain.user.entity.User;
 
-import static techit.velog.domain.user.dto.UserReqDto.*;
+
 
 public class DummyObject {
-    protected UserJoinReq adminUser(){
-        UserJoinReq userJoinReq = new UserJoinReq();
-        userJoinReq.setRole(Role.ROLE_ADMIN);
+    protected UserReqDtoWebJoin adminUser(){
+        UserReqDtoWebJoin userJoinReq = new UserReqDtoWebJoin();
         userJoinReq.setPassword("admin");
         userJoinReq.setEmail("admin@naver.com");
         userJoinReq.setEmailCheck(true);
@@ -19,9 +19,8 @@ public class DummyObject {
         return userJoinReq;
     }
 
-    protected UserJoinReq newUser(){
-        UserJoinReq userJoinReq = new UserJoinReq();
-        userJoinReq.setRole(Role.ROLE_USER);
+    protected UserReqDtoWebJoin newUser(){
+        UserReqDtoWebJoin userJoinReq = new UserReqDtoWebJoin();
         userJoinReq.setPassword("user");
         userJoinReq.setEmail("user@naver.com");
         userJoinReq.setEmailCheck(true);

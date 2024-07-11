@@ -23,7 +23,7 @@ public class Tags extends BaseEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "tags",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "tags")
     private List<PostTag> postTags = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id")
@@ -42,5 +42,12 @@ public class Tags extends BaseEntity {
     public void setBlog(Blog blog) {
         this.blog = blog;
         blog.getTags().add(this);
+    }
+
+    /**
+     * 비즈니스 메서드
+     */
+    public void removePostTag(){
+        postTags.clear();
     }
 }
