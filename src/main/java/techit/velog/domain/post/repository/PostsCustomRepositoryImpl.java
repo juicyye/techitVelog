@@ -156,7 +156,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
     public PostRespDtoWeb findPostDetail(String blogName, String postTitle) {
         PostRespDtoWeb result = queryFactory.select(Projections.fields(PostRespDtoWeb.class,
                         posts.id.as("postId"), posts.title, posts.content, posts.createDate, posts.updateDate, posts.views, posts.description.as("postDescription"),
-                        blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret, user.loginId))
+                        blog.title.as("blogName"), likes.countDistinct().as("likes"),posts.isSecret, posts.isReal, user.loginId))
                 .from(posts)
                 .join(posts.blog, blog)
                 .join(blog.user, user)
@@ -173,10 +173,6 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
         result.setPostImages(uploadFiles);
         return result;
 
-    }
-
-    private BooleanExpression isTemp(Boolean temp) {
-        return temp ? posts.isReal.stringValue().eq(IsReal.TEMP.name()) : posts.isReal.stringValue().eq(IsReal.REAL.name());
     }
 
     private BooleanExpression isUser(Boolean isuser) {

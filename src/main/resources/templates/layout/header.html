@@ -190,8 +190,23 @@
             position: relative;
             left: -110px;
             top: -50px;
-
-
+        }
+        .success-message:hover {
+            transform: translateY(-5px); /* 호버 시 약간 위로 이동 */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* 그림자 강화 */
+        }
+        .success-message {
+            position: relative; /* 상대 위치 설정 */
+            background-color: #d4edda; /* 배경색 */
+            color: #155724; /* 텍스트 색상 */
+            padding: 20px; /* 내부 여백 */
+            border: 1px solid #c3e6cb; /* 테두리 */
+            border-radius: 10px; /* 테두리 모서리 둥글게 */
+            margin-bottom: 20px; /* 하단 마진 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+            font-weight: bold; /* 진하게 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 */
+            transition: transform 0.3s ease; /* 변형 애니메이션 */
         }
 
     </style>
@@ -224,6 +239,42 @@
     sortMenu.classList.remove('show');
 }
 });
+    // 메시지 숨기는 함수
+    function hideMessage(messageId) {
+        var message = document.getElementById(messageId);
+        message.style.display = 'none';
+    }
+
+    // 일정 시간 후 메시지 숨기기
+    setTimeout(function() {
+        var modifyMessage = document.getElementById('modifyMessage');
+        var deleteMessage = document.getElementById('deleteMessage');
+
+        if (modifyMessage) {
+            hideMessage('modifyMessage');
+        }
+        if (deleteMessage) {
+            hideMessage('deleteMessage');
+        }
+    }, 2000); // 5초 후에 숨김
+
+    $(document).ready(function() {
+        console.log("Document is ready"); // 페이지 로드 확인
+
+        $("#post-per-page").on("change", function(event) {
+            console.log("Select box changed"); // 이벤트 핸들러 작동 확인
+
+            var form = $("#post-form");
+            var limit = $(this).val(); // 변경된 값 가져오기
+            var offset = form.find("input[name='offset']").val(); // 현재 offset 값 가져오기
+
+            // 폼의 action 속성을 기반으로 URL 생성
+            var url = form.attr("action") + "?" + $.param({ limit: limit, offset: offset });
+
+            // 새로고침
+            window.location.href = url;
+        });
+    });
 </script>
 </body>
 </html>

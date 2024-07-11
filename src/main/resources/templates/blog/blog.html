@@ -9,9 +9,15 @@
 </head>
 <body>
 <section class="container mt-4" >
-    <li class="nav-item" th:if="${param.delete}">
-        <span class="navbar-text">삭제가 완료되었습니다.</span>
-    </li>
+    <div th:if="${param.update}" class="success-message" id="modifyMessage">
+        수정 성공했습니다.
+        <span class="close-button" onclick="hideMessage('modifyMessage');">&times;</span>
+    </div>
+    <div th:if="${param.delete}" class="success-message" id="deleteMessage">
+        삭제 성공했습니다.
+        <span class="close-button" onclick="hideMessage('deleteMessage');">&times;</span>
+    </div>
+
     <div class="mb-4 p-4">
         <div class="d-flex mb-3 align-items-center">
             <div th:if="${blog.userImage != null}" th:with="image=${blog.userImage}">

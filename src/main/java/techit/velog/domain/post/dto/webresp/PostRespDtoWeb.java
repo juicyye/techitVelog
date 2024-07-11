@@ -36,6 +36,7 @@ public class PostRespDtoWeb {
     private Boolean isTemp;
     private String tagName;
     private List<String> tagNames = new ArrayList<>();
+    private IsReal isReal;
 
 
     public PostRespDtoWeb(Posts posts) {
@@ -50,5 +51,6 @@ public class PostRespDtoWeb {
         this.postImage = posts.getUploadFile();
         this.postImages = posts.getUploadFiles();
         this.isTemp = posts.getIsReal().equals(IsReal.TEMP);
+
     }
 }

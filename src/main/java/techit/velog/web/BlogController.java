@@ -3,6 +3,7 @@ package techit.velog.web;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/{blogName}")
+@Slf4j
 public class BlogController {
     private final BlogService blogService;
     private final TagService tagService;
@@ -134,7 +136,7 @@ public class BlogController {
     @PreAuthorize("hasRole('ADMIN') or @userService.getLoginIdByBlogName(#blogName) == principal.username")
     public String postSave(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,@CurrentSecurityContext SecurityContext securityContext) {
         PostRespDtoWeb postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext);
-
+        log.info("saved post {}", postRespDtoWebDetail.getIsTemp());
         model.addAttribute("post", postRespDtoWebDetail);
         return "blog/post";
     }

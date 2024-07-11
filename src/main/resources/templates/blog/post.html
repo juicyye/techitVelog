@@ -51,11 +51,16 @@
 </div>
 <div class="container mt-4">
 
-    <li class="nav-item" th:if="${param.update}">
-        <span>수정성공</span>
-    </li>
-    <div class="card p-4">
+    <div th:if="${param.update}" class="success-message" id="modifyMessage">
+        수정 성공했습니다.
+        <span class="close-button" onclick="hideMessage('modifyMessage');">&times;</span>
+    </div>
+    <div th:if="${param.delete}" class="success-message" id="deleteMessage">
+        삭제 성공했습니다.
+        <span class="close-button" onclick="hideMessage('deleteMessage');">&times;</span>
+    </div>
 
+    <div class="card p-4">
         <div class="mb-3 flex-div">
             <h3 class="card-title"><span th:text="${post.title}"></span></h3>
             <p th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}" class="date-class"></p>
@@ -84,9 +89,9 @@
 
 
 
-        <div class="flex-div-button" sec:authorize="isAuthenticated()">
+        <div class="flex-div-button" sec:authorize="isAuthenticated()" >
             <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|"
-                    class="btn btn-primary mb-3 btn-sm button-recommend">
+                    class="btn btn-primary mb-3 btn-sm button-recommend" th:if="${!post.isTemp}">
                 추천
             </button>
             <button class="btn btn-info btn-sm mb-3"
@@ -114,7 +119,7 @@
         </div>
     </div>
 
-    <div>
+    <div th:if="${!post.isTemp}">
         <div>
             <ul class="list-group list-unstyled">
                 <div th:each="comment : ${comments}">
@@ -134,10 +139,44 @@
         </div>
     </div>
 
-
-
-
 </div>
+<script>
+    // 메시지 숨기는 함수
+    function hideMessage(messageId) {
+        var message = document.getElementById(messageId);
+        message.style.display = 'none';
+    }
 
+    // 일정 시간 후 메시지 숨기기
+    setTimeout(function() {
+        var modifyMessage = document.getElementById('modifyMessage');
+        var deleteMessage = document.getElementById('deleteMessage');
+
+        if (modifyMessage) {
+            hideMessage('modifyMessage');
+        }
+        if (deleteMessage) {
+            hideMessage('deleteMessage');
+        }
+    }, 2000); // 5초 후에 숨김
+
+    $(document).ready(function() {
+        console.log("Document is ready"); // 페이지 로드 확인
+
+        $("#post-per-page").on("change", function(event) {
+            console.log("Select box changed"); // 이벤트 핸들러 작동 확인
+
+            var form = $("#post-form");
+            var limit = $(this).val(); // 변경된 값 가져오기
+            var offset = form.find("input[name='offset']").val(); // 현재 offset 값 가져오기
+
+            // 폼의 action 속성을 기반으로 URL 생성
+            var url = form.attr("action") + "?" + $.param({ limit: limit, offset: offset });
+
+            // 새로고침
+            window.location.href = url;
+        });
+    });
+</script>
 </body>
 </html>

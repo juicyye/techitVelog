@@ -191,6 +191,7 @@ public class PostService {
 
     public PostRespDtoWeb getPostDetails(String blogName, String postTitle, SecurityContext securityContext) {
         PostRespDtoWeb postDetail = postRepository.findPostDetail(blogName, postTitle);
+        postDetail.setIsTemp(postDetail.getIsReal().equals(IsReal.TEMP));
         if (postDetail.getIsSecret().equals(IsSecret.SECRET)) {
             if (isUser(blogName, securityContext)) {
                 return postDetail;
@@ -346,13 +347,13 @@ public class PostService {
 
     private Predicate<Posts> secretUser(String loginId, SecurityContext securityContext) {
         if (securityContext.getAuthentication() instanceof AnonymousAuthenticationToken) {
-            return post -> post.getIsSecret().equals(IsSecret.NORMAL);
+            return post -> post.getIsSecret().equals(IsSecret.NORMAL) && post.getIsReal().equals(IsReal.REAL);
         }
         PrincipalDetails principal = (PrincipalDetails) securityContext.getAuthentication().getPrincipal();
         if (principal.getUsername().equals(loginId)) {
-            return post -> true;
+            return post -> post.getIsReal().equals(IsReal.REAL);
         } else {
-            return post -> post.getIsSecret().equals(IsSecret.NORMAL);
+            return post -> post.getIsSecret().equals(IsSecret.NORMAL) && post.getIsReal().equals(IsReal.REAL);
         }
 
     }
