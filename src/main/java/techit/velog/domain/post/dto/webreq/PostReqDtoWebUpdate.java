@@ -14,7 +14,7 @@ import java.util.List;
 public class PostReqDtoWebUpdate {
     private Long blogId;
     @NotEmpty
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣ㄱ-ㅎ]{2,20}$",message = "제목은 2~20 이내로 적어주세요")
+    @Pattern(regexp = "^(?=.*[ㄱ-ㅎ가-힣a-zA-Z0-9])[ㄱ-ㅎ가-힣a-zA-Z0-9\\s]{2,18}[ㄱ-ㅎ가-힣a-zA-Z0-9]$",message = "제목은 2~20 이내로 적어주세요")
     private String title;
     @NotEmpty
     private String content;
