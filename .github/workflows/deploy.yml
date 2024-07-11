@@ -46,10 +46,10 @@ jobs:
         run: docker build -t tecitlog-server .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag tecitlog-server:latest ${{ steps.login-ecr-outputs.registry }}/tecitlog-server:latest
+        run: docker tag tecitlog-server:latest 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
 
       - name: ECR에  Docker 이미지 Push
-        run: docker push $${{ steps.login-ecr-outputs.registry }}/tecitlog-server:latest
+        run: docker push 654654431456.dkr.ecr.ap-northeast-2.amazonaws.com/tecitlog-server:latest
 
       - name: SSH로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
