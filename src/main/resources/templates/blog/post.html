@@ -87,10 +87,6 @@
             <img th:src="${image.getStoreFileName()}" width="300" height="200"/>
         </div>
 
-        <div class="mb-3">
-            <div class="card-text" th:utext="${#strings.replace(post.content, '\n', '<br/>')}"></div>
-        </div>
-
 
 
         <div class="flex-div-button" sec:authorize="isAuthenticated()" >
