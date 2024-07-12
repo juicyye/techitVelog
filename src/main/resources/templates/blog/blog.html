@@ -61,7 +61,7 @@
             <div class="divider"></div>
             <div th:each="tag : ${tags}" class="mb-2">
                 <h5>
-                    <a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name}"
+                    <a href="" th:href="@{|/${blog.blogName}/posts/${tag.name}|}" th:text="${tag.name} "
                        style="color: black"></a>
                     <span th:text="'(' + ${tag.postTagCount} +')'"></span>
                 </h5>
@@ -77,7 +77,7 @@
 
                 <div class="mb-3">
                     <h3><a href="" th:href="@{|/${post.blogName}/${post.title}|}"
-                           th:text="${post.title}" style="color:black"></a></h3>
+                           th:text="${post.title}" style="color:black" id="text-container"></a></h3>
                 </div>
                 <div class="mb-3">
                     <p th:text="${post.postDescription}"></p>

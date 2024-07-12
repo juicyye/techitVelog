@@ -209,6 +209,7 @@
             transition: transform 0.3s ease; /* 변형 애니메이션 */
         }
 
+
     </style>
 
 </head>
@@ -274,6 +275,16 @@
             // 새로고침
             window.location.href = url;
         });
+    });
+    // JavaScript를 사용하여 텍스트를 변환합니다.
+    document.addEventListener('DOMContentLoaded', function() {
+        var textContainer = document.getElementById('text-container');
+        var originalText = textContainer.textContent;
+        var replacedText = originalText.replace(/-/g, ' ');
+        textContainer.textContent = replacedText;
+
+        // 텍스트에 클래스를 추가하여 스타일을 적용합니다.
+        textContainer.classList.add('replaced-text');
     });
 </script>
 </body>

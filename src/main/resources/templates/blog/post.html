@@ -1,224 +1,104 @@
 <!DOCTYPE html>
-<html xmlns:sec="http://www.w3.org/1999/xhtml">
-<head th:replace="~{layout/postHeader :: header(~{::title})}">
+<html th:replace="~{layout/header :: header(~{::title},~{::section})}" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>포스트</title>
-
 </head>
 <body>
-<div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#" th:href="@{/}">홈</a>
-        <div sec:authorize="hasRole('ADMIN')">
-            <a class="navbar-brand" href="#" th:href="@{/admin/users}">관리자</a>
+<section>
+    <div class="container mt-4">
+
+        <div th:if="${param.update}" class="success-message" id="modifyMessage">
+            수정 성공했습니다.
+            <span class="close-button" onclick="hideMessage('modifyMessage');">&times;</span>
         </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="" th:href="@{/login}">로그인</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="" th:href="@{/join}">회원가입</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form id="logoutForm" th:action="@{/logout}" method="post" style="display:none;">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    </form>
-                    <a class="nav-link" href="#" onclick="document.getElementById('logoutForm').submit();">로그아웃</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" href="" th:href="@{/account}">개인정보</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{/posts/create}">글 작성</a>
-                </li>
-
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{|/@${#authentication.getPrincipal().getName()}|}">내 벨로그</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" th:href="@{/posts/saves}">임시글</a>
-                </li>
-            </ul>
+        <div th:if="${param.delete}" class="success-message" id="deleteMessage">
+            삭제 성공했습니다.
+            <span class="close-button" onclick="hideMessage('deleteMessage');">&times;</span>
         </div>
-    </nav>
-</div>
-<div class="container mt-4">
 
-    <div th:if="${param.update}" class="success-message" id="modifyMessage">
-        수정 성공했습니다.
-        <span class="close-button" onclick="hideMessage('modifyMessage');">&times;</span>
-    </div>
-    <div th:if="${param.delete}" class="success-message" id="deleteMessage">
-        삭제 성공했습니다.
-        <span class="close-button" onclick="hideMessage('deleteMessage');">&times;</span>
-    </div>
-
-    <div class="card p-4">
-        <div class="mb-3 flex-div">
-            <h3 class="card-title"><span th:text="${post.title}"></span></h3>
-            <p th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}" class="date-class"></p>
-            <div sec:authorize="isAuthenticated()" class="post-title-secret">
-                    <span  th:if="${post.loginId == #authentication.principal.username and post.isSecret == T(techit.velog.domain.post.entity.IsSecret).SECRET}"
-                           class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">비공개
+        <div class="card p-4">
+            <div class="mb-3 flex-div">
+                <h3 class="card-title"><span th:text="${post.title}" id="text-container"></span></h3>
+                <p th:text="${#temporals.format(post.createDate,'yyyy-MM-dd')}" class="date-class"></p>
+                <div sec:authorize="isAuthenticated()" class="post-title-secret">
+                    <span th:if="${post.loginId == #authentication.principal.username and post.isSecret == T(techit.velog.domain.post.entity.IsSecret).SECRET}"
+                          class="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">비공개
                     </span>
-            </div>
-        </div>
-        <div class="divider"></div>
-
-        <div class="flex-div">
-            <a th:href="@{|/${post.blogName}|}" th:text="${post.blogName}" class="anker"></a>
-            <p class="card-text">조회수: <span th:text="${post.views}"></span></p>
-            <p class="card-text">추천수: <span th:text="${post.likes}"></span></p>
-        </div>
-
-        <div class="mb-3">
-            <div class="card-text white-space" th:utext="${post.content}"></div>
-        </div>
-
-
-        <div th:each="image : ${post.postImages}">
-            <img th:src="${image.getStoreFileName()}" width="300" height="200"/>
-        </div>
-
-
-
-        <div class="flex-div-button" sec:authorize="isAuthenticated()" >
-            <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|"
-                    class="btn btn-primary mb-3 btn-sm button-recommend" th:if="${!post.isTemp}">
-                추천
-            </button>
-            <button class="btn btn-info btn-sm mb-3"
-                    th:onclick="|location.href='@{|/${post.blogName}/${post.title}/postModify/${post.postId}|}'|">수정
-            </button>
-            <form th:action="@{|/${post.blogName}/postDelete/${post.postId}|}" method="post"
-                  onsubmit="return confirm('정말로 삭제하시겠습니까?');">
-                <button type="submit" class="btn btn-danger btn-sm">삭제</button>
-            </form>
-        </div>
-
-        <div class="d-flex justify-content-between mt-4">
-            <div th:if="${previousPost != null}">
-                <a th:href="@{|/${post.blogName}/${previousPost.title}|}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left-circle"></i>
-                    <span th:text="'이전 포스트: ' + ${previousPost.title}"></span>
-                </a>
-            </div>
-            <div th:if="${nextPost != null}">
-                <a th:href="@{|/${post.blogName}/${nextPost.title}|}" class="btn btn-outline-secondary">
-                    <span th:text="'다음 포스트: ' + ${nextPost.title}"></span>
-                    <i class="bi bi-arrow-right-circle"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div th:if="${!post.isTemp}">
-        <div>
-            <ul class="list-group list-unstyled">
-                <div th:each="comment : ${comments}">
-                    <div th:replace="~{comment/comments :: commentTemplate(comment=${comment}, post=${post})}"></div>
                 </div>
-            </ul>
-        </div>
-        <div>
-            <form sec:authorize="isAuthenticated()" th:action="@{|/${post.blogName}/${post.title}/comment|}" method="post" class="form-inline">
-                <div class="form-group mr-2">
-                    <label for="content" class="sr-only">댓글</label>
-                    <input type="hidden" name="postId" th:value="${post.postId}">
-                    <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
+            </div>
+            <div class="divider"></div>
+
+            <div class="flex-div">
+                <a th:href="@{|/${post.blogName}|}" th:text="${post.blogName}" class="anker"></a>
+                <p class="card-text">조회수: <span th:text="${post.views}"></span></p>
+                <p class="card-text">추천수: <span th:text="${post.likes}"></span></p>
+            </div>
+
+            <div class="mb-3">
+                <div class="card-text white-space" th:utext="${post.content}"></div>
+            </div>
+
+
+            <div th:each="image : ${post.postImages}">
+                <img th:src="${image.getStoreFileName()}" width="300" height="200"/>
+            </div>
+
+
+            <div class="flex-div-button" sec:authorize="isAuthenticated()">
+                <button th:onclick="|location.href='@{|/like/${post.blogName}/${post.postId}|}'|"
+                        class="btn btn-primary mb-3 btn-sm button-recommend" th:if="${!post.isTemp}">
+                    추천
+                </button>
+                <button class="btn btn-info btn-sm mb-3"
+                        th:onclick="|location.href='@{|/${post.blogName}/${post.title}/postModify/${post.postId}|}'|">수정
+                </button>
+                <form th:action="@{|/${post.blogName}/postDelete/${post.postId}|}" method="post"
+                      onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                </form>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <div th:if="${previousPost != null}">
+                    <a th:href="@{|/${post.blogName}/${previousPost.title}|}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left-circle"></i>
+                        <span th:text="'이전 포스트: ' + ${previousPost.title}"></span>
+                    </a>
                 </div>
-                <button type="submit" class="btn btn-secondary">댓글</button>
-            </form>
+                <div th:if="${nextPost != null}">
+                    <a th:href="@{|/${post.blogName}/${nextPost.title}|}" class="btn btn-outline-secondary">
+                        <span th:text="'다음 포스트: ' + ${nextPost.title}"></span>
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <div th:if="${!post.isTemp}">
+            <div>
+                <ul class="list-group list-unstyled">
+                    <div th:each="comment : ${comments}">
+                        <div th:replace="~{comment/comments :: commentTemplate(comment=${comment}, post=${post})}"></div>
+                    </div>
+                </ul>
+            </div>
+            <div>
+                <form sec:authorize="isAuthenticated()" th:action="@{|/${post.blogName}/${post.title}/comment|}"
+                      method="post" class="form-inline">
+                    <div class="form-group mr-2">
+                        <label for="content" class="sr-only">댓글</label>
+                        <input type="hidden" name="postId" th:value="${post.postId}">
+                        <input type="text" id="content" name="content" class="form-control" placeholder="댓글을 입력하세요">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">댓글</button>
+                </form>
+            </div>
+        </div>
+
     </div>
-
-</div>
-<script>
-    // 메시지 숨기는 함수
-    function hideMessage(messageId) {
-        var message = document.getElementById(messageId);
-        message.style.display = 'none';
-    }
-
-    // 일정 시간 후 메시지 숨기기
-    setTimeout(function() {
-        var modifyMessage = document.getElementById('modifyMessage');
-        var deleteMessage = document.getElementById('deleteMessage');
-
-        if (modifyMessage) {
-            hideMessage('modifyMessage');
-        }
-        if (deleteMessage) {
-            hideMessage('deleteMessage');
-        }
-    }, 2000); // 5초 후에 숨김
-
-    $(document).ready(function() {
-        console.log("Document is ready"); // 페이지 로드 확인
-
-        $("#post-per-page").on("change", function(event) {
-            console.log("Select box changed"); // 이벤트 핸들러 작동 확인
-
-            var form = $("#post-form");
-            var limit = $(this).val(); // 변경된 값 가져오기
-            var offset = form.find("input[name='offset']").val(); // 현재 offset 값 가져오기
-
-            // 폼의 action 속성을 기반으로 URL 생성
-            var url = form.attr("action") + "?" + $.param({ limit: limit, offset: offset });
-
-            // 새로고침
-            window.location.href = url;
-        });
-    });
-    // post로 보내는 형식
-    document.addEventListener('DOMContentLoaded', function() {
-        // Form and CSRF token elements
-        const form = document.getElementById('commentForm');
-        const csrfToken = document.getElementById('csrfToken').value;
-        const csrfParameterName = document.getElementById('csrfParameterName').value;
-        const postUrl = 'YOUR_POST_URL_HERE';  // Change this to your POST URL
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the default form submission
-
-            // Create FormData object
-            const formData = new FormData(form);
-            formData.append(csrfParameterName, csrfToken);  // Add CSRF token to form data
-
-            // Send POST request using Fetch API
-            fetch(postUrl, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json',  // Request JSON response
-                    // 'Content-Type': 'application/x-www-form-urlencoded'  // Uncomment if using FormData
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Handle successful response
-                    console.log('Success:', data);
-                    // Example: alert('Comment submitted successfully!');
-                })
-                .catch(error => {
-                    // Handle errors
-                    console.error('Error:', error);
-                    // Example: alert('There was an error submitting your comment.');
-                });
-        });
-    });
-</script>
+</section>
 </body>
 </html>

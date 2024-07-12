@@ -114,7 +114,7 @@ public class PostsCustomRepositoryImpl implements PostsCustomRepository {
 
     private BooleanExpression postSearch(PostSearch postSearch) {
         if (postSearch.getValue() != null) {
-            return posts.title.contains(postSearch.getValue()).or(posts.content.contains(postSearch.getValue()));
+            return posts.title.contains(postSearch.getValue()).or(posts.content.contains(postSearch.getValue()).or(posts.title.contains(postSearch.getValue().replace(" ","-"))));
         } else{
             return null;
         }

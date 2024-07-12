@@ -47,7 +47,8 @@ public class BlogController {
     private final CommentService commentService;
 
     @GetMapping
-    public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext, @ModelAttribute("search")PostSearch postSearch) {
+    public String blog(@PathVariable("blogName") String blogName, Model model, @CurrentSecurityContext SecurityContext securityContext,
+                       @ModelAttribute("search")PostSearch postSearch) {
         BlogRespDtoWeb blog = blogService.getBlog(blogName);
         List<PostRespDtoWeb> posts = postService.getPostsVelog(blogName, securityContext, postSearch);
         List<TagRespDtoWeb> tags = tagService.getTagAllByBlogName(blogName,securityContext);
@@ -59,7 +60,6 @@ public class BlogController {
     }
 
     @GetMapping("/{postTitle}")
-    // todo 로그아웃햇을때 댓글이 제대로 안보이는 현상발생
     public String postDetail(@PathVariable("blogName") String blogName, @PathVariable("postTitle") String postTitle, Model model,
                              HttpServletRequest request, HttpServletResponse response, @CurrentSecurityContext SecurityContext securityContext) {
         PostRespDtoWeb postRespDtoWebDetail = postService.getPostDetails(blogName, postTitle, securityContext);

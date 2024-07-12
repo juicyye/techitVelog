@@ -15,7 +15,7 @@
             <div th:each="post : ${posts}" class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">제목</h5>
-                    <h3 class="card-title"><a th:href="@{|/${post.blogName}/${post.title}/saves|}" th:text="${post.title}"></a></h3>
+                    <h3 class="card-title"><a th:href="@{|/${post.blogName}/${post.title}/saves|}" th:text="${post.title}" id="text-container"></a></h3>
 
                     <div class="card-text">
                         <h5>포스트 간단설명</h5>
