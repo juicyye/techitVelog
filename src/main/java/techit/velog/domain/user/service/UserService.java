@@ -2,6 +2,7 @@ package techit.velog.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -10,9 +11,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import techit.velog.domain.blog.entity.Blog;
 import techit.velog.domain.blog.repository.BlogRepository;
+import techit.velog.domain.mail.event.MailEvent;
 import techit.velog.domain.post.repository.PostsRepository;
 import techit.velog.domain.uploadfile.S3VO;
 import techit.velog.domain.uploadfile.FileStore;
@@ -41,6 +46,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final PostsRepository postRepository;
     private final FileStore fileStore;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public Long join(UserReqDtoWebJoin userJoinReq) {
@@ -48,6 +54,16 @@ public class UserService {
         UploadFile uploadFile = new UploadFile(S3VO.USER_DEFAULT_IMAGE, S3VO.USER_DEFAULT_IMAGE);
         User savedUser = userRepository.save(User.toEntity(userJoinReq, uploadFile));
         blogRepository.save(new Blog("@" + savedUser.getName(), savedUser));
+
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronizationAdapter() {
+                    @Override
+                    public void afterCommit() {
+                        publisher.publishEvent(new MailEvent(userJoinReq.getEmail()));
+                    }
+                }
+
+        );
         return savedUser.getId();
     }
 
