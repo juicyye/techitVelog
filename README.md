@@ -168,12 +168,31 @@
 - 비밀글과 임시글은 자신만 볼 수 있다
 - Admin은 모든 글과 사용자와 댓글을 삭제할 수 있다
 
-![스크린샷 2024-07-12 181013](https://github.com/user-attachments/assets/aba9d0ce-62c5-4acf-b4fe-6397b23c7372)
-![스크린샷 2024-07-12 181005](https://github.com/user-attachments/assets/ebbadca2-d5fe-4d34-8434-e30a7a721f40)
-![스크린샷 2024-07-12 181107](https://github.com/user-attachments/assets/e0c3cb5a-0ff7-4970-82fb-74f8a30013be)
+
+
 
 <br><br>
 
+# 사진
+### 1. 정렬
+![스크린샷 2024-07-12 182755](https://github.com/user-attachments/assets/2f2add42-c6a8-4d8b-b9d6-e05d772fc6e4)
+### 2. 관리자의 경우 유저삭제와 글 삭제가 가능하다
+![스크린샷 2024-07-12 182747](https://github.com/user-attachments/assets/73b799f8-7ad9-4929-a88a-01e02d2c4558)
+![스크린샷 2024-07-12 181107](https://github.com/user-attachments/assets/8cc1d0ac-2dc4-42db-99a5-f0a6ff36deef)
+### 3. 임시글
+![스크린샷 2024-07-12 182732](https://github.com/user-attachments/assets/56ae9ca8-2889-4932-a04d-6fb5a8d5c101)
+### 4. 태그와 비밀글 표시 
+![스크린샷 2024-07-12 182736](https://github.com/user-attachments/assets/013e7183-b027-4c51-be71-a4170fecd6f2)
+### 5. 무한계층 댓글 
+![스크린샷 2024-07-12 182643](https://github.com/user-attachments/assets/b56c5c7e-5466-4782-b5d3-9c9f19aed57e)
+### 6. 개인정보 표시 및 수정, 탈퇴 
+![스크린샷 2024-07-12 182708](https://github.com/user-attachments/assets/d5ca2499-085f-425d-955c-846d2df56eda)
+### 7. 글 삭제와 삭제, 추천 
+![스크린샷 2024-07-12 182643](https://github.com/user-attachments/assets/eef36bad-bdad-4578-aaa2-54e1f8dade76)
+### 8. 좋아한 포스트 
+![스크린샷 2024-07-12 182747](https://github.com/user-attachments/assets/f1839d1d-07d8-457e-9706-579c4c607a4a)
+### 9. 팔로우 및 팔로워
+![스크린샷 2024-07-12 183330](https://github.com/user-attachments/assets/ad1a909d-3ce2-4fa3-becb-ae240b922bc6)
 
 ## **Git Commit Message Type**
 
