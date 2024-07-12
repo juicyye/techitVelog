@@ -1,7 +1,3 @@
-# 📣 Techitlog Application
-7월 1일 ~ 7월 12까지 했던 프로젝트 경험에 대해 적었습니다
-<br><br>
-
 ## 📝개요
 * **프로젝트명** : Techitlog
 * **개발 환경**
@@ -202,10 +198,5 @@
 <br><br>
 
 ## AWS(EC2, S3, Code Deploy)
-![image](https://user-images.githubusercontent.com/36220595/140631512-25e208e9-4745-4e4a-8914-8fd3c43b272e.png)
-<br><br><br><br>
-
-# API Docs
-
-- [http://ec2-3-36-59-242.ap-northeast-2.compute.amazonaws.com:8080/docs/index.html](http://ec2-3-36-59-242.ap-northeast-2.compute.amazonaws.com:8080/docs/index.html)
+![스크린샷 2024-07-12 180524](https://github.com/user-attachments/assets/2d0c234d-1907-4910-9d82-07135a6911ca)
 <br><br><br><br>
