@@ -167,6 +167,11 @@
 - 하나의 글에는 여러 태그들을 가질 수 있고, 해당 태그를 가진 글만 볼 수 있다
 - 비밀글과 임시글은 자신만 볼 수 있다
 - Admin은 모든 글과 사용자와 댓글을 삭제할 수 있다
+
+![스크린샷 2024-07-12 181013](https://github.com/user-attachments/assets/aba9d0ce-62c5-4acf-b4fe-6397b23c7372)
+![스크린샷 2024-07-12 181005](https://github.com/user-attachments/assets/ebbadca2-d5fe-4d34-8434-e30a7a721f40)
+![스크린샷 2024-07-12 181107](https://github.com/user-attachments/assets/e0c3cb5a-0ff7-4970-82fb-74f8a30013be)
+
 <br><br>
 
 
