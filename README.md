@@ -73,9 +73,9 @@
 ## 패키지 구조
 
 ```bash
-**Woowahan-Coupons**
-├─docs
-│  └─asciidoc
+**techitlog**
+├
+│  
 ├─main
 │  ├─java
 │  │  └─techit
