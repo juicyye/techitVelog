@@ -27,6 +27,10 @@ public class JwtProcess {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getName(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
+    }
+
     public Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
@@ -35,6 +39,7 @@ public class JwtProcess {
         return Jwts.builder()
                 .claim("loginId", accountDto.getLoginId())
                 .claim("role", accountDto.getRole().name())
+                .claim("name", accountDto.getName())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWTVO.EXPIRES_TIME))
                 .signWith(secretKey)

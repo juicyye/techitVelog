@@ -53,6 +53,7 @@ public class PostController {
             bindingResult.reject("duplicate-blog-name", "동일한 제목은 사용하실 수 없습니다.");
             return "posts/create";
         }
+        log.info("postController create {}", postReqDtoWebCreate);
         postService.create(postReqDtoWebCreate, principalDetails.getUsername());
         return "redirect:/";
     }
@@ -67,6 +68,7 @@ public class PostController {
         if (userService.isUser(securityContext)) {
             log.info("(userService.isUser(securityContext) {} ", userService.isUser(securityContext));
             log.info("principal {} ",securityContext.getAuthentication().getPrincipal());
+            log.info("principal Name {} ",((PrincipalDetails)securityContext.getAuthentication().getPrincipal()).getName());
             blog = blogService.getBlog((PrincipalDetails)securityContext.getAuthentication().getPrincipal());
         }
 

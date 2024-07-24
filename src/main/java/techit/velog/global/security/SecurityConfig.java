@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -83,7 +84,7 @@ public class SecurityConfig {
                         .addLogoutHandler((request, response, authentication) -> {
                             for (Cookie cookie : request.getCookies()) {
                                 String cookieName = cookie.getName();
-                                if(cookie.getName().equals("view-count")) continue;
+                                if (cookie.getName().equals("view-count")) continue;
                                 Cookie cookieToDelete = new Cookie(cookieName, null);
                                 cookieToDelete.setMaxAge(0);
                                 response.addCookie(cookieToDelete);
@@ -116,6 +117,7 @@ public class SecurityConfig {
         return source;
 
     }
+
 
 
 }

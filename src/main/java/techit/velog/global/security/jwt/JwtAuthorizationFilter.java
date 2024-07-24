@@ -32,7 +32,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             if (!jwtProcess.isExpired(token)) {
                 String loginId = jwtProcess.getLoginId(token);
                 String role = jwtProcess.getRole(token);
-                PrincipalDetails principalDetails = new PrincipalDetails(new AccountDto(loginId, role));
+                String name = jwtProcess.getName(token);
+                PrincipalDetails principalDetails = new PrincipalDetails(new AccountDto(loginId, role, name));
                 Authentication authToken = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

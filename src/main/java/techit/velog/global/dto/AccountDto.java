@@ -4,13 +4,14 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import techit.velog.domain.user.entity.Role;
 import techit.velog.domain.user.entity.User;
 
 @Data
 @Builder
 @AllArgsConstructor
-@NotEmpty
+@NoArgsConstructor
 public class AccountDto {
     private Long id;
     private String name;
@@ -34,9 +35,11 @@ public class AccountDto {
         this.role = role;
     }
 
-    public AccountDto(String loginId, String role) {
+    public AccountDto(String loginId, String role, String name) {
         this.loginId = loginId;
         this.role = Role.valueOf(role);
+        this.name = name;
+
     }
 
     public static AccountDto toDto(User user){

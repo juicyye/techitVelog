@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     private Long id;
     private String userId;
 
-    private String name;
+    private String name; // 사실 필요없음
     private String nickname;
     private String loginId;
     private String password;
@@ -129,7 +129,7 @@ public class User extends BaseEntity {
     public void changeOauth(OAuth2Response oAuth2Response) {
         this.email = oAuth2Response.getEmail();
         this.name = oAuth2Response.getName();
-        this.email = oAuth2Response.getLoginId();
+        this.loginId = oAuth2Response.getLoginId();
     }
 
     public boolean isUserEmail(String email) {

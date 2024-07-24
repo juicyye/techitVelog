@@ -45,12 +45,20 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
             User savedUser = userRepository.save(new User(oAuth2Response));
             blogRepository.saveAndFlush(new Blog("@" + savedUser.getName(), savedUser));
-            return new PrincipalDetails(new AccountDto(savedUser), oAuth2Response.getAttributes());
+            log.info("savedUser: {}", savedUser.getName());
+            AccountDto accountDto = new AccountDto(savedUser);
+            log.info("accountDto: {}", accountDto);
+            PrincipalDetails principalDetails = new PrincipalDetails(accountDto, oAuth2Response.getAttributes());
+            log.info("principalDetails: {}", principalDetails.getName());
+            return principalDetails;
         } else{
             User user = _user.get();
             user.changeOauth(oAuth2Response);
-
-            return new PrincipalDetails(new AccountDto(user), oAuth2Response.getAttributes());
+            AccountDto accountDto = new AccountDto(user);
+            log.info("else accountDto: {}", accountDto);
+            PrincipalDetails principalDetails = new PrincipalDetails(accountDto, oAuth2Response.getAttributes());
+            log.info("else principalDetails: {}", principalDetails.getName());
+            return principalDetails;
         }
 
     }
