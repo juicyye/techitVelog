@@ -26,8 +26,6 @@ public class FileStore {
     private String bucket;
 
 
-
-
     public List<UploadFile> storeFiles(List<MultipartFile> files) {
         List<UploadFile> uploadFiles = new ArrayList<>();
         for (MultipartFile file : files) {

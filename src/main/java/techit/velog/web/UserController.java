@@ -120,6 +120,7 @@ public class UserController {
             bindingResult.reject("invalid_password","비밀번호가 일치하지 않습니다.");
             return "user/delete";
         }
+
         userService.deleteUser(principalDetails.getUsername());
         rttr.addAttribute("delete",true);
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();

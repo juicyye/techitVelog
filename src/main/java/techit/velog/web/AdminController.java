@@ -23,6 +23,7 @@ import techit.velog.domain.user.service.UserService;
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
+    private final String name = "adf";
 
     @GetMapping("/users")
     public String users(Model model, @PageableDefault(size = 20) Pageable pageable) {
