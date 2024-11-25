@@ -39,10 +39,6 @@
   <br>
 </div>
 
-## 📝 API 명세
-
-- 추가 예정
-
 ## 📊 ERD
 
 ![techit velog](https://github.com/user-attachments/assets/a753db87-87e5-414f-917f-bd88d76b0dc6)
