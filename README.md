@@ -49,9 +49,27 @@
 
 
 ## 🔨 트러블슈팅
-
-- 추가 예정
-- 
+1. **jar 파일 실행 시 타임리프 문법 오류**
+    - **원인**: jar 파일 실행 시 타임리프 문법이 엄격하게 적용되어, 파일 위치 지정에 주의해야 함
+    - **결과**: 위치를 올바르게 지정하여 정상적으로 애플리케이션이 동작하도록 수정함
+2. **Json→ UserDetails 직렬화 오류**
+    - **원인**: UserDetails가 Principal로 사용되어 직렬화 시 특별한 처리가 필요함
+    - **결과**: Dto로 데이터를 받아 객체로 변환하여 문제를 해결함
+3. **QueryDSL에서 Dto를 가져올 때 join fetch하면  오류가 발생하는 현상**
+    - **원인**: QueryDSL에서 Dto로 데이터를 가져올 때, join fetch를 사용할 수 없음
+    - **결과**: Projection을 이용하여 Dto로 데이터를 가져오는 방식으로 수정하여 문제를 해결함
+4. **OAuth2로그인 시 헤더로 JWT가 반환되지 않는 현상**
+    - **원인**: OAuth2 로그인 과정에서 Authorization Server를 거쳐야 하므로, 헤더로 JWT를 전달하는 것이 어려움
+    - **결과**: JWT를 쿠키에 담아서 클라이언트로 전달하도록 수정하여 문제를 해결함
+5. **DirtyChecking이 안되는 현상**
+    - **원인**: 메소드 호출이 같은 클래스 내에서 이루어질 경우 AOP가 제대로 적용되지 않음
+    - **결과**: 메소드 시작에 트랜잭션을 붙여서 정상적으로 트랜잭션이 적용
+6. **시큐리티 순환참조 현상**
+    - **원인**: PasswordEncoder를 Bean으로 지정하면 Config에서 순환참조가 발생함
+    - **결과**: PasswordEncoder를 별도의 클래스로 분리하여 순환참조 문제를 해결
+7. **RememberMe에서 Authentication이 null이 되는 현상**
+    - **원인**: rememberMe를 사용할 때 AuthenticationProvider를 지정하면 기존 userDetailsService와 커스텀 UserDetailsService두 번 타게 돼서 null이 된다
+    - **결과**: Provider를 제거하고 userDetailsService만 사용하도록 설정
 
 # 🎫 TechitLog
 
